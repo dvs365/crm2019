@@ -131,7 +131,15 @@ class SignupForm extends Model
 
     public function attributeLabels(){
         return [
-            'addUpUser' => 'Новый пароль',
+            'addUpUser' => 'Добавление/редактирование менеджеров',
+            'addUpAdmin' => 'Добавление/редактирование расширенных пользователей',
+            'viewTodoUser' => 'Просмотр дел менеджеров',
+            'viewClientAll' => 'Просмотр всех клиентов',
+            'upClientAll' => 'Редактирование всех клиентов',
+            'confirmDiscount' => 'Согласование скидки',
+            'addNoteClient' => 'Добавление заметок о клиенте',
+            'addTodoUser' => 'Назначение дел менеджерам',
+            'addUpNewClient' => 'Добавление/редактирование новых клиентов',
         ];
     }
 }

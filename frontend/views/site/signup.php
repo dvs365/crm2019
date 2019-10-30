@@ -68,35 +68,16 @@ $this->title = 'Добавление пользователя';
                 <td class="settings_user cl480">
                     <p>Выберите доступные для пользователя функции</p>
                     <div class="user_functions">
-                        <? $template = "{input}<span class=\"checkbox\"></span>"?>
-                        <? $disabled = \Yii::$app->user->can('addUpAdmin')? ['value' => '1']:['value' => '1', 'disabled' => 'disabled'];?>
-                        <label>
-                            <?= $form->field($model, 'addUpUser', ['template' => $template . ' Добавление/редактирование менеджеров'])->checkbox($disabled, false)?>
-                        </label>
-                        <label>
-                            <?= $form->field($model, 'addUpAdmin', ['template' => $template . ' Добавление/редактирование расширенных пользователей'])->checkbox($disabled, false)?>
-                        </label>
-                        <label>
-                            <?= $form->field($model, 'viewTodoUser', ['template' => $template . ' Просмотр дел менеджеров'])->checkbox(['value' => '1'], false)?>
-                        </label>
-                        <label>
-                            <?= $form->field($model, 'viewClientAll', ['template' => $template . ' Просмотр всех клиентов'])->checkbox(['value' => '1'], false)?>
-                        </label>
-                        <label>
-                            <?= $form->field($model, 'upClientAll', ['template' => $template . ' Редактирование всех клиентов'])->checkbox(['value' => '1'], false)?>
-                        </label>
-                        <label>
-                            <?= $form->field($model, 'confirmDiscount', ['template' => $template . ' Согласование скидки'])->checkbox(['value' => '1'], false)?>
-                        </label>
-                        <label>
-                            <?= $form->field($model, 'addNoteClient', ['template' => $template . ' Добавление заметок о клиенте'])->checkbox(['value' => '1'], false)?>
-                        </label>
-                        <label>
-                            <?= $form->field($model, 'addTodoUser', ['template' => $template . ' Назначение дел менеджерам'])->checkbox(['value' => '1'], false)?>
-                        </label>
-                        <label>
-                            <?= $form->field($model, 'addUpNewClient', ['template' => $template . ' Добавление/редактирование новых клиентов'])->checkbox(['value' => '1'], false)?>
-                        </label>
+                        <? $template = "{beginLabel}{input}<span class=\"checkbox\"></span> {labelTitle}{endLabel}"?>
+                        <?= $form->field($model, 'addUpUser', ['template' => $template])->checkbox(['value' => '1', 'disabled' => 'disabled'], false)->label()?>
+                        <?= $form->field($model, 'addUpAdmin', ['template' => $template])->checkbox(['value' => '1', 'disabled' => 'disabled'], false)->label()?>
+                        <?= $form->field($model, 'viewTodoUser', ['template' => $template])->checkbox(['value' => '1'], false)->label()?>
+                        <?= $form->field($model, 'viewClientAll', ['template' => $template])->checkbox(['value' => '1'], false)->label()?>
+                        <?= $form->field($model, 'upClientAll', ['template' => $template])->checkbox(['value' => '1'], false)->label()?>
+                        <?= $form->field($model, 'confirmDiscount', ['template' => $template])->checkbox(['value' => '1'], false)->label()?>
+                        <?= $form->field($model, 'addNoteClient', ['template' => $template])->checkbox(['value' => '1'], false)->label()?>
+                        <?= $form->field($model, 'addTodoUser', ['template' => $template])->checkbox(['value' => '1'], false)->label()?>
+                        <?= $form->field($model, 'addUpNewClient', ['template' => $template])->checkbox(['value' => '1'], false)->label()?>
                     </div>
                 </td>
             </tr>
