@@ -7,25 +7,25 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = 'Request password reset';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Восстановление пароля';
 ?>
-<div class="site-request-password-reset">
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out your email. A link to reset password will be sent there.</p>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form']); ?>
 
-                <?= $form->field($model, 'email')->textInput(['autofocus' => true]) ?>
 
-                <div class="form-group">
-                    <?= Html::submitButton('Send', ['class' => 'btn btn-primary']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
-        </div>
-    </div>
-</div>
+<main>
+    <h1 class="wrap1"><?= Html::encode($this->title) ?></h1>
+    <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form', 'options' =>  ['class' => 'login'], 'fieldConfig' => ['enableLabel' => false]]); ?>
+        <p>Для восстановления пароля введите адрес электронной почты, к которой привязан аккаунт. На неё придёт код подтверждения для смены пароля</p>
+        <table class="w100p">
+            <tr>
+                <td class="w180">E-mail</td>
+                <td><?= $form->field($model, 'email', ['template' => "{input}"])->input('email',['class' => 'mb10', 'autofocus' => true]) ?></td>
+            </tr>
+            <tr>
+                <td class="w180 lh30"></td>
+                <td><?= Html::submitInput('Получить код', ['class' => 'btn right', 'name' => 'login']) ?></td>
+            </tr>
+        </table>
+    <?php ActiveForm::end(); ?>
+</main>

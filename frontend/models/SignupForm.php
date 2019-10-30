@@ -10,10 +10,23 @@ use common\models\User;
  */
 class SignupForm extends Model
 {
-    public $username;
+    public $surname;
+    public $name;
+    public $patronymic;
+    public $position;
+    public $phone;
     public $email;
     public $password;
-
+    public $access;
+    public $addUpUser;
+    public $addUpAdmin;
+    public $viewTodoUser;
+    public $viewClientAll;
+    public $upClientAll;
+    public $confirmDiscount;
+    public $addNoteClient;
+    public $addTodoUser;
+    public $addUpNewClient;
 
     /**
      * {@inheritdoc}
@@ -21,19 +34,37 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            ['username', 'trim'],
-            ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['surname', 'filter', 'filter' => 'trim'],
+            ['surname', 'required'],
+            ['surname', 'string', 'min' => 2, 'max' => 255],
 
-            ['email', 'trim'],
+            ['name', 'filter', 'filter' => 'trim'],
+            ['name', 'required'],
+            ['name', 'string', 'min' => 2, 'max' => 255],
+
+            ['patronymic', 'filter', 'filter' => 'trim'],
+            ['patronymic', 'required'],
+            ['patronymic', 'string', 'min' => 2, 'max' => 255],
+
+            ['position', 'filter', 'filter' => 'trim'],
+            ['position', 'string', 'min' => 2, 'max' => 255],
+
+            ['phone', 'filter', 'filter' => 'trim'],
+            ['phone', 'match', 'pattern' => '/\+[7]{1}[0-9]{10}$/'],
+            ['phone', 'required'],
+
+            ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'Этот e-mail уже занят.'],
 
-            ['password', 'required'],
-            ['password', 'string', 'min' => 6],
+            ['access', 'required'],
+            ['access', 'integer'],
+            ['access', 'in', 'range' => [1, 2]],
+            ['access', 'default', 'value' => 1],
+
+            [['addUpUser', 'addUpAdmin', 'viewTodoUser', 'viewClientAll', 'upClientAll', 'confirmDiscount', 'addNoteClient', 'addTodoUser', 'addUpNewClient'], 'integer'],
         ];
     }
 
@@ -47,14 +78,35 @@ class SignupForm extends Model
         if (!$this->validate()) {
             return null;
         }
-        
+        $auth = Yii::$app->authManager;
         $user = new User();
-        $user->username = $this->username;
+        $user->surname = $this->surname;
+        $user->name = $this->name;
+        $user->patronymic = $this->patronymic;
+        $user->position = $this->position;
+        $user->phone = $this->phone;
         $user->email = $this->email;
+        $this->password = bin2hex(openssl_random_pseudo_bytes(4));
+
         $user->setPassword($this->password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
-        return $user->save() && $this->sendEmail($user);
+        if($user->save() && $this->sendEmail($user)){
+            $auth->assign((($this->access == '2')? $auth->getRole('admin') : $auth->getRole('user')), $user->id);
+
+            $this->addUpUser? $auth->assign($auth->getPermission('addUpUser'), $user->id) : '';
+            $this->addUpAdmin? $auth->assign($auth->getPermission('addUpAdmin'), $user->id) : '';
+            $this->viewTodoUser? $auth->assign($auth->getPermission('viewTodoUser'), $user->id) : '';
+            $this->viewClientAll? $auth->assign($auth->getPermission('viewClientAll'), $user->id) : '';
+            $this->upClientAll? $auth->assign($auth->getPermission('upClientAll'), $user->id) : '';
+            $this->confirmDiscount? $auth->assign($auth->getPermission('confirmDiscount'), $user->id) : '';
+            $this->addNoteClient? $auth->assign($auth->getPermission('addNoteClient'), $user->id) : '';
+            $this->addTodoUser? $auth->assign($auth->getPermission('addTodoUser'), $user->id) : '';
+            $this->addUpNewClient? $auth->assign($auth->getPermission('addUpNewClient'), $user->id) : '';
+
+            return true;
+        }
+        return false;
 
     }
 
@@ -69,11 +121,17 @@ class SignupForm extends Model
             ->mailer
             ->compose(
                 ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                ['user' => $user]
+                ['user' => $user, 'pass' => $this->password]
             )
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
             ->setTo($this->email)
-            ->setSubject('Account registration at ' . Yii::$app->name)
+            ->setSubject(' Пользователь зарегистрирован в &laquo' . Yii::$app->name . "&raquo")
             ->send();
+    }
+
+    public function attributeLabels(){
+        return [
+            'addUpUser' => 'Новый пароль',
+        ];
     }
 }

@@ -28,10 +28,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup'],
+                'only' => ['login', 'logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['signup'],
+                        'actions' => ['login'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -39,6 +39,11 @@ class SiteController extends Controller
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['signup'],
+                        'allow' => true,
+                        'roles' => ['addUpUser', 'addUpAdmin'],
                     ],
                 ],
             ],
@@ -108,8 +113,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
-        return $this->goHome();
+        return $this->redirect(['site/login']);
     }
 
     /**
@@ -175,7 +179,7 @@ class SiteController extends Controller
             if ($model->sendEmail()) {
                 Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
 
-                return $this->goHome();
+                return $this->redirect(['site/login']);
             } else {
                 Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
             }
@@ -204,7 +208,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
             Yii::$app->session->setFlash('success', 'New password saved.');
 
-            return $this->goHome();
+            return $this->redirect(['site/login']);
         }
 
         return $this->render('resetPassword', [
@@ -234,7 +238,7 @@ class SiteController extends Controller
         }
 
         Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account with provided token.');
-        return $this->goHome();
+        return $this->redirect(['site/login']);
     }
 
     /**
@@ -248,7 +252,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
                 Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
-                return $this->goHome();
+                return $this->redirect(['site/login']);
             }
             Yii::$app->session->setFlash('error', 'Sorry, we are unable to resend verification email for the provided email address.');
         }

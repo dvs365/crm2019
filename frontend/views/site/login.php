@@ -7,35 +7,26 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = 'Login';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>Please fill out the following fields to login:</p>
-
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
-
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
-
-                <?= $form->field($model, 'password')->passwordInput() ?>
-
-                <?= $form->field($model, 'rememberMe')->checkbox() ?>
-
-                <div style="color:#999;margin:1em 0">
-                    If you forgot your password you can <?= Html::a('reset it', ['site/request-password-reset']) ?>.
-                    <br>
-                    Need new verification email? <?= Html::a('Resend', ['site/resend-verification-email']) ?>
-                </div>
-
-                <div class="form-group">
-                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
-        </div>
-    </div>
-</div>
+<main>
+    <h1 class="wrap1">Вход в систему</h1>
+    <?php $form = ActiveForm::begin(['id' => 'login-form', 'options' =>  ['class' => 'login'], 'fieldConfig' => ['enableLabel' => false]]); ?>
+        <table class="w100p">
+            <tr>
+                <td class="w180">E-mail</td>
+                <td><?= $form->field($model, 'email', ['template' => "{input}"])->input('email', ['class' => 'mb10', 'autofocus' => true]) ?></td>
+            </tr>
+            <tr>
+                <td class="w180">Пароль</td>
+                <td><?= $form->field($model, 'password', ['template' => "{input}"])->input('password', ['class' => 'mb10']) ?></td>
+            </tr>
+            <tr>
+                <td class="w180 lh30 lh-cancel418"><?= Html::a('Восстановить пароль', ['site/request-password-reset']) ?></td>
+                <td><?= Html::submitInput('Войти', ['class' => 'btn right', 'name' => 'login']) ?></td>
+            </tr>
+            <?= ($model->errors)? '<p class="color_red">Неправильно введён логин либо пароль</p>' : ''?>
+            <!--<br>
+            Need new verification email? <?= Html::a('Resend', ['site/resend-verification-email']) ?>-->
+        </table>
+    <?php ActiveForm::end(); ?>
+</main>

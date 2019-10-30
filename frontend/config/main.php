@@ -45,5 +45,11 @@ return [
         ],
         */
     ],
+    'modules' => [
+      'gii' => [
+          'class' => 'yii\debug\Module',
+          'allowedIPs' => ['*'],
+      ]
+    ],
     'params' => $params,
 ];
