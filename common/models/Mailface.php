@@ -29,7 +29,6 @@ class Mailface extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['face', 'mail'], 'required'],
             [['face'], 'integer'],
             [['mail'], 'string', 'max' => 255],
             [['face'], 'exist', 'skipOnError' => true, 'targetClass' => Face::className(), 'targetAttribute' => ['face' => 'id']],

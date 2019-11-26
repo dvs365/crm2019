@@ -32,7 +32,6 @@ class Face extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['client'], 'required'],
             [['client'], 'integer'],
             [['fullname', 'position'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
@@ -47,8 +46,8 @@ class Face extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'client' => 'Client',
-            'fullname' => 'Fullname',
-            'position' => 'Position',
+            'fullname' => 'ФИО',
+            'position' => 'Должность',
         ];
     }
 

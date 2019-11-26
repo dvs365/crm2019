@@ -27,6 +27,14 @@ use Yii;
  */
 class Organization extends \yii\db\ActiveRecord
 {
+    const FORM_OOO = 10;
+    const FORM_AO = 20;
+    const FORM_PAO = 30;
+    const FORM_MUP = 40;
+    const FORM_FGUP = 50;
+    const FORM_IP = 60;
+
+
     /**
      * {@inheritdoc}
      */
@@ -41,11 +49,26 @@ class Organization extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['client', 'director', 'nds', 'phone', 'mail', 'inn', 'ogrn', 'kpp', 'payment', 'bank'], 'required'],
             [['client', 'form', 'nds', 'phone', 'mail', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
             [['name', 'jadds', 'fadds', 'director', 'bank'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
+    }
+
+    function getFormLabels() {
+        return [
+            self::FORM_OOO => 'ООО',
+            self::FORM_AO => 'АО',
+            self::FORM_PAO => 'ПАО',
+            self::FORM_MUP => 'МУП',
+            self::FORM_FGUP => 'ФГУП',
+            self::FORM_IP => 'ИП'
+        ];
+    }
+
+    function getFormLabel() {
+        $forms = $this->getFormLabels();
+        return isset($forms[$this->form]) ? $forms[$this->form] : '';
     }
 
     /**
@@ -56,19 +79,19 @@ class Organization extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'client' => 'Client',
-            'name' => 'Name',
+            'name' => 'Наименование',
             'form' => 'Form',
-            'jadds' => 'Jadds',
-            'fadds' => 'Fadds',
-            'director' => 'Director',
-            'nds' => 'Nds',
-            'phone' => 'Phone',
-            'mail' => 'Mail',
-            'inn' => 'Inn',
-            'ogrn' => 'Ogrn',
-            'kpp' => 'Kpp',
-            'payment' => 'Payment',
-            'bank' => 'Bank',
+            'jadds' => 'Юридический адрес',
+            'fadds' => 'Фактический адрес',
+            'director' => 'ФИО директора',
+            'nds' => 'НДС',
+            'phone' => 'Телефон',
+            'mail' => 'E-mail',
+            'inn' => 'ИНН',
+            'ogrn' => 'ОГРН',
+            'kpp' => 'КПП',
+            'payment' => 'Расчётный счёт',
+            'bank' => 'Банк',
         ];
     }
 

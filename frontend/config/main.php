@@ -36,6 +36,14 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'assetManager' => [
+            'bundles' => [
+                'yii\web\JqueryAsset' => [
+                    'sourcePath' => null,
+                    'js' => ['frontend/web/js/jquery-2.2.4.js'],
+                ]
+            ]
+        ],
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,

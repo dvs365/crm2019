@@ -50,13 +50,16 @@ class Client extends \yii\db\ActiveRecord
             [['name'], 'trim'],
 
             [['name', 'address', 'discomment'], 'string', 'max' => 255],
-            [['user', 'discount', 'disconfirm'], 'integer'],
+            [['user', 'disconfirm'], 'integer'],
             [['update'], 'safe'],
 
             [['user'], 'default', 'value' => null],
             ['user', 'filter', 'filter' => function($value){
                 return is_null($value) ? null : intval($value);
             }],
+
+            ['discount', 'default', 'value' => 0],
+            ['discount', 'integer', 'min' => 0, 'max' => 2],
             ['disconfirm', 'filter', 'filter' => 'intval'],
 
             ['status', 'default', 'value' => self::TARGET],
@@ -66,12 +69,12 @@ class Client extends \yii\db\ActiveRecord
         ];
     }
 
-    function getStatusesLabel()
+    function getStatusLabels()
     {
         return [
-           self::TARGET => 'потенциальные',
-           self::LOAD => 'рабочие',
-           self::REJECT => 'отказные'
+           self::TARGET => 'Потенциальный',
+           self::LOAD => 'Рабочий',
+           self::REJECT => 'Отказной'
         ];
     }
 
