@@ -20,7 +20,7 @@ class m191014_121000_create_phoneclient_table extends Migration
         $this->createTable('{{%phoneclient}}', [
             'id' => $this->primaryKey(),
             'client' => $this->integer(4)->notNull(),
-            'number' => $this->integer()->notNull(),
+            'number' => $this->string()->notNull(),
             'number_mirror' => $this->integer()->notNull(),
             'comment' =>$this->string()->notNull(),
         ], $tableOptions);
@@ -35,6 +35,12 @@ class m191014_121000_create_phoneclient_table extends Migration
             'idx-phoneclient-client',
             '{{%phoneclient}}',
             'client'
+        );
+
+        $this->createIndex(
+            'idx-phoneclient-number_mirror',
+            '{{%phoneclient}}',
+            'number_mirror'
         );
 
         $this->addForeignKey(
@@ -61,6 +67,11 @@ class m191014_121000_create_phoneclient_table extends Migration
 
         $this->dropIndex(
             'idx-phoneclient-client',
+            '{{%phoneclient}}'
+        );
+
+        $this->dropIndex(
+            'idx-phoneclient-number_mirror',
             '{{%phoneclient}}'
         );
 
