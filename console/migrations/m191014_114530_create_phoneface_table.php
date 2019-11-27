@@ -21,7 +21,7 @@ class m191014_114530_create_phoneface_table extends Migration
             'id' => $this->primaryKey(),
             'face' => $this->integer(11)->notNull(),
             'number' => $this->string()->notNull(),
-            'number_mirror' => $this->integer()->notNull(),
+            'number_mirror' => $this->string()->notNull(),
             'comment' =>$this->string()->notNull(),
         ], $tableOptions);
 

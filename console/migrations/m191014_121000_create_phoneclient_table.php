@@ -19,9 +19,9 @@ class m191014_121000_create_phoneclient_table extends Migration
 
         $this->createTable('{{%phoneclient}}', [
             'id' => $this->primaryKey(),
-            'client' => $this->integer(4)->notNull(),
+            'client' => $this->integer(11)->notNull(),
             'number' => $this->string()->notNull(),
-            'number_mirror' => $this->integer()->notNull(),
+            'number_mirror' => $this->string()->notNull(),
             'comment' =>$this->string()->notNull(),
         ], $tableOptions);
 
