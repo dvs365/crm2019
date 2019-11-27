@@ -31,9 +31,9 @@ class Phoneclient extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['number','app\components\validators\PhoneValidator'],
             [['client', 'number_mirror'], 'integer'],
-            ['number', 'validatePhone', 'skipOnEmpty'=>false],
-            [['comment', 'number'], 'string', 'max' => 255],
+            [['comment'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }
@@ -50,18 +50,6 @@ class Phoneclient extends \yii\db\ActiveRecord
             'number_mirror' => 'Number Mirror',
             'comment' => 'Comment',
         ];
-    }
-
-    public function validatePhone($attribute, $params)
-    {
-        $int = preg_replace("/[^0-9]/", '', $attribute);
-
-        if(!empty($int) && (mb_strlen($int) < 11 || mb_strlen($int) > 12)){
-            echo '<script>alert("ssssssssssssss");</script>';
-            $errorMsg = '11 или 12 цифр';
-            $this->addError($attribute, $errorMsg);
-
-        }
     }
 
     /**

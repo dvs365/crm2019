@@ -87,11 +87,10 @@ class ClientController extends Controller
                         $facePhone = new Phoneface;
                         $facePhone ->load($data);
                         $facePhones[$indexFace][$indexPhone] = $facePhone;
-                        $valid = $facePhone->validate();
+                        $valid = $facePhone->validate() && $valid;
                     }
                 }
             }
-
             if(isset($_POST['Mailface'][0][0])){
                 foreach ($_POST['Mailface'] as $indexFace => $mails){
                     foreach ($mails as $indexMail => $mail){
@@ -99,7 +98,7 @@ class ClientController extends Controller
                         $faceMail = new Mailface;
                         $faceMail ->load($data);
                         $faceMails[$indexFace][$indexMail] = $faceMail;
-                        $valid = $faceMail->validate();
+                        $valid = $faceMail->validate() && $valid;
                     }
                 }
             }
@@ -171,9 +170,6 @@ class ClientController extends Controller
                     $transaction->rollBack();
                 }
             }
-
-
-            return $this->redirect(['view', 'id' => $client->id]);
         }
 
         return $this->render('create', [

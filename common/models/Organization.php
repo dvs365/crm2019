@@ -49,6 +49,7 @@ class Organization extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['phone','app\components\validators\PhoneValidator'],
             [['client', 'form', 'nds', 'phone', 'mail', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
             [['name', 'jadds', 'fadds', 'director', 'bank'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],

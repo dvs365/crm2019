@@ -31,7 +31,8 @@ class Phoneface extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['face', 'number', 'number_mirror'], 'integer'],
+            ['number', 'app\components\validators\PhoneValidator'],
+            [['face', 'number_mirror'], 'integer'],
             [['comment'], 'string', 'max' => 255],
             [['face'], 'exist', 'skipOnError' => true, 'targetClass' => Face::className(), 'targetAttribute' => ['face' => 'id']],
         ];
