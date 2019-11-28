@@ -5,7 +5,7 @@ class m191125_151000_add_number_mirror_column_to_organization_table extends Migr
 {
     public function up()
     {
-        $this->addColumn('{{%organization}}', 'number_mirror', $this->string(13)->defaultValue(''));
+        $this->addColumn('{{%organization}}', 'number_mirror', $this->string()->notNull()->defaultValue(''));
         $this->createIndex('idx-organization-number_mirror','{{%organization}}','number_mirror');
     }
 
