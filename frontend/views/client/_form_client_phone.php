@@ -24,7 +24,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
 <table class="w100p container-items_client_phone">
     <?php foreach($modelsClientPhone as $index => $clientPhone):?>
     <tr class="item_client_phone">
-        <td class="w180">Телефон</td>
+        <td class="w180"></td>
         <td>
             <?php
             //necessary for update action.

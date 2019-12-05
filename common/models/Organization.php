@@ -51,6 +51,9 @@ class Organization extends \yii\db\ActiveRecord
         return [
             ['phone','app\components\validators\PhoneValidator'],
             [['client', 'form', 'nds', 'phone', 'mail', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
+
+            ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP]],
+            ['nds', 'in', 'range' => [0, 1]],
             [['name', 'jadds', 'fadds', 'director', 'bank'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];

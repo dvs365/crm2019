@@ -1,4 +1,6 @@
 jQuery(function ($) {
+    $(this).find(".item_client_phone:first td:first").html('Телефон');
+    $(this).find(".item_client_mail:first td:first").html('E-mail');
     $(this).find(".item_client_face_phone:first td:first").html('Телефон');
     $(this).find(".item_client_face_mail:first td:first").html('E-mail');
 
@@ -25,5 +27,16 @@ jQuery(function ($) {
         var pers_num_old = Number($(item).prev('.client_org_item').find('.client_item_number').text());
         var pers_num_new = pers_num_old + 1;
         $(item).find('.client_item_number').text(pers_num_new);
+    });
+
+    //изменение граф в случае выбора ИП
+    $(".client_add").on('change', '.select_property select', function(){
+        if ($(this).val() == 60) {
+            $(this).closest('table').find('tr.kpp').hide('fast');
+            $(this).closest('table').find('td.ogrn').text('ОГРНИП');
+        } else {
+            $(this).closest('table').find('tr.kpp').show('fast');
+            $(this).closest('table').find('td.ogrn').text('ОГРН');
+        }
     });
 });

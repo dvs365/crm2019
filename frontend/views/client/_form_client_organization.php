@@ -53,7 +53,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                         <label class="select_property">
                             <div class="select">
                                 <div class="dropdown"></div>
-                                <?=$form->field($clientOrg, "[{$indexOrg}]form", ['template' => "{input}"])->dropDownList(['10' => 'ООО', '20' => 'АО', '30' => 'ПАО', '40' => 'МУП', '50' => 'ФГУП', '60' => 'ИП']);?>
+                                <?=$form->field($clientOrg, "[{$indexOrg}]form", ['template' => "{input}"])->dropDownList($clientOrg->formLabels);?>
                             </div>
                         </label>
                     </div>
@@ -100,7 +100,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     <?= $form->field($clientOrg, "[{$indexOrg}]nds", ['template' => "{input}"])->radioList(['1' => ' С НДС', '0' => ' Без НДС'],[
                         'item' => function($index, $label, $name, $checked, $value){
                             $return = '<label class="wrap_third">';
-                            $return .= '<input type="radio" name="'.$name.'" value="'.$value.'" '.(($value == '1')?" checked":"").'>';
+                            $return .= '<input type="radio" name="'.$name.'" value="'.$value.'"'.(($checked)? ' checked':(($value?' checked':''))).'>';
                             $return .= '<span class="radio"></span>';
                             $return .= ucwords($label);
                             $return .= '</label>';
@@ -144,6 +144,16 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     <?= $form->field($clientOrg, "[{$indexOrg}]ogrn", ['template' => "{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
                 </td>
             </tr>
+            <?php if ($clientOrg->form == '60') {?>
+            <tr class="kpp">
+                <td>
+                    <?=$clientOrg->getAttributeLabel('kpp')?>
+                </td>
+                <td>
+                    <?= $form->field($clientOrg, "[{$indexOrg}]kpp", ['template' => "{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
+                </td>
+            </tr>
+            <?}?>
             <tr class="kpp">
                 <td>
                     <?=$clientOrg->getAttributeLabel('kpp')?>
