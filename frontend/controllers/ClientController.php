@@ -218,7 +218,7 @@ class ClientController extends Controller
             }
         }
 
-        if ($client->load(Yii::$app->request->post()) && $client->save()) {
+        if ($client->load(Yii::$app->request->post())) {
 
             // reset
             $facePhones = [];
