@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use wbraganca\dynamicform\DinamicFormWidget;
 use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
@@ -64,6 +63,14 @@ use yii\helpers\ArrayHelper;
                     <?= $form->field($model, 'address', ['template' => "{input}"])->textInput(['placeholder' => 'Индекс, страна, регион, город, улица, дом', 'maxlength' => true]) ?>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <?=$model->getAttributeLabel('website')?>
+                </td>
+                <td>
+                    <?= $form->field($model, 'website', ['template' => "{input}"])->textInput(['placeholder' => 'Сайт, сайт', 'maxlength' => true]) ?>
+                </td>
+            </tr>
         </table>
         <h2>Контакты общие</h2>
         <?=$this->render('_form_client_phone', [
@@ -80,7 +87,7 @@ use yii\helpers\ArrayHelper;
         ?>
         <?=$this->render('_form_client_face', [
             'form' => $form,
-            'modelsClientFace' => $modelsClientFace,
+            'modelsFace' => $modelsClientFace,
             'modelsFacePhone' => $modelsFacePhone,
             'modelsFaceMail' => $modelsFaceMail,
             'model' => $model,
@@ -103,7 +110,7 @@ use yii\helpers\ArrayHelper;
             </label>
         </div>
         <div class="right">
-            <?=Html::a('Отменить', [Yii::$app->request->referrer], ['class' => 'btn cancel'])?>
+            <?=Html::a('Отменить', Yii::$app->request->referrer, ['class' => 'btn cancel'])?>
             <?=Html::submitInput('Сохранить', ['class' => 'btn'])?>
         </div>
         <div class="clear"></div>

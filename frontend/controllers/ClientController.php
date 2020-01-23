@@ -46,8 +46,17 @@ class ClientController extends Controller
 
     public function actionView($id)
     {
+        $client = $this->findModel($id);
+        $clientPhones = $client->phoneclients;
+        $clientMails = $client->mailclients;
+        $clientFaces = $client->faces;
+        $clientOrgs = $client->organizations;
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'client' => $client,
+            'clientPhones' => $clientPhones,
+            'clientMails' => $clientMails,
+            'clientFaces' => $clientFaces,
+            'clientOrgs' => $clientOrgs,
         ]);
     }
 
@@ -349,7 +358,7 @@ class ClientController extends Controller
                                     }
                                 }
                             }
-                            if (!$emptyFace && !$emptySub) {
+                            if (!$emptyFace || !$emptySub) {
                                 $clientFace->client = $client->id;
                                 $dirty = $dirty && empty($clientFace->getDirtyAttributes());
                                 if (!$flag = $clientFace->save(false)) {
@@ -364,7 +373,7 @@ class ClientController extends Controller
                                         }
                                     }
                                 }
-                                foreach ($facePhones[$indexFace] as $indexMail => $mail) {
+                                foreach ($faceMails[$indexFace] as $indexMail => $mail) {
                                     if (!empty($mail->mail)) {
                                         $mail->face = $clientFace->id;
                                         $dirty = $dirty && empty($mail->getDirtyAttributes());
@@ -422,6 +431,30 @@ class ClientController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionTotarget($id)
+    {
+        $client = $this->findModel($id);
+        $client->status = Client::TARGET;
+        $client->save(false);
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    public function actionToload($id)
+    {
+        $client = $this->findModel($id);
+        $client->status = Client::LOAD;
+        $client->save(false);
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    public function actionToreject($id)
+    {
+        $client = $this->findModel($id);
+        $client->status = Client::REJECT;
+        $client->save(false);
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     protected function findModel($id)

@@ -43,7 +43,7 @@ class Mailface extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'face' => 'Face',
-            'mail' => 'Mail',
+            'mail' => 'E-mail',
         ];
     }
 

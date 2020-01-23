@@ -46,7 +46,7 @@ class Phoneface extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'face' => 'Face',
-            'number' => 'Number',
+            'number' => 'Телефон',
             'number_mirror' => 'Number Mirror',
             'comment' => 'Comment',
         ];

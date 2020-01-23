@@ -11,6 +11,7 @@ use Yii;
  * @property int $user
  * @property string $name
  * @property string $address
+ * @property string $website
  * @property int $status
  * @property int $discount
  * @property int $disconfirm
@@ -49,7 +50,7 @@ class Client extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['name'], 'trim'],
 
-            [['name', 'address', 'discomment'], 'string', 'max' => 255],
+            [['name', 'address', 'website', 'discomment'], 'string', 'max' => 255],
             [['user', 'disconfirm'], 'integer'],
             [['update'], 'safe'],
 
@@ -59,7 +60,7 @@ class Client extends \yii\db\ActiveRecord
             }],
 
             ['discount', 'default', 'value' => 0],
-            ['discount', 'integer', 'min' => 0, 'max' => 2],
+            ['discount', 'integer', 'min' => 0, 'max' => 99],
             ['disconfirm', 'filter', 'filter' => 'intval'],
 
             ['status', 'default', 'value' => self::TARGET],
@@ -88,6 +89,7 @@ class Client extends \yii\db\ActiveRecord
             'user' => 'Менеджер',
             'name' => 'Клиент',
             'address' => 'Адрес доставки',
+            'website' => 'Сайт',
             'status' => 'Статус клиента',
             'discount' => 'Скидка',
             'disconfirm' => 'Принять',
