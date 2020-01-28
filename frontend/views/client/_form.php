@@ -29,7 +29,7 @@ use yii\helpers\ArrayHelper;
                     <?= $form->field($model, 'status', ['template' => "{input}<div class=\"clear\"></div>"])->radioList($model->getStatusLabels(),[
                         'item' => function($index, $label, $name, $checked, $value){
                             $return = Html::beginTag('label', ['class' => 'wrap_third']);
-                            $return .= '<input type="radio" name="'.$name.'" value="'.$value.'"  '.(($index == '0')?" checked":"").'>';
+                            $return .= '<input type="radio" name="'.$name.'" value="'.$value.'"  '.(($value == $checked)?" checked":"").'>';
                             $return .= '<span class="radio"></span> ';
                             $return .= ucwords($label);
                             $return .= Html::endTag('label') .(($index == '2')?'<div class="clear"></div>' : '');

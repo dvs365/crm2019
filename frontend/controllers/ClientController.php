@@ -171,8 +171,11 @@ class ClientController extends Controller
                             }
                         }
                         foreach ($clientOrganizations as $clientOrg) {
-                            if(array_filter($clientOrg->attributes) !== []) {
+                            if (!empty($clientOrg->name)) {
                                 $clientOrg->client = $client->id;
+                                if (empty($clientOrg->nds)) {
+                                    $clientOrg->nds = Organization::WITHNDS;
+                                }
                                 if (!($flag = $clientOrg->save(false))) {
                                     break;
                                 }
@@ -371,6 +374,8 @@ class ClientController extends Controller
                                         if (!($flag = $phone->save(false))) {
                                             break 2;
                                         }
+                                    } else {
+                                        $phone->delete();
                                     }
                                 }
                                 foreach ($faceMails[$indexFace] as $indexMail => $mail) {
@@ -380,17 +385,26 @@ class ClientController extends Controller
                                         if (!($flag = $mail->save(false))) {
                                             break 2;
                                         }
+                                    } else {
+                                        $mail->delete();
                                     }
                                 }
+                            } else {
+                                $clientFace->delete();
                             }
                         }
                         foreach ($clientOrganizations as $clientOrg) {
                             if (!empty($clientOrg->name)) {
                                 $clientOrg->client = $client->id;
+                                if (empty($clientOrg->nds)) {
+                                    $clientOrg->nds = Organization::WITHNDS;
+                                }
                                 $dirty = $dirty && empty($clientOrg->getDirtyAttributes());
                                 if (!$flag = $clientOrg->save(false)) {
                                     break;
                                 }
+                            } else {
+                                $clientOrg->delete();
                             }
                         }
                         if (!$dirty) {

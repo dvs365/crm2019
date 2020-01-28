@@ -25,7 +25,7 @@ class m191014_150500_create_organization_table extends Migration
             'jadds' => $this->string()->notNull()->defaultValue(''),
             'fadds' => $this->string()->notNull()->defaultValue(''),
             'director' => $this->string()->notNull()->defaultValue(''),
-            'nds' => $this->integer(1)->notNull()->defaultValue(0),
+            'nds' => $this->integer(2)->notNull()->defaultValue(10),
             'phone' => $this->string()->notNull()->defaultValue(''),
             'mail' => $this->string()->notNull()->defaultValue(''),
             'inn' => $this->string()->notNull()->defaultValue(''),

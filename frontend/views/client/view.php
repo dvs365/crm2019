@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use frontend\assets\ClientAsset;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Client */
@@ -8,6 +9,7 @@ $this->title = $client->name;
 $this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title . '123';
 \yii\web\YiiAsset::register($this);
+ClientAsset::register($this);
 ?>
 <main>
     <div class="wrap1">
@@ -16,7 +18,10 @@ $this->params['breadcrumbs'][] = $this->title . '123';
         <div class="firms">
             <?$orgs = $client->organizations;?>
             <?foreach($orgs as $org){?>
-                <div class="firm"><?= Html::a($org->name, ['update', 'id' => $client->id]) ?> <span class="nds color_grey <?=(!$org->nds)?'nds_none':''?>"><?=$org->getAttributeLabel('nds')?></span></div>
+                <div class="firm">
+                    <?= Html::a($org->name, ['update', 'id' => $client->id]) ?>
+                    <span class="nds color_grey <?=($org->nds == $org->ndsConst['without'])?'nds_none':''?>"><?=$org->getAttributeLabel('nds')?></span>
+                </div>
             <?}?>
         </div>
         <?}?>
@@ -41,40 +46,35 @@ $this->params['breadcrumbs'][] = $this->title . '123';
     </div>
 
     <div class="contacts">
+        <?php foreach($clientFaces as $clientFace):?>
         <div class="wrap1 contact">
-            <div>Алексей Васильевич Баландин</div>
-            <div class="color_grey">Менеджер по закупкам</div>
-            <div class="contact_item"><a href="tel:8-903-647-22-92">8-903-647-22-92</a></div>
-            <div class="contact_item"><a href="mailto:meridian331@gmail.com">meridian331@gmail.com</a></div>
+            <div><?=$clientFace->fullname?></div>
+            <div class="color_grey"><?=$clientFace->position?></div>
+            <?$fphones = $clientFace->phonefaces; $fmails = $clientFace->mailfaces;?>
+            <?php foreach($fphones as $fphone):?>
+                <div class="contact_item"><a href="tel:<?=$fphone->number?>"><?=$fphone->number?></a><?=' '.$fphone->comment?></div>
+            <?php endforeach;?>
+            <?php foreach($fmails as $fmail):?>
+                <div class="contact_item"><a href="mailto:<?=$fmail->mail?>"><?=$fmail->mail?></a></div>
+            <?php endforeach;?>
         </div>
-        <div class="wrap1 contact">
-            <div>Барышникова Инна Михайловна</div>
-            <div class="color_grey">Бухгалтер</div>
-            <div class="contact_item"><a href="tel:8-905-459-15-48">8-905-459-15-48</a></div>
-            <div class="contact_item"><a href="mailto:meridian331@gmail.com">meridian332@gmail.com</a></div>
-        </div>
-        <div class="wrap1 contact">
-            <div>Кашичкин Сергей Иванович</div>
-            <div class="color_grey">Директор</div>
-            <div class="contact_item"><a href="tel:8-905-459-15-31">8-905-459-15-31</a></div>
-            <div class="contact_item"><a href="tel:8(4922)54-03-62">8(4922) 54-03-62</a> доб.112</div>
-            <div class="contact_item"><a href="mailto:director@meridian-opt.ru">director@meridian-opt.ru</a></div>
-        </div>
+        <?php endforeach;?>
         <div class="wrap1">
-            <div class="contact_site wrap3"><a href="http://meridian-opt.ru">meridian-opt.ru</a></div>
+            <?$cphones = $client->phoneclients; $cmails = $client->mailclients;?>
+            <div class="contact_site wrap3"><a href="//<?=$client->website?>"><?=$client->website?></a></div>
             <div ID="contact-all" class="color_blue">Общие контакты клиента
                 <div class="dropdown"></div>
             </div>
             <div class="contact_all">
-                <div class="contact_item"><a href="tel:8(4922)54-03-62">8(4922) 54-03-62</a> доб.112</div>
-                <div class="contact_item"><a href="tel:8(4922)54-03-62">8(4922) 54-03-62</a> доб.112</div>
-                <div class="contact_item"><a href="tel:8(4922)54-03-62">8(4922) 54-03-62</a> доб.112</div>
+                <?php foreach($cphones as $cphone):?>
+                    <div class="contact_item"><a href="tel:<?=$cphone->number?>"><?=$cphone->number?></a><?=' '.$cphone->comment?></div>
+                <?php endforeach;?>
             </div>
 
             <div class="contact_all">
-                <div class="contact_item"><a href="mailto:director@meridian-opt.ru">director@meridian-opt.ru</a></div>
-                <div class="contact_item"><a href="mailto:director@meridian-opt.ru">director@meridian-opt.ru</a></div>
-                <div class="contact_item"><a href="mailto:director@meridian-opt.ru">director@meridian-opt.ru</a></div>
+                <?php foreach($cmails as $cmail):?>
+                <div class="contact_item"><a href="mailto:<?=$cmail->mail?>"><?=$cmail->mail?></a></div>
+                <?php endforeach;?>
             </div>
         </div>
     </div>

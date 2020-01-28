@@ -37,6 +37,7 @@ jQuery(function ($) {
         var pers_num_old = Number($(item).prev('.client_org_item').find('.client_item_number').text());
         var pers_num_new = pers_num_old + 1;
         $(item).find('.client_item_number').text(pers_num_new);
+        //$(item).find('.wrap_third input[type=radio]:first').attr('checked', 'checked');
     });
 
     //изменение граф в случае выбора ИП

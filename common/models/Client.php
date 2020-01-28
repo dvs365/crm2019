@@ -140,4 +140,12 @@ class Client extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Phoneclient::className(), ['client' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTodo()
+    {
+        return $this->hasMany(Todo::className(), ['client' => 'id']);
+    }
 }

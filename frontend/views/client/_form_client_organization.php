@@ -97,14 +97,13 @@ use wbraganca\dynamicform\DynamicFormWidget;
                 </td>
                 <td>
                     <div class="wrap_radio">
-                    <?= $form->field($clientOrg, "[{$indexOrg}]nds", ['template' => "{input}"])->radioList(['1' => ' С НДС', '0' => ' Без НДС'],[
+                    <?= $form->field($clientOrg, "[{$indexOrg}]nds", ['template' => "{input}"])->radioList($clientOrg->getNdsLabels(),[
                         'item' => function($index, $label, $name, $checked, $value){
                             $return = '<label class="wrap_third">';
-                            $return .= '<input type="radio" name="'.$name.'" value="'.$value.'"'.(($checked)? ' checked':(($value?' checked':''))).'>';
+                            $return .= '<input type="radio" name="'.$name.'" value="'.$value.'"'.(($value == $checked || (!$checked && !$index))?' checked':'').'>';
                             $return .= '<span class="radio"></span>';
                             $return .= ucwords($label);
                             $return .= '</label>';
-
                             return $return;
                         }
                     ])->label(false); ?>

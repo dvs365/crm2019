@@ -34,6 +34,9 @@ class Organization extends \yii\db\ActiveRecord
     const FORM_FGUP = 50;
     const FORM_IP = 60;
 
+    const WITHNDS = 10;
+    const WITHOUTNDS = 20;
+
 
     /**
      * {@inheritdoc}
@@ -53,13 +56,30 @@ class Organization extends \yii\db\ActiveRecord
             [['client', 'form', 'nds', 'phone', 'mail', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
 
             ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP]],
-            ['nds', 'in', 'range' => [0, 1]],
+            ['nds', 'in', 'range' => [self::WITHNDS, self::WITHOUTNDS]],
             [['name', 'jadds', 'fadds', 'director', 'bank'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }
 
-    function getFormLabels() {
+    function getNdsLabels()
+    {
+        return [
+            self::WITHNDS => 'С НДС',
+            self::WITHOUTNDS => 'Без НДС',
+        ];
+    }
+
+    function getNdsConst()
+    {
+        return [
+            'with' => self::WITHNDS,
+            'without' => self::WITHOUTNDS,
+        ];
+    }
+
+    function getFormLabels()
+    {
         return [
             self::FORM_OOO => 'ООО',
             self::FORM_AO => 'АО',
