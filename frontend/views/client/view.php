@@ -82,66 +82,35 @@ ClientAsset::register($this);
     <div class="wrap1">
         <h2>Дела</h2>
         <div class="task">
-            <form action="/" method="POST" onsubmit="send(this)">
-                <input type="text" class="wrap3" name="task" placeholder="Наименование дела" required>
-                <textarea ID="task-comment" name="comment" class="wrap3" placeholder="Комментарий к делу"></textarea>
-                <input type="text" name="date-from" class="task_date color_blue" readonly onClick="xCal(this)" readonly onKeyUp="xCal()">
-                <div class="task_desc color_blue">Описание дела<div class="dropdown"></div></div>
-                <div class="task_time">в
-                    <select class="color_blue" name="time">
-                        <option value="08:00">08:00</option>
-                        <option value="09:00">09:00</option>
-                        <option value="10:00">10:00</option>
-                        <option value="11:00">11:00</option>
-                        <option value="12:00">12:00</option>
-                        <option value="13:00">13:00</option>
-                        <option value="14:00">14:00</option>
-                        <option value="15:00">15:00</option>
-                        <option value="16:00">16:00</option>
-                        <option value="17:00">17:00</option>
-                        <option value="18:00">18:00</option>
-                    </select>
-                </div>
-                <div class="task_time">До
-                    <input type="text" name="date-to" class="task_date__s color_blue" readonly onClick="par={class:'xcalend', to:''};xCal(this)" onKeyUp="xCal()">
-                </div>
-                <input type="submit" class="btn right" value="Добавить">
-            </form>
+            <?= $this->render('_form_todo', [
+                'client' => $client,
+                'todo' => $clientTodo,
+            ]) ?>
             <div class="clear"></div>
-            <div class="task_item">
-                <table>
-                    <tr class="table_item">
-                        <td>
-                            <form action="/" method="POST" onsubmit="send(this)">
-                                <input type="checkbox" name="task" value="1">
-                                <button class="checkbox" title="Закрыть дело"></button>
-                            </form>
-                        </td>
-                        <td class="date">10.07.19</td>
-                        <td class="open_desc color_blue">Позвонить Алексею в 15:00 насчёт доставки</td>
-                    </tr>
-                    <tr class="table_item table_item_hidden">
-                        <td></td>
-                        <td class="date">в 12:00</td>
-                        <td>Планируется доставка муфт на 52 т.р. и хомуты на 43 т.р. в августе по новому адресу</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="task_item">
-                <table>
-                    <tr class="table_item">
-                        <td>
-                            <form action="/" method="POST" onsubmit="send(this)">
-                                <input type="checkbox" name="task" value="2">
-                                <button class="checkbox" title="Закрыть дело"></button>
-                            </form>
-                        </td>
-                        <td class="date">15.08.19</td>
-                        <td>Проверить доставку</td>
-                    </tr>
-                </table>
-            </div>
+            <? $todos = $client->todos?>
+            <?foreach ($todos as $todo):?>
+                <div class="task_item">
+                    <table>
+                        <tr class="table_item">
+                            <td>
+                                <form action="/" method="POST" onsubmit="send(this)">
+                                    <input type="checkbox" name="task" value="2">
+                                    <button class="checkbox" title="Закрыть дело"></button>
+                                </form>
+                            </td>
+                            <td class="date"><?=date('d.m.y',strtotime($todo->date))?></td>
+                            <td <?=(!empty($todo->description))?' class="open_desc color_blue"':''?>><?=$todo->name?></td>
+                        </tr>
+                        <?if(!empty($todo->description)):?>
+                            <tr class="table_item table_item_hidden">
+                                <td></td>
+                                <td class="date">в <?=date('H:i',strtotime($todo->date))?></td>
+                                <td><?=$todo->description?></td>
+                            </tr>
+                        <?endif;?>
+                    </table>
+                </div>
+            <?endforeach;?>
         </div>
     </div>
 

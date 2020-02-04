@@ -10,6 +10,7 @@ class ClientAsset extends AssetBundle
     public $baseUrl = '@web';
     public $js = [
         'js/client.js',
+        'js/datepicker.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

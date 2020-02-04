@@ -101,13 +101,15 @@ use yii\helpers\ArrayHelper;
         ]);
         ?>
         <div class="wrap_select left">
+            <?if(\Yii::$app->user->can('upClientAll')):?>
             <label>Менеджер:
                 <div class="select">
                     <div class="dropdown"></div>
-                    <?$managers = ArrayHelper::map($modelsUser, 'id', 'surnameNP')?>
-                    <?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'promt' => ''])?>
+                        <?$managers = ArrayHelper::map($modelsUser, 'id', 'surnameNP')?>
+                    <?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'promt' => '', 'options' => [Yii::$app->user->identity->id => ['selected' => true]]])?>
                 </div>
             </label>
+            <?endif;?>
         </div>
         <div class="right">
             <?=Html::a('Отменить', Yii::$app->request->referrer, ['class' => 'btn cancel'])?>

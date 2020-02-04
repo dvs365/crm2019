@@ -144,7 +144,7 @@ class Client extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTodo()
+    public function getTodos()
     {
         return $this->hasMany(Todo::className(), ['client' => 'id']);
     }

@@ -13,6 +13,7 @@ class m200124_144000_create_todo_table extends Migration
 
         $this->createTable('{{%todo}}', [
             'id' => $this->primaryKey(),
+            'user' => $this->integer()->notNull(),
             'client' => $this->integer()->notNull(),
             'name' => $this->string()->notNull()->defaultValue(''),
             'description' => $this->string()->notNull()->defaultValue(''),
@@ -38,24 +39,16 @@ class m200124_144000_create_todo_table extends Migration
             '{{%todo}}',
             'client'
         );
-
-        $this->addForeignKey(
-            'fk-todo-client',
+        $this->createIndex(
+            'idx-todo-user',
             '{{%todo}}',
-            'client',
-            '{{%client}}',
-            'id',
-            'CASCADE'
+            'user'
         );
+
     }
 
     public function down()
     {
-        $this->dropForeignKey(
-            'fk-todo-client',
-            '{{%todo}}'
-        );
-
         $this->dropIndex(
             'idx-todo-id',
             '{{%todo}}'
@@ -68,6 +61,11 @@ class m200124_144000_create_todo_table extends Migration
 
         $this->dropIndex(
             'idx-todo-date',
+            '{{%todo}}'
+        );
+
+        $this->dropIndex(
+            'idx-todo-user',
             '{{%todo}}'
         );
         $this->dropTable('{{%todo}}');

@@ -11,6 +11,7 @@ use common\models\Face;
 use common\models\Phoneface;
 use common\models\Mailface;
 use common\models\Organization;
+use common\models\Todo;
 use common\models\ClientSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -47,16 +48,34 @@ class ClientController extends Controller
     public function actionView($id)
     {
         $client = $this->findModel($id);
+        $todo = new Todo;
         $clientPhones = $client->phoneclients;
         $clientMails = $client->mailclients;
         $clientFaces = $client->faces;
         $clientOrgs = $client->organizations;
+        if ($todo->load(Yii::$app->request->post())) {
+            $valid = $todo->validate();
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    $todo->client = $client->id;
+                    $todo->user = \Yii::$app->user->id;
+                    $todo->date = $todo->setDateTimeFrom();
+                    $todo->dateto = $todo->setDateTimeTo();
+                    $todo->save(false);
+                    $transaction->commit();
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            }
+        }
         return $this->render('view', [
             'client' => $client,
             'clientPhones' => $clientPhones,
             'clientMails' => $clientMails,
             'clientFaces' => $clientFaces,
             'clientOrgs' => $clientOrgs,
+            'clientTodo' => $todo,
         ]);
     }
 
@@ -117,21 +136,25 @@ class ClientController extends Controller
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
 
-                    if ($flag = $client->save(false)) {
+                    if ($flag = $client->save()) {
                         foreach ($clientPhones as $clientPhone) {
-                            if(array_filter($clientPhone->attributes) !== []){
+                            if(!empty($clientPhone->number)){
                                 $clientPhone->client = $client->id;
-                                if (!($flag = $clientPhone->save(false))){
+                                if (!($flag = $clientPhone->save())){
                                     break;
                                 }
+                            } else {
+                                $clientPhone->delete();
                             }
                         }
                         foreach ($clientMails as $clientMail) {
-                            if(array_filter($clientMail->attributes) !== []) {
+                            if(!empty($clientMail->mail)) {
                                 $clientMail->client = $client->id;
-                                if (!($flag = $clientMail->save(false))) {
+                                if (!($flag = $clientMail->save())) {
                                     break;
                                 }
+                            } else {
+                                $clientMail->delete();
                             }
                         }
                         foreach ($clientFaces as $indexFace => $clientFace) {
@@ -140,7 +163,7 @@ class ClientController extends Controller
                                 $emptyFace = false;
                             }
                             $clientFace->client = $client->id;
-                            if (! ($flag = $clientFace->save(false))) {
+                            if (! ($flag = $clientFace->save())) {
                                 break;
                             }
                             $empty = true;
@@ -159,7 +182,7 @@ class ClientController extends Controller
                                 foreach ($faceMails[$indexFace] as $indexMail => $faceMail) {
                                     if(array_filter($faceMail->attributes) !== []) {
                                         $faceMail->face = $clientFace->id;
-                                        if (!($flag = $faceMail->save(false))) {
+                                        if (!($flag = $faceMail->save())) {
                                             break 2;
                                         }
                                         $empty = false;
@@ -176,7 +199,7 @@ class ClientController extends Controller
                                 if (empty($clientOrg->nds)) {
                                     $clientOrg->nds = Organization::WITHNDS;
                                 }
-                                if (!($flag = $clientOrg->save(false))) {
+                                if (!($flag = $clientOrg->save())) {
                                     break;
                                 }
                             }
@@ -322,19 +345,21 @@ class ClientController extends Controller
                         }
 
                         foreach ($clientPhones as $clientPhone) {
-                            if(array_filter($clientPhone->attributes) !== []) {
+                            if(!empty($clientPhone->number)) {
                                 $clientPhone->client = $client->id;
                                 $dirty = $dirty && empty($clientPhone->getDirtyAttributes());
-                                if (!$flag = $clientPhone->save(false)) {
+                                if (!$flag = $clientPhone->save()) {
                                     break;
                                 }
+                            } else {
+                                $clientPhone->delete();
                             }
                         }
                         foreach ($clientMails as $clientMail) {
                             if(array_filter($clientMail->attributes) !== []) {
                                 $clientMail->client = $client->id;
                                 $dirty = $dirty && empty($clientMail->getDirtyAttributes());
-                                if (!$flag = $clientMail->save(false)) {
+                                if (!$flag = $clientMail->save()) {
                                     break;
                                 }
                             }
@@ -364,14 +389,14 @@ class ClientController extends Controller
                             if (!$emptyFace || !$emptySub) {
                                 $clientFace->client = $client->id;
                                 $dirty = $dirty && empty($clientFace->getDirtyAttributes());
-                                if (!$flag = $clientFace->save(false)) {
+                                if (!$flag = $clientFace->save()) {
                                     break;
                                 }
                                 foreach ($facePhones[$indexFace] as $indexPhone => $phone) {
                                     if (!empty($phone->number) || !empty($phone->comment)) {
                                         $phone->face = $clientFace->id;
                                         $dirty = $dirty && empty($phone->getDirtyAttributes());
-                                        if (!($flag = $phone->save(false))) {
+                                        if (!($flag = $phone->save())) {
                                             break 2;
                                         }
                                     } else {
@@ -382,7 +407,7 @@ class ClientController extends Controller
                                     if (!empty($mail->mail)) {
                                         $mail->face = $clientFace->id;
                                         $dirty = $dirty && empty($mail->getDirtyAttributes());
-                                        if (!($flag = $mail->save(false))) {
+                                        if (!($flag = $mail->save())) {
                                             break 2;
                                         }
                                     } else {
@@ -400,7 +425,7 @@ class ClientController extends Controller
                                     $clientOrg->nds = Organization::WITHNDS;
                                 }
                                 $dirty = $dirty && empty($clientOrg->getDirtyAttributes());
-                                if (!$flag = $clientOrg->save(false)) {
+                                if (!$flag = $clientOrg->save()) {
                                     break;
                                 }
                             } else {
@@ -409,7 +434,7 @@ class ClientController extends Controller
                         }
                         if (!$dirty) {
                             $client->update = date('Y-m-d H:i:s');
-                            if (! ($flag = $client->save(false))) {
+                            if (! ($flag = $client->save())) {
                                 $transaction->rollBack();
                             }
                         }
@@ -451,7 +476,7 @@ class ClientController extends Controller
     {
         $client = $this->findModel($id);
         $client->status = Client::TARGET;
-        $client->save(false);
+        $client->save();
         return $this->redirect(['view', 'id' => $id]);
     }
 
@@ -459,7 +484,7 @@ class ClientController extends Controller
     {
         $client = $this->findModel($id);
         $client->status = Client::LOAD;
-        $client->save(false);
+        $client->save();
         return $this->redirect(['view', 'id' => $id]);
     }
 
@@ -467,7 +492,7 @@ class ClientController extends Controller
     {
         $client = $this->findModel($id);
         $client->status = Client::REJECT;
-        $client->save(false);
+        $client->save();
         return $this->redirect(['view', 'id' => $id]);
     }
 
@@ -476,7 +501,6 @@ class ClientController extends Controller
         if (($model = Client::findOne($id)) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
