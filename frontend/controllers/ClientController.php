@@ -16,15 +16,49 @@ use common\models\ClientSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\web\Response;
 use app\base\Model;
 use yii\helpers\ArrayHelper;
+use frontend\rbac\AuthorRule;
 
 class ClientController extends Controller
 {
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['update', 'view', 'index', 'disconfirm'],
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['disconfirm'],
+                        'allow' => true,
+                        'roles' => ['confirmDiscount'],
+                    ],
+                    [
+                        'actions' => ['view'],
+                        'allow' => true,
+                        'roles' => ['viewClientAll'],
+                        'roleParams' => function() {
+                            return ['client' => Client::findOne(['id' => Yii::$app->request->get('id')])];
+                        }
+                    ],
+                    [
+                        'actions' => ['update'],
+                        'allow' => true,
+                        'roles' => ['upClientAll'],
+                        'roleParams' => function() {
+                            return ['client' => Client::findOne(['id' => Yii::$app->request->get('id')])];
+                        }
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -90,7 +124,9 @@ class ClientController extends Controller
         $clientOrganizations = [new Organization];
 
         if ($client->load(Yii::$app->request->post())) {
-
+            if (empty($client->user)){
+                $client->user = Yii::$app->user->identity->id;
+            }
             $clientPhones = Model::createMultiple(Phoneclient::classname());
             $clientMails = Model::createMultiple(Mailclient::classname());
             $clientFaces = Model::createMultiple(Face::classname());
@@ -237,7 +273,7 @@ class ClientController extends Controller
         $clientMails = $client->mailclients;
         $clientFaces = $client->faces;
         $facePhones = [];
-        $oldFacePhones =[];
+        $oldFacePhones = [];
         $faceMails = [];
         $oldFaceMails = [];
         $clientOrganizations = $client->organizations;
@@ -246,8 +282,8 @@ class ClientController extends Controller
             foreach ($clientFaces as $indexFace => $face) {
                 $phones = $face->phonefaces;
                 $mails = $face->mailfaces;
-                $facePhones[$indexFace] = !empty($phones)? $phones: [new Phoneface];
-                $faceMails[$indexFace] = !empty($mails)? $mails: [new Mailface];
+                $facePhones[$indexFace] = !empty($phones) ? $phones : [new Phoneface];
+                $faceMails[$indexFace] = !empty($mails) ? $mails : [new Mailface];
                 $oldFacePhones = ArrayHelper::merge(ArrayHelper::index($phones, 'id'), $oldFacePhones);
                 $oldFaceMails = ArrayHelper::merge(ArrayHelper::index($mails, 'id'), $oldFaceMails);
             }
@@ -299,7 +335,7 @@ class ClientController extends Controller
                     }
                 }
             }
-            $faceMailsIDs =[];
+            $faceMailsIDs = [];
             if (isset($_POST['Mailface'][0][0])) {
                 foreach ($_POST['Mailface'] as $indexFace => $mails) {
                     $faceMailsIDs = ArrayHelper::merge($faceMailsIDs, array_filter(ArrayHelper::getColumn($mails, 'id')));
@@ -322,30 +358,34 @@ class ClientController extends Controller
             if ($valid) {
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
-                    $dirty = empty($client->getDirtyAttributes());
+                    $dirtyClient = $client->getDirtyAttributes();
+                    $dirty = empty($dirtyClient);
+                    if ($client->disconfirm && (array_key_exists('discomment', $dirtyClient) || array_key_exists('discount', $dirtyClient))){
+                        $client->disconfirm = 0;
+                    }
                     if ($flag = $client->save(false)) {
-                        if (! empty($deleteFacePhonesIDs)) {
+                        if (!empty($deleteFacePhonesIDs)) {
                             Phoneface::deleteAll(['id' => $deleteFacePhonesIDs]);
                         }
-                        if (! empty($deleteFaceMailsIDs)) {
+                        if (!empty($deleteFaceMailsIDs)) {
                             Mailface::deleteAll(['id' => $deleteFaceMailsIDs]);
                         }
 
-                        if (! empty($deleteClientPhoneIDs)) {
+                        if (!empty($deleteClientPhoneIDs)) {
                             Phoneclient::deleteAll(['id' => $deleteClientPhoneIDs]);
                         }
-                        if (! empty($deleteClientMailIDs)) {
+                        if (!empty($deleteClientMailIDs)) {
                             Mailclient::deleteAll(['id' => $deleteClientMailIDs]);
                         }
-                        if (! empty($deleteClientFaceIDs)) {
+                        if (!empty($deleteClientFaceIDs)) {
                             Face::deleteAll(['id' => $deleteClientFaceIDs]);
                         }
-                        if (! empty($deleteClientOrgIDs)) {
+                        if (!empty($deleteClientOrgIDs)) {
                             Organization::deleteAll(['id' => $deleteClientOrgIDs]);
                         }
 
                         foreach ($clientPhones as $clientPhone) {
-                            if(!empty($clientPhone->number)) {
+                            if (!empty($clientPhone->number)) {
                                 $clientPhone->client = $client->id;
                                 $dirty = $dirty && empty($clientPhone->getDirtyAttributes());
                                 if (!$flag = $clientPhone->save()) {
@@ -356,7 +396,7 @@ class ClientController extends Controller
                             }
                         }
                         foreach ($clientMails as $clientMail) {
-                            if(array_filter($clientMail->attributes) !== []) {
+                            if (array_filter($clientMail->attributes) !== []) {
                                 $clientMail->client = $client->id;
                                 $dirty = $dirty && empty($clientMail->getDirtyAttributes());
                                 if (!$flag = $clientMail->save()) {
@@ -367,12 +407,12 @@ class ClientController extends Controller
                         foreach ($clientFaces as $indexFace => $clientFace) {
                             $emptyFace = true;
                             $emptySub = true;
-                            if(!empty($clientFace->fullname) || !empty($clientFace->position)) {
+                            if (!empty($clientFace->fullname) || !empty($clientFace->position)) {
                                 $emptyFace = false;
                             }
                             if (isset($facePhones[$indexFace]) && is_array($facePhones[$indexFace])) {
                                 foreach ($facePhones[$indexFace] as $indexPhone => $phone) {
-                                    if(!empty($phone->number) || !empty($phone->comment)) {
+                                    if (!empty($phone->number) || !empty($phone->comment)) {
                                         $emptySub = false;
                                         break;
                                     }
@@ -380,7 +420,7 @@ class ClientController extends Controller
                             }
                             if (isset($faceMails[$indexFace]) && is_array($faceMails[$indexFace])) {
                                 foreach ($faceMails[$indexFace] as $indexMail => $mail) {
-                                    if(!empty($mail->mail)) {
+                                    if (!empty($mail->mail)) {
                                         $emptySub = false;
                                         break;
                                     }
@@ -434,7 +474,7 @@ class ClientController extends Controller
                         }
                         if (!$dirty) {
                             $client->update = date('Y-m-d H:i:s');
-                            if (! ($flag = $client->save())) {
+                            if (!($flag = $client->save())) {
                                 $transaction->rollBack();
                             }
                         }
@@ -456,10 +496,10 @@ class ClientController extends Controller
         return $this->render('update', [
             'model' => $client,
             'modelsClientPhone' => (empty($clientPhones)) ? [new Phoneclient] : $clientPhones,
-            'modelsClientMail'  => (empty($clientMails)) ? [new Mailclient] : $clientMails,
-            'modelsClientFace'  => (empty($clientFaces)) ? [new Face] : $clientFaces,
-            'modelsFacePhone'  => (empty($facePhones)) ? [[new Phoneface]] : $facePhones,
-            'modelsFaceMail'  => (empty($faceMails)) ? [[new Mailface]] : $faceMails,
+            'modelsClientMail' => (empty($clientMails)) ? [new Mailclient] : $clientMails,
+            'modelsClientFace' => (empty($clientFaces)) ? [new Face] : $clientFaces,
+            'modelsFacePhone' => (empty($facePhones)) ? [[new Phoneface]] : $facePhones,
+            'modelsFaceMail' => (empty($faceMails)) ? [[new Mailface]] : $faceMails,
             'modelsOrganization' => (empty($clientOrganizations)) ? [new Organization] : $clientOrganizations,
             'modelsUser' => User::find()->all(),
         ]);
@@ -494,6 +534,13 @@ class ClientController extends Controller
         $client->status = Client::REJECT;
         $client->save();
         return $this->redirect(['view', 'id' => $id]);
+    }
+
+    public function actionDisconfirm($id)
+    {
+        $client = $this->findModel($id);
+        $client->disconfirm = 1;
+        $client->save();
     }
 
     protected function findModel($id)

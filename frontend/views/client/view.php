@@ -38,8 +38,10 @@ ClientAsset::register($this);
     <div class="wrap1">
         <?if($client->discount) {?>
         <div class="wrap3">
-            <div class="agreed_none">Скидка: <?=$client->discomment?> <?=$client->discount.'%'?></div>
-            <a href="" class="agreed">Согласовать</a>
+            <div <?=($client->disconfirm)?'':'class="agreed_none"'?>>Скидка: <?=$client->discomment?> <?=$client->discount.'%'?></div>
+            <?if(\Yii::$app->user->can('confirmDiscount') && !$client->disconfirm):?>
+                <?=Html::a('Согласовать', ['disconfirm', 'id' => $client->id], ['class' => 'agreed'])?>
+            <?endif;?>
         </div>
         <?}?>
         <p>Доставка: <?=$client->address?></p>

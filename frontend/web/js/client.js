@@ -4,7 +4,7 @@ $(document).ready(function(){
         event.preventDefault();
         $(this).parent().children('.agreed_none').removeClass('agreed_none');
         $(this).remove();
-        /*sendAjax($(this).attr('href'), "POST");*/
+        sendAjax($(this).attr('href'), "POST");
     });
     //раскрытие общих контактов
     $("#contact-all").click(function(){
@@ -104,5 +104,14 @@ $(document).ready(function(){
         Year = adate.substring(6,adate.length);
         Month = mon[adate.substring(3,5)];
         return Day + ' ' + Month + ' ' + Year;
+    }
+    //отправка запроса на сервер
+    function sendAjax(act, met, mas, suc) {
+        $.ajax({
+           type: met,
+           url: act,
+           data: mas,
+           success: suc
+        });
     }
 });
