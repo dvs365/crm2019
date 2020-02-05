@@ -20,7 +20,6 @@ use yii\filters\AccessControl;
 use yii\web\Response;
 use app\base\Model;
 use yii\helpers\ArrayHelper;
-use frontend\rbac\AuthorRule;
 
 class ClientController extends Controller
 {
