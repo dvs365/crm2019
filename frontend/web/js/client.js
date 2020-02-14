@@ -6,6 +6,39 @@ $(document).ready(function(){
         $(this).remove();
         sendAjax($(this).attr('href'), "POST");
     });
+
+    //добавить дело по клиенту formtodoclient
+    $("#formtodoclient").on('beforeSubmit', function () {
+        var $testform = $(this);
+        var met = $testform.attr('method');
+        var act = $testform.attr('action');
+        var mas = $testform.serializeArray();
+        var suc = $("#outputtodo");
+        $.ajax({
+            type: met,
+            url: act,
+            data: mas,
+        }).done(function (data) {
+            if (data.error == null) {
+                $("#outputtodo").html(data);
+            } else {
+                $("#outputtodo").html(data.error);
+            }
+
+        }).fail(function () {
+            $("#outputtodo").html("Error3");
+        });
+        return false;
+    });
+
+    //удалить дело по клиенту
+    $(".deltodoclient").click(function(){
+        var href = $(this).parent('.todoclientdelete').attr('action');
+        $(this).parent('.task_item').remove();
+        $(this).remove();
+        sendAjax(href, "POST");
+
+    });
     //раскрытие общих контактов
     $("#contact-all").click(function(){
         if ($(this).parent().children('.contact_all').is(':visible')) {

@@ -86,33 +86,13 @@ ClientAsset::register($this);
         <div class="task">
             <?= $this->render('_form_todo', [
                 'client' => $client,
-                'todo' => $clientTodo,
             ]) ?>
             <div class="clear"></div>
-            <? $todos = $client->todos?>
-            <?foreach ($todos as $todo):?>
-                <div class="task_item">
-                    <table>
-                        <tr class="table_item">
-                            <td>
-                                <form action="/" method="POST" onsubmit="send(this)">
-                                    <input type="checkbox" name="task" value="2">
-                                    <button class="checkbox" title="Закрыть дело"></button>
-                                </form>
-                            </td>
-                            <td class="date"><?=date('d.m.y',strtotime($todo->date))?></td>
-                            <td <?=(!empty($todo->description))?' class="open_desc color_blue"':''?>><?=$todo->name?></td>
-                        </tr>
-                        <?if(!empty($todo->description)):?>
-                            <tr class="table_item table_item_hidden">
-                                <td></td>
-                                <td class="date">в <?=date('H:i',strtotime($todo->date))?></td>
-                                <td><?=$todo->description?></td>
-                            </tr>
-                        <?endif;?>
-                    </table>
-                </div>
-            <?endforeach;?>
+            <div id="outputtodo">
+            <?=$this->render('_form_list_todo', [
+                'todos' => $client->todos,
+            ]);?>
+            </div>
         </div>
     </div>
 

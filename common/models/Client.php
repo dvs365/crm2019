@@ -61,7 +61,7 @@ class Client extends \yii\db\ActiveRecord
 
             ['discount', 'default', 'value' => 0],
             ['discount', 'integer', 'min' => 0, 'max' => 99],
-            ['disconfirm', 'filter', 'filter' => 'intval'],
+            [['disconfirm','discount', 'status'], 'filter', 'filter' => 'intval'],
 
             ['status', 'default', 'value' => self::TARGET],
             ['status', 'in', 'range' => [self::TARGET, self::LOAD, self::REJECT]],

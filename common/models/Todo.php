@@ -67,25 +67,10 @@ class Todo extends \yii\db\ActiveRecord
         return $this->hasOne(Client::className(), ['id' => 'client']);
     }
 
-    public function setDateTimeFrom()
+    public function beforeSave($insert)
     {
-        if ($this->date && $this->time)
-        {
-            return \DateTime::createFromFormat('d.m.Y H:i', $this->date . ' ' . $this->time)->format('Y-m-d H:i:s');
-        }
-
-        if ($this->date) {
-            return \DateTime::createFromFormat('d.m.Y', $this->date)->format('Y-m-d 00:00:00');
-        }
-
-        return false;
-    }
-
-    public function setDateTimeTo()
-    {
-        if ($this->dateto) {
-            return \DateTime::createFromFormat('d.m.Y', $this->dateto)->format('Y-m-d 23:59:59');
-        }
-        return false;
+        $this->date = \DateTime::createFromFormat('d.m.Y H:i', $this->date . ' ' . $this->time)->format('Y-m-d H:i:s');
+        $this->dateto = \DateTime::createFromFormat('d.m.Y', $this->dateto)->format('Y-m-d 23:59:59');
+        return parent::beforeSave($insert);
     }
 }

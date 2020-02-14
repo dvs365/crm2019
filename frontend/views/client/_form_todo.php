@@ -3,7 +3,8 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>
 
-<?php $form = ActiveForm::begin(); ?>
+<?php $todo = new common\models\Todo;?>
+<?php $form = ActiveForm::begin(['id' => 'formtodoclient', 'action' => ['todo/create', 'client' => $client->id], 'method' => 'post', 'enableAjaxValidation' => false]); ?>
     <?=$form->field($todo, 'name', ['template' => "{input}"])->textInput(['placeholder' => 'Наименование дела', 'class' => 'wrap3', 'maxlength' => true]) ?>
     <?=$form->field($todo, 'description', ['template' => "{input}"])->textArea(['placeholder' => 'Комментарий к делу', 'id' => 'task-comment', 'class' => 'wrap3', 'maxlength' => true]) ?>
     <?=$form->field($todo, 'date', ['template' => "{input}"])->textInput(['class' => 'task_date__s color_blue', 'readonly' => '', 'onClick' => 'xCal(this);', 'onKeyUp' => 'xCal();','maxlength' => true]) ?>
@@ -26,5 +27,5 @@ use yii\widgets\ActiveForm;
     <div class="task_time">
         <?=$form->field($todo, 'dateto', ['template' => "До {input}"])->textInput(['class' => 'dateto task_date__s color_blue', 'readonly' => '', 'onClick' => 'par={class:\'xcalend\', to:\'\'};xCal(this)', 'onKeyUp' => 'xCal()','maxlength' => true]) ?>
     </div>
-    <?=Html::submitInput('Добавить', ['class' => 'btn right'])?>
+    <?=Html::submitInput('Добавить', ['class' => 'addtodo btn right'])?>
 <?php ActiveForm::end(); ?>

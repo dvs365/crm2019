@@ -81,34 +81,17 @@ class ClientController extends Controller
     public function actionView($id)
     {
         $client = $this->findModel($id);
-        $todo = new Todo;
         $clientPhones = $client->phoneclients;
         $clientMails = $client->mailclients;
         $clientFaces = $client->faces;
         $clientOrgs = $client->organizations;
-        if ($todo->load(Yii::$app->request->post())) {
-            $valid = $todo->validate();
-            if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-                    $todo->client = $client->id;
-                    $todo->user = \Yii::$app->user->id;
-                    $todo->date = $todo->setDateTimeFrom();
-                    $todo->dateto = $todo->setDateTimeTo();
-                    $todo->save(false);
-                    $transaction->commit();
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            }
-        }
+
         return $this->render('view', [
             'client' => $client,
             'clientPhones' => $clientPhones,
             'clientMails' => $clientMails,
             'clientFaces' => $clientFaces,
             'clientOrgs' => $clientOrgs,
-            'clientTodo' => $todo,
         ]);
     }
 
@@ -359,8 +342,10 @@ class ClientController extends Controller
                 try {
                     $dirtyClient = $client->getDirtyAttributes();
                     $dirty = empty($dirtyClient);
-                    if ($client->disconfirm && (array_key_exists('discomment', $dirtyClient) || array_key_exists('discount', $dirtyClient))){
-                        $client->disconfirm = 0;
+                    if (array_key_exists('discomment', $dirtyClient) || array_key_exists('discount', $dirtyClient)){
+                        if($client->disconfirm){
+                            $client->disconfirm = 0;
+                        }
                     }
                     if ($flag = $client->save(false)) {
                         if (!empty($deleteFacePhonesIDs)) {

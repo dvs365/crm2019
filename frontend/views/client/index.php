@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\ClientSearch */
@@ -31,14 +32,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'address',
             'status',
-            //'discount',
-            //'disconfirm',
-            //'discomment',
-            //'update',
-            //'update_u',
-            //'update_s',
-            //'update_e',
-
+            'discount',
+            'disconfirm',
+            'discomment',
+            'update',
+            'update_u',
+            'update_s',
+            'update_e',
+            [
+                'label' => 'name',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return Html::a(Html::encode($data->name), ['client/view', 'id' => $data->id]);
+                }
+            ],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
