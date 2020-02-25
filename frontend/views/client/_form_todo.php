@@ -4,7 +4,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 <?php $todo = new common\models\Todo;?>
-<?php $form = ActiveForm::begin(['id' => 'formtodoclient', 'action' => ['todo/create', 'client' => $client->id], 'method' => 'post', 'enableAjaxValidation' => false]); ?>
+<?php $form = ActiveForm::begin(['id' => 'formtodoclient', 'action' => ['todo/create', 'client' => $client->id], 'method' => 'post', 'enableAjaxValidation' => false, 'validateOnBlur' => false]); ?>
     <?=$form->field($todo, 'name', ['template' => "{input}"])->textInput(['placeholder' => 'Наименование дела', 'class' => 'wrap3', 'maxlength' => true]) ?>
     <?=$form->field($todo, 'description', ['template' => "{input}"])->textArea(['placeholder' => 'Комментарий к делу', 'id' => 'task-comment', 'class' => 'wrap3', 'maxlength' => true]) ?>
     <?=$form->field($todo, 'date', ['template' => "{input}"])->textInput(['class' => 'task_date__s color_blue', 'readonly' => '', 'onClick' => 'xCal(this);', 'onKeyUp' => 'xCal();','maxlength' => true]) ?>

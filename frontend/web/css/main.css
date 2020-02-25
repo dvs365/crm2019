@@ -330,7 +330,7 @@ table.tweek td a:nth-child(1) {margin-top:0;}
     .header span {font-size:1.1em;}
 
 }
-.has-error input {
+.has-error input, .has-error textarea{
     border-color: red;
 }
 /*************/

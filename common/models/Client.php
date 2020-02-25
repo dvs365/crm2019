@@ -148,4 +148,12 @@ class Client extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Todo::className(), ['client' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getComments()
+    {
+        return $this->hasMany(Comment::className(), ['client' => 'id'])->limit(10)->orderBy(['id' => SORT_DESC]);
+    }
 }

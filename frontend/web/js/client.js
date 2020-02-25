@@ -31,6 +31,82 @@ $(document).ready(function(){
         return false;
     });
 
+    $("#formcomment").on('beforeSubmit', function () {
+        var $testform = $(this);
+        var met = $testform.attr('method');
+        var act = $testform.attr('action');
+        var mas = $testform.serializeArray();
+        var suc = $("#comments div table");
+        $.ajax({
+            type: met,
+            url: act,
+            data: mas,
+        }).done(function (data) {
+            if (data.error == null) {
+                $testform.find('textarea').val('');
+                $("#comments div table").prepend(data);
+            } else {
+                $("#comments div table").prepend(data.error);
+            }
+
+        }).fail(function () {
+            $("#outputtodo").prepend("Error3");
+        });
+        return false;
+    });
+
+    //открыть 10 комментариев
+    $("#comment-open10").click(function(){
+        event.preventDefault();
+        var met = 'post';
+        var act = $('#comment-open10').attr('href');
+        var cnt = $('#commentsTable tr').length;
+        var mas = 'count=' + $('#commentsTable tr').length;
+        $.ajax({
+            type: met,
+            url: act,
+            data: mas,
+        }).done(function (data) {
+            if (data.error == null) {
+                $("#comments div table").append(data);
+                var newcnt = ($('#commentsTable tr').length - cnt);
+                if(newcnt != 10){
+                    $("#comment-open10").hide();
+                    $("#comment-openall").hide();
+                }
+            } else {
+                $("#comments div table").append(data.error);
+            }
+        }).fail(function () {
+            $("#comments div table").append("Error3");
+        });
+        return false;
+    });
+    //открыть все комментарии
+    $("#comment-openall").click(function(){
+        event.preventDefault();
+        var met = 'post';
+        var act = $('#comment-open10').attr('href');
+        var cnt = $('#commentsTable tr').length;
+        var mas = 'count=' + $('#commentsTable tr').length + '&all=1'
+        $.ajax({
+            type: met,
+            url: act,
+            data: mas,
+        }).done(function (data) {
+            if (data.error == null) {
+                $("#comments div table").append(data);
+                $("#comment-open10").hide();
+                $("#comment-openall").hide();
+            } else {
+                $("#comments div table").append(data.error);
+            }
+        }).fail(function () {
+            $("#comments div table").append("Error3");
+        });
+        return false;
+    });
+
     //удалить дело по клиенту
     $(".deltodoclient").click(function(){
         var href = $(this).parent('.todoclientdelete').attr('action');
@@ -77,20 +153,6 @@ $(document).ready(function(){
     //закрытие дела
     $(".task_item td form").click(function(){
         $(this).closest('.task_item').hide('fast');
-    });
-
-    //открыть 10 комментариев
-    $("#comment-open10").click(function(){
-        event.preventDefault();
-        openComments($(this));
-    });
-
-    //открыть все комментарии
-    $("#comment-openall").click(function(){
-        $(this).hide();
-        $("#comment-open10").hide('fast');
-        event.preventDefault();
-        openComments($(this));
     });
 
     //раскрытие поля для заметки
