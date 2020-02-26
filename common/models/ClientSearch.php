@@ -17,7 +17,7 @@ class ClientSearch extends Client
     public function rules()
     {
         return [
-            [['id', 'user', 'status', 'discount', 'disconfirm', 'update_u', 'update_s', 'update_e'], 'integer'],
+            [['id', 'user', 'status', 'discount', 'disconfirm', 'update_u', 'update_a'], 'integer'],
             [['name', 'address', 'discomment', 'update'], 'safe'],
         ];
     }
@@ -65,8 +65,7 @@ class ClientSearch extends Client
             'disconfirm' => $this->disconfirm,
             'update' => $this->update,
             'update_u' => $this->update_u,
-            'update_s' => $this->update_s,
-            'update_e' => $this->update_e,
+            'update_a' => $this->update_a,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])

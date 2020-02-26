@@ -37,8 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'discomment',
             'update',
             'update_u',
-            'update_s',
-            'update_e',
+            'update_a',
             [
                 'label' => 'name',
                 'format' => 'raw',

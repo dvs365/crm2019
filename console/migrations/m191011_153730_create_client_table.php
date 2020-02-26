@@ -27,9 +27,8 @@ class m191011_153730_create_client_table extends Migration
            'disconfirm' =>$this->integer(1)->notNull()->defaultValue(0),
            'discomment' =>$this->string()->notNull(),
            'update' => 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP',
-           'update_u' => $this->integer()->notNull(),
-           'update_s' => $this->integer()->notNull(),
-           'update_e' => $this->integer()->notNull(),
+           'update_u' => $this->dateTime()->notNull(),
+           'update_a' => $this->dateTime()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(

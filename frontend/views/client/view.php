@@ -122,12 +122,14 @@ ClientAsset::register($this);
         <h2>Открытия</h2>
         <table>
             <tr class="table_item">
-                <td class="date color_grey">07.06.19 в 15:41</td>
-                <td>Кириллов Н.Н.</td>
+                <?$show_u = \DateTime::createFromFormat('Y-m-d H:i:s', $client->show_u)?>
+                <td class="date color_grey"><?=$show_u->format('d.m.y в H:i')?></td>
+                <td><?=$show_uid->surnameNP?></td>
             </tr>
             <tr class="table_item">
-                <td class="date color_grey">25.03.19 в 13:48</td>
-                <td>Зайцева Н.В.</td>
+                <?$show_a = \DateTime::createFromFormat('Y-m-d H:i:s', $client->show_a)?>
+                <td class="date color_grey"><?=$show_a->format('d.m.y в H:i')?></td>
+                <td><?=$show_aid->surnameNP?></td>
             </tr>
         </table>
     </div>
@@ -138,6 +140,11 @@ ClientAsset::register($this);
             <tr class="table_item">
                 <td class="date color_grey">07.06.19</td>
                 <td>Добавление - Кириллов Н.Н.</td>
+            </tr>
+            <tr class="table_item">
+                <?$update_u = \DateTime::createFromFormat('Y-m-d H:i:s', $client->update_u)?>
+                <td class="date color_grey"><?=$update_u->format('d.m.y в H:i')?></td>
+                <td>Изменение - <?=($client->update_uid)?\common\models\User::findOne($client->update_uid)->surnameNP:'-'?></td>
             </tr>
         </table>
     </div>

@@ -81,17 +81,26 @@ class ClientController extends Controller
     public function actionView($id)
     {
         $client = $this->findModel($id);
-        $clientPhones = $client->phoneclients;
-        $clientMails = $client->mailclients;
-        $clientFaces = $client->faces;
-        $clientOrgs = $client->organizations;
-
+        $client->show = date('Y-m-d H:i:s');
+        $userID = Yii::$app->user->identity->id;
+        $roles = Yii::$app->authManager->getRolesByUser($userID);
+        if (isset($roles['admin'])) {
+            $client->show_a = date('Y-m-d H:i:s');
+            $client->show_aid = $userID;
+        }
+        if (isset($roles['user'])) {
+            $client->show_u = date('Y-m-d H:i:s');
+            $client->show_uid = $userID;
+        }
+        $client->save();
         return $this->render('view', [
             'client' => $client,
-            'clientPhones' => $clientPhones,
-            'clientMails' => $clientMails,
-            'clientFaces' => $clientFaces,
-            'clientOrgs' => $clientOrgs,
+            'clientPhones' => $client->phoneclients,
+            'clientMails' => $client->mailclients,
+            'clientFaces' => $client->faces,
+            'clientOrgs' => $client->organizations,
+            'show_uid' => $client->show_uid ? User::findOne($client->show_uid) : new User(),
+            'show_aid' => $client->show_aid ? User::findOne($client->show_aid) : new User(),
         ]);
     }
 
@@ -106,6 +115,8 @@ class ClientController extends Controller
         $clientOrganizations = [new Organization];
 
         if ($client->load(Yii::$app->request->post())) {
+            $client->created = date('Y-m-d H:i:s');
+            $client->created_id = Yii::$app->user->identity->id;
             if (empty($client->user)){
                 $client->user = Yii::$app->user->identity->id;
             }
@@ -458,6 +469,16 @@ class ClientController extends Controller
                         }
                         if (!$dirty) {
                             $client->update = date('Y-m-d H:i:s');
+                            $userID = Yii::$app->user->identity->id;
+                            $roles = Yii::$app->authManager->getRolesByUser($userID);
+                            if (isset($roles['admin'])) {
+                                $client->update_a = date('Y-m-d H:i:s');
+                                $client->update_aid = $userID;
+                            }
+                            if (isset($roles['user'])) {
+                                $client->update_u = date('Y-m-d H:i:s');
+                                $client->update_uid = $userID;
+                            }
                             if (!($flag = $client->save())) {
                                 $transaction->rollBack();
                             }
