@@ -79,6 +79,12 @@ class Client extends \yii\db\ActiveRecord
         ];
     }
 
+    function getStatusLabel()
+    {
+        $statuses = $this->getStatusLabels();
+        return isset($statuses[$this->status]) ? $statuses[$this->status] : '';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -96,8 +102,7 @@ class Client extends \yii\db\ActiveRecord
             'discomment' => 'Комментарий к скидке',
             'update' => 'Update',
             'update_u' => 'Update U',
-            'update_s' => 'Update S',
-            'update_e' => 'Update E',
+            'update_a' => 'Update A',
         ];
     }
 

@@ -106,7 +106,7 @@ use yii\helpers\ArrayHelper;
                 <div class="select">
                     <div class="dropdown"></div>
                         <?$managers = ArrayHelper::map($modelsUser, 'id', 'surnameNP')?>
-                    <?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'promt' => '', 'options' => [Yii::$app->user->identity->id => ['selected' => true]]])?>
+                    <?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'options' => [Yii::$app->user->identity->id => ['selected' => true]]])?>
                 </div>
             </label>
             <?endif;?>

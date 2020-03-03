@@ -44,6 +44,15 @@ return [
                 ]
             ]
         ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'dateFormat' => 'dd.MM.yyyy',
+            'timeFormat' => 'HH:mm',
+            'timeZone' => 'Europe/Moscow',
+            'decimalSeparator' => ' ',
+            'thousandSeparator' => ' ',
+            'currencyCode' => 'EUR',
+        ],
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,

@@ -28,7 +28,7 @@ class ClientController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['update', 'view', 'index', 'disconfirm'],
+                'only' => ['update', 'view', 'index', 'disconfirm', 'note'],
                 'rules' => [
                     [
                         'actions' => ['index'],
@@ -39,6 +39,11 @@ class ClientController extends Controller
                         'actions' => ['disconfirm'],
                         'allow' => true,
                         'roles' => ['confirmDiscount'],
+                    ],
+                    [
+                        'actions' => ['note'],
+                        'allow' => true,
+                        'roles' => ['admin'],
                     ],
                     [
                         'actions' => ['view'],
@@ -67,14 +72,19 @@ class ClientController extends Controller
         ];
     }
 
-    public function actionIndex()
+    public function actionIndex($role = null)
     {
         $searchModel = new ClientSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if ($role) {
+            $dataProvider->query->andWhere(['status' => (int)$role]);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'users' => User::find()->indexBy('id')->all(),
+            'role' => (int)$role,
         ]);
     }
 
@@ -354,7 +364,7 @@ class ClientController extends Controller
                     $dirtyClient = $client->getDirtyAttributes();
                     $dirty = empty($dirtyClient);
                     if (array_key_exists('discomment', $dirtyClient) || array_key_exists('discount', $dirtyClient)){
-                        if($client->disconfirm){
+                        if(!\Yii::$app->user->can('confirmDiscount')){
                             $client->disconfirm = 0;
                         }
                     }
@@ -546,6 +556,35 @@ class ClientController extends Controller
         $client = $this->findModel($id);
         $client->disconfirm = 1;
         $client->save();
+    }
+
+    public function actionNote($id)
+    {
+        $client = $this->findModel($id);
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if ($data['note']) {
+                $client->note = $data['note'];
+                $client->save();
+                return [
+                    'data' => $client->note    ,
+                    'error' => null
+                ];
+            } else {
+                return [
+                    "data" => null,
+                    "error" => "error1"
+                ];
+            }
+        } else {
+            return [
+                "data" => null,
+                "error" => "error2"
+            ];
+        }
     }
 
     protected function findModel($id)

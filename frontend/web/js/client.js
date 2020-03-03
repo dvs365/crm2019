@@ -161,6 +161,30 @@ $(document).ready(function(){
         $(this).parent().children('.note').show('fast');
     });
 
+    $("#formnote").on('beforeSubmit', function () {
+        var $testform = $(this);
+        var met = $testform.attr('method');
+        var act = $testform.attr('action');
+        $.ajax({
+            type: met,
+            url: act,
+            data: 'note=' + $("#formnote textarea#client-note").val(),
+        }).done(function (data) {
+            if (data.error == null) {
+                console.log(data.data);
+                $("#note-open").html(data.data);
+            } else {
+                $("#note-open").html(data.error);
+            }
+
+        }).fail(function () {
+            $("#note-open").html("Error3");
+        });
+        $("#formnote").hide();
+        $("#note-open").show();
+        return false;
+    });
+
     //раскрытие формы добавление дела
     $("#open-add-work").click(function(){
         $(this).removeClass('color_blue');
@@ -168,6 +192,19 @@ $(document).ready(function(){
         $('#form-work').animate({'max-height':'500px'}, 200);
     });
 
+    //Добавление | в input
+    $('#slash').on('mousedown', function() {
+        return false;
+    });
+    $('#slash').click(function(){
+        input = document.getElementById('search');
+        start = input.selectionStart;
+        end = input.selectionEnd;
+        text = input.value.substring(0, start) + '|' + input.value.substring(end);
+        input.value = text;
+        input.focus();
+        input.selectionEnd = start + 1;
+    });
 
     //получение сегодняшней даты в формате dd.mm.yyyy
     function nowDate() {
