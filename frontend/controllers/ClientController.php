@@ -28,7 +28,7 @@ class ClientController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['update', 'view', 'index', 'disconfirm'],
+                'only' => ['update', 'view', 'index', 'disconfirm', 'note'],
                 'rules' => [
                     [
                         'actions' => ['index'],
@@ -39,6 +39,11 @@ class ClientController extends Controller
                         'actions' => ['disconfirm'],
                         'allow' => true,
                         'roles' => ['confirmDiscount'],
+                    ],
+                    [
+                        'actions' => ['note'],
+                        'allow' => true,
+                        'roles' => ['admin'],
                     ],
                     [
                         'actions' => ['view'],
@@ -67,10 +72,13 @@ class ClientController extends Controller
         ];
     }
 
-    public function actionIndex()
+    public function actionIndex($role = null)
     {
         $searchModel = new ClientSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if ($role) {
+            $dataProvider->query->andWhere(['status' => (int)$role]);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -546,6 +554,35 @@ class ClientController extends Controller
         $client = $this->findModel($id);
         $client->disconfirm = 1;
         $client->save();
+    }
+
+    public function actionNote($id)
+    {
+        $client = $this->findModel($id);
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if ($data['note']) {
+                $client->note = $data['note'];
+                $client->save();
+                return [
+                    'data' => $client->note    ,
+                    'error' => null
+                ];
+            } else {
+                return [
+                    "data" => null,
+                    "error" => "error1"
+                ];
+            }
+        } else {
+            return [
+                "data" => null,
+                "error" => "error2"
+            ];
+        }
     }
 
     protected function findModel($id)

@@ -1,8 +1,9 @@
 <?php
 
+use yii\widgets\Menu;
 use yii\helpers\Html;
-use yii\grid\GridView;
-use yii\helpers\Url;
+use yii\widgets\ListView;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\ClientSearch */
@@ -11,43 +12,112 @@ use yii\helpers\Url;
 $this->title = 'Clients';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="client-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<main>
+    <div class="wrap2 control">
+        <?=Html::a('Потенциальные', ['index', 'role' => \common\models\Client::TARGET])?>
+        <?=Html::a('Рабочие', ['index', 'role' => \common\models\Client::LOAD])?>
+        <?=Html::a('Отказные', ['index', 'role' => \common\models\Client::REJECT])?>
+        <?=Html::a('Добавить клиента', ['create'], ['class' => 'btn w160 right ml20'])?>
+        <?=Html::a('Передать клиентов', ['create'], ['class' => 'btn w160 right'])?>
+        <div class="clear"></div>
+    </div>
 
-    <p>
-        <?= Html::a('Create Client', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <form class="filters wrap1" action="/" method="GET" onsubmit="send(this)">
+        <div class="wrap1">
+            <div class="wrap_half">
+                <label>Обращение за <input type="number" name="opening-time" value=""> мес.</label>
+                <label>Менеджер:
+                    <div class="select">
+                        <div class="dropdown"></div>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+                        <select name="manager">
+                            <option value="" selected>Все</option>
+                            <option value="1">Кириллов Н.Н.</option>
+                            <option value="2">Кириллов Н.Н.</option>
+                            <option value="3">Кириллов Н.Н.</option>
+                            <option value="0">Свободные</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <div class="wrap_half">
+                <label class="lh30">
+                    <input type="checkbox" name="action-task" value="1">
+                    <span class="checkbox"></span>
+                    С активными делами
+                </label>
+                <label class="lh30">
+                    <input type="checkbox" name="task" value="2">
+                    <span class="checkbox"></span>
+                    С несогласованной скидкой
+                </label>
+            </div>
 
-    <?= GridView::widget([
+            <div class="clear"></div>
+        </div>
+        <input type="text" id="search" name="search" placeholder="Разделяйте варианты вертикальным слешем. Например, Иванов | 45-78-62">
+        <input type="submit" value="Найти" class="btn w160 right">
+        <div id="slash" class="btn w30 right">|</div>
+        <div class="clear"></div>
+    </form>
+
+    <div ID="sort" class="right">
+        <form action="/" method="GET" onsubmit="send(this)">
+            <input type="checkbox" name="sort" value="1">
+            Сначала открытые давно
+            <button class="checkbox"></button>
+        </form>
+    </div>
+    <div class="paginator"><a class="none410" href="/">Назад</a><a href="/">1</a><a href="/">...</a><a href="/">9</a><a href="/">10</a><span class="active-page">11</span><a href="/">12</a><a href="/">13</a><a href="/">...</a><a href="/">55</a><a class="none410" href="/">Вперед</a></div>
+    <div class="clear"></div>
+
+    <?= ListView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'user',
-            'name',
-            'address',
-            'status',
-            'discount',
-            'disconfirm',
-            'discomment',
-            'update',
-            'update_u',
-            'update_a',
-            [
-                'label' => 'name',
-                'format' => 'raw',
-                'value' => function ($data) {
-                    return Html::a(Html::encode($data->name), ['client/view', 'id' => $data->id]);
-                }
-            ],
-            ['class' => 'yii\grid\ActionColumn'],
+        'summary' => '',
+        'pager' => [
+            'firstPageLabel' => 'Назад',
+            'lastPageLabel' => 'Вперед',
+            'prevPageLabel' => '<',
+            'nextPageLabel' => '>',
+            'maxButtonCount' => 3,
         ],
-    ]); ?>
+        'itemOptions' => ['class' => 'wrap4'],
+        'itemView' => function ($model, $key, $index, $widget) {
+            $template = Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', Html::encode($model->user0['surnameNP']), ['class' => 'manager color_grey']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
+            $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
+                return Html::tag('div', Html::encode($element['name']), ['class' => 'firm']);
+            });
+            $template .= Html::tag('div', implode('', $firms), ['class' => 'firms']);
+            $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
+            $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime), ['class' => 'wrap1']);
+            $delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address));
+            $discomment = Html::tag('span', Html::encode($model->discomment.' '.$model->discount).'%', ['class' => 'agreed_none']);
+            $disconfirm = Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']);
+            $template .= Html::tag('div', Html::tag('div', $discomment.' '.$disconfirm, ['class' => 'wrap3']).$delivery, ['class' => 'wrap1']);
+            $contacts = ArrayHelper::map($model->faces, 'id', function ($element){
+                $fullname = Html::tag('div', Html::encode($element['fullname']));
+                $position = Html::tag('div', Html::encode($element['position']), ['class' => 'color_grey']);
+                $facephones = ArrayHelper::map($element->phonefaces, 'id', function ($phoneface){
+                    return Html::tag('div', Html::a(Html::encode($phoneface->number), 'tel:'.Html::encode($phoneface->number)),['class' => 'contact_item']);
+                });
+                $facemails = ArrayHelper::map($element->mailfaces, 'id', function ($mailface){
+                    return Html::tag('div', Html::a(Html::encode($mailface->mail), 'mailto:'.Html::encode($mailface->mail)), ['class' => 'contact_item']);
+                });
+                return Html::tag('div', $fullname.$position.implode('',$facephones).implode('',$facemails), ['class' => 'wrap2 contact']);
+            });
+            $template .= implode('', $contacts);
+            $webArr = explode(',', $model->website);
+            foreach ($webArr as $web):
+                $webs[] = Html::a(Html::encode(trim($web)), '//'.Html::encode(trim($web)));
+            endforeach;
+            $template .= Html::tag('div', implode(' ', $webs), ['class' => 'contact_site wrap3']);
+            return $template;
+        }
+    ])?>
 
+    <div class="paginator left"><a class="none410" href="/">Назад</a><a href="/">1</a><a href="/">...</a><a href="/">9</a><a href="/">10</a><span class="active-page">11</span><a href="/">12</a><a href="/">13</a><a href="/">...</a><a href="/">55</a><a class="none410" href="/">Вперед</a></div>
+    <div ID="up" class="right"><a href="#header">Наверх<div class="arrow_up"></div></a></div>
+    <div class="clear"></div>
 
-</div>
+</main>

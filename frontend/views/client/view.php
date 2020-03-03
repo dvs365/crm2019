@@ -64,7 +64,12 @@ ClientAsset::register($this);
         <?php endforeach;?>
         <div class="wrap1">
             <?$cphones = $client->phoneclients; $cmails = $client->mailclients;?>
-            <div class="contact_site wrap3"><a href="//<?=$client->website?>"><?=$client->website?></a></div>
+            <div class="contact_site wrap3">
+                <?$webArr = explode(',', $client->website);?>
+                    <?foreach ($webArr as $web):?>
+                        <?=Html::a(Html::encode(trim($web)), '//'.Html::encode(trim($web)));?>
+                    <?endforeach;?>
+            </div>
             <div ID="contact-all" class="color_blue">Общие контакты клиента
                 <div class="dropdown"></div>
             </div>
@@ -117,7 +122,7 @@ ClientAsset::register($this);
             <div class="clear"></div>
         </div>
     </div>
-
+    <?if(\Yii::$app->user->can('admin')):?>
     <div class="wrap1">
         <h2>Открытия</h2>
         <table>
@@ -151,11 +156,10 @@ ClientAsset::register($this);
 
     <div class="wrap1">
         <h2>Заметка</h2>
-        <div id="note-open" class="color_blue wrap3">Всё отлично</div>
-        <form class="note" action="/" method="POST" onsubmit="send(this)">
-            <textarea name="note" class="wrap3" placeholder="Заметка" required>Всё отлично</textarea>
-            <input type="submit"  class="btn right" value="Добавить">
-            <div class="clear"></div>
-        </form>
+        <div id="note-open" class="color_blue wrap3"><?=$client->note?:'Создать'?></div>
+        <?=$this->render('_form_note', [
+            'client' => $client,
+        ]);?>
     </div>
+    <?endif;?>
 </main>
