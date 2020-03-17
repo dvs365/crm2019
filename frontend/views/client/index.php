@@ -1,6 +1,5 @@
 <?php
 
-use yii\widgets\Menu;
 use yii\helpers\Html;
 use yii\widgets\ListView;
 use yii\helpers\ArrayHelper;
