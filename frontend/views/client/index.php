@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ListView;
+use app\components\Menu\MenuActive;
 use yii\helpers\ArrayHelper;
 use frontend\assets\ClientAsset;
 
@@ -18,11 +19,20 @@ ClientAsset::register($this);
 
 <main>
     <div class="wrap2 control">
-        <?=Html::a('Потенциальные', ['index', 'role' => \common\models\Client::TARGET])?>
-        <?=Html::a('Рабочие', ['index', 'role' => \common\models\Client::LOAD])?>
-        <?=Html::a('Отказные', ['index', 'role' => \common\models\Client::REJECT])?>
-        <?=Html::a('Добавить клиента', ['create'], ['class' => 'btn w160 right ml20'])?>
-        <?=Html::a('Передать клиентов', ['create'], ['class' => 'btn w160 right'])?>
+        <?= MenuActive::widget([
+            'encodeLabels' => false,
+            'items' => [
+                ['label' => 'Потенциальные', 'url' => ['client/index', 'role' => \common\models\Client::TARGET]],
+                ['label' => 'Рабочие', 'url' => ['client/index', 'role' => \common\models\Client::LOAD]],
+                ['label' => 'Отказные', 'url' => ['client/index', 'role' => \common\models\Client::REJECT]],
+                ['label' => 'Добавить клиента', 'url' => ['client/create'], 'template' => '<a href="{url}" class="btn w160 right ml20">{label}</a>'],
+                ['label' => 'Передать клиентов', 'url' => ['client/create'], 'template' => '<a href="{url}" class="btn w160 right">{label}</a>'],
+            ],
+            'options' => ['tag' => false],
+            'itemOptions' => ['tag' => false],
+            'activeCssClass' => 'activerole',
+        ])
+        ?>
         <div class="clear"></div>
     </div>
 
@@ -91,5 +101,4 @@ ClientAsset::register($this);
     <div class="paginator left"><a class="none410" href="/">Назад</a><a href="/">1</a><a href="/">...</a><a href="/">9</a><a href="/">10</a><span class="active-page">11</span><a href="/">12</a><a href="/">13</a><a href="/">...</a><a href="/">55</a><a class="none410" href="/">Вперед</a></div>
     <div ID="up" class="right"><a href="#header">Наверх<div class="arrow_up"></div></a></div>
     <div class="clear"></div>
-
 </main>

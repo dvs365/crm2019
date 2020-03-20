@@ -78,36 +78,38 @@ class ClientSearch extends Client
                 unset($searchArr[$searchKey]);
             }
         }
-        list($idsPhone, $idsMail) = [[],[]];
-        if ($phones) {
-            $qPhoneClient = Phoneclient::find();
-            $qPhoneFace = Phoneface::find();
-            foreach ($phones as $phone) {
-                $qPhoneClient->orWhere(['LIKE', 'number_mirror', $phone.'%', false]);
-                $qPhoneFace->orWhere(['LIKE', 'number_mirror', $phone.'%', false]);
+        if ($phones || $mails) {
+            list($idsPhone, $idsMail) = [[],[]];
+            if ($phones) {
+                $qPhoneClient = Phoneclient::find();
+                $qPhoneFace = Phoneface::find();
+                foreach ($phones as $phone) {
+                    $qPhoneClient->orWhere(['LIKE', 'number_mirror', $phone.'%', false]);
+                    $qPhoneFace->orWhere(['LIKE', 'number_mirror', $phone.'%', false]);
+                }
+                $ids1 = $qPhoneClient->select('client')->asArray()->column();
+                $ids11 = [];
+                if ($face1 = $qPhoneFace->select('face')->asArray()->column()) {
+                    $ids11 = Face::find()->andWhere(['in','id', $face1])->select('client')->asArray()->column();
+                }
+                $idsPhone = array_merge($ids1, $ids11);
             }
-            $ids1 = $qPhoneClient->select('client')->asArray()->column();
-            $ids11 = [];
-            if ($face1 = $qPhoneFace->select('face')->asArray()->column()) {
-                $ids11 = Face::find()->andWhere(['in','id', $face1])->select('client')->asArray()->column();
+            if ($mails) {
+                $qMailClient = Mailclient::find();
+                $qMailFace = Mailface::find();
+                foreach ($mails as $mail) {
+                    $qMailClient->orWhere(['LIKE', 'mail', $mail.'%', false]);
+                    $qMailFace->orWhere(['LIKE', 'mail', $mail.'%', false]);
+                }
+                $ids2 = $qMailClient->select('client')->asArray()->column();
+                $ids22 = [];
+                if ($face2 = $qMailFace->select('face')->asArray()->column()) {
+                    $ids22 = Face::find()->andWhere(['in','id', $face2])->select('client')->asArray()->column();
+                }
+                $idsMail = array_merge($ids2, $ids22);
             }
-            $idsPhone = array_merge($ids1, $ids11);
+            $ids = array_unique(array_merge($idsPhone,$idsMail));
         }
-        if ($mails) {
-            $qMailClient = Mailclient::find();
-            $qMailFace = Mailface::find();
-            foreach ($mails as $mail) {
-                $qMailClient->orWhere(['LIKE', 'mail', $mail.'%', false]);
-                $qMailFace->orWhere(['LIKE', 'mail', $mail.'%', false]);
-            }
-            $ids2 = $qMailClient->select('client')->asArray()->column();
-            $ids22 = [];
-            if ($face2 = $qMailFace->select('face')->asArray()->column()) {
-                $ids22 = Face::find()->andWhere(['in','id', $face2])->select('client')->asArray()->column();
-            }
-            $idsMail = array_merge($ids2, $ids22);
-        }
-        $ids = array_unique(array_merge($idsPhone,$idsMail));
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -119,18 +121,32 @@ class ClientSearch extends Client
         $query->andFilterWhere([
             'user' => $this->user,
         ]);
+        // grid filtering conditions
+        if ($this->disconfirm) {
+            $query->andFilterWhere([
+                'disconfirm' => 0,
+            ]);
+            $query->andWhere(['or',
+                    ['<>', 'discount', 0],
+                    ['<>', 'discomment', '']
+                ]);
+        }
+        // grid filtering conditions
+        if ($this->task) {
 
-        if($searchArr || $ids) {
+        }
+
+        if($searchArr || isset($ids)) {
             $or = ['or'];
             foreach ($searchArr as $searchIt) {
                 $or[] = ['like', 'name', trim($searchIt)];
                 $or[] = ['like', 'address', trim($searchIt)];
                 $or[] = ['like', 'discomment', trim($searchIt)];
             }
-            if ($ids) {
+            if (isset($ids)) {
                 $or[] = ['in', 'id', $ids];
             }
-            $query->andFilterWhere($or);
+            $query->andWhere($or);
         }
 
         return $dataProvider;

@@ -22,16 +22,8 @@ use yii\helpers\ArrayHelper;
             </label>
         </div>
         <div class="wrap_half">
-            <label class="lh30">
-                <?=$form->field($model, 'task', ['template' => "{input}"])->checkbox([], false)?>
-                <span class="checkbox"></span>
-                С активными делами
-            </label>
-            <label class="lh30">
-                <?=$form->field($model, 'disconfirm', ['template' => "{input}"])->checkbox([], false)?>
-                <span class="checkbox"></span>
-                С несогласованной скидкой
-            </label>
+            <?=$form->field($model, 'task', ['template' => "<label class=\"lh30\">{input}<span class=\"checkbox\"></span> С активными делами</label>"])->checkbox([], false)?>
+            <?=$form->field($model, 'disconfirm', ['template' => "<label class=\"lh30\">{input}<span class=\"checkbox\"></span> С несогласованной скидкой</label>"])->checkbox([], false)?>
         </div>
 
         <div class="clear"></div>

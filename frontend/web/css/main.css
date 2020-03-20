@@ -522,4 +522,7 @@ input[type=file] {display:none;}
 #searchclient div.field-search{
     display: inline;
 }
+.activerole {
+    color:black !important;
+}
 /*******************/
