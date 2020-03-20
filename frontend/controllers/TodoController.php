@@ -56,6 +56,7 @@ class TodoController extends Controller
             if ($model->load($data)) {
                 $model->user = \Yii::$app->user->id;
                 $model->client = $client;
+                $model->status = Todo::OPEN;
                 $model->save();
                 return $this->renderAjax('/client/_form_list_todo', [
                     "todos" => $model->find()->where(['client' => $client])->all(),
@@ -73,10 +74,6 @@ class TodoController extends Controller
                 "error" => "error2"
             ];
         }
-    }
-
-    public static function actionCreatec($client)
-    {
     }
 
     public function actionUpdate($id)

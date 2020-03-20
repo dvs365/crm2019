@@ -22,8 +22,8 @@ class ClientSearch extends Client
     public function rules()
     {
         return [
-            [['id', 'user', 'status', 'discount', 'disconfirm', 'update_u', 'update_a'], 'integer'],
-            [['name', 'address', 'discomment', 'update', 'search'], 'safe'],
+            [['id', 'user', 'status', 'discount', 'disconfirm', 'update_u', 'update_a', 'permonth'], 'integer'],
+            [['name', 'address', 'discomment', 'update', 'search', 'task'], 'safe'],
         ];
     }
 
@@ -119,8 +119,15 @@ class ClientSearch extends Client
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'user' => $this->user,
+            'user' => \Yii::$app->user->can('user')? \Yii::$app->user->id : $this->user,
         ]);
+        if ($this->permonth) {
+            $delay = (int)$this->permonth * 30;
+            $query->andWhere([
+                '>', 'show_u', (new \DateTime('-'.$delay.' days'))->format('Y-m-d')
+            ]);
+        }
+
         // grid filtering conditions
         if ($this->disconfirm) {
             $query->andFilterWhere([
@@ -133,7 +140,11 @@ class ClientSearch extends Client
         }
         // grid filtering conditions
         if ($this->task) {
-
+            $todo = Todo::find()->select('client')->andFilterWhere([
+                'status' => 10,
+            ]);
+            $taskIDs = $todo->groupBy('client')->asArray()->column();
+            $query->andWhere(['in', 'id', $taskIDs]);
         }
 
         if($searchArr || isset($ids)) {

@@ -19,6 +19,9 @@ use Yii;
  */
 class Todo extends \yii\db\ActiveRecord
 {
+    const OPEN = 10;
+    const CLOSE = 20;
+
     public $time;
     /**
      * {@inheritdoc}
@@ -34,8 +37,8 @@ class Todo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name','date'], 'required'],
-            [['client'], 'integer'],
+            [['name', 'date'], 'required'],
+            [['client', 'status'], 'integer'],
             [['date', 'dateto'], 'date', 'format' => 'php:d.m.Y'],
             [['time'], 'safe'],
             [['name', 'description', 'nameclient'], 'string', 'max' => 255],

@@ -31,7 +31,7 @@ ClientAsset::register($this);
             'options' => ['tag' => false],
             'itemOptions' => ['tag' => false],
             'activeCssClass' => 'activerole',
-        ])
+        ]);
         ?>
         <div class="clear"></div>
     </div>
