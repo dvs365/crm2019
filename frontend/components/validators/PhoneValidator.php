@@ -84,6 +84,7 @@ class PhoneValidator extends Validator
 var rev = '';  
 var arr = [];
 var num = value.replace(/\D+/g,'');
+var findText = ~value.replace(/[a-zа-яёА-ЯЁ]/g,'@').indexOf('@');
 var i = num.length;
 if($.inArray(i, [0,11,12]) === -1){
     messages.push($message);
@@ -111,11 +112,13 @@ for (var i = 0; i < phones.length; i++){
         phone = arrnum8.join("");
         
     }
-    
-    if(phone != '' && phone == currentphone){
+    if(phone != '' && phone.split("").reverse().join("") == currentphone){
         cnt++;
     }
 
+}
+if(findText){
+    messages.push($message);
 }
 if(cnt > 1){
     messages.push($message2);

@@ -104,7 +104,7 @@ table.clients_transfer tr td textarea {left:0;}
 .nds {display:inline-block; margin-left:20px;}
 .nds_none, .agreed_none {text-decoration:line-through;}
 
-.contact {display:inline-block; width:49%;}
+.contact {display:inline-block; width:49%;vertical-align: top;}
 .contact_item {display:inline-block; min-width:35%; margin-top:4px;}
 .contact_all {display:none;}
 .contact_all .contact_item {min-width:17%;}

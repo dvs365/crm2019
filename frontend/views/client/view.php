@@ -20,7 +20,7 @@ ClientAsset::register($this);
             <?$orgs = $client->organizations;?>
             <?foreach($orgs as $org){?>
                 <div class="firm">
-                    <?= Html::a($org->name, ['update', 'id' => $client->id]) ?>
+                    <?= Html::a($org->formLabel.' '.$org->name, ['client/update', 'id' => $client->id, '#' => 'organization'.$org->id]) ?>
                     <span class="nds color_grey <?=($org->nds == $org->ndsConst['without'])?'nds_none':''?>"><?=$org->getAttributeLabel('nds')?></span>
                 </div>
             <?}?>
@@ -37,9 +37,9 @@ ClientAsset::register($this);
     </div>
 
     <div class="wrap1">
-        <?if($client->discount) {?>
+        <?if($client->discount || $client->discomment) {?>
         <div class="wrap3">
-            <div <?=($client->disconfirm)?'':'class="agreed_none"'?>>Скидка: <?=$client->discomment?> <?=$client->discount.'%'?></div>
+            <div <?=($client->disconfirm)?'':'class="agreed_none"'?>>Скидка: <?=$client->discomment?> <?=($client->discount)?$client->discount.'%':''?></div>
             <?if(\Yii::$app->user->can('confirmDiscount') && !$client->disconfirm):?>
                 <?=Html::a('Согласовать', ['disconfirm', 'id' => $client->id], ['class' => 'agreed'])?>
             <?endif;?>

@@ -68,13 +68,13 @@ ClientAsset::register($this);
             //$widget->viewParams['users'][$model->user]->surnameNP
             $template = Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', Html::encode($model->user0->surnameNP), ['class' => 'manager color_grey']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
             $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
-                return Html::tag('div', Html::encode($element['name']), ['class' => 'firm']);
+                return Html::tag('div', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
             });
             $template .= Html::tag('div', implode('', $firms), ['class' => 'firms']);
             $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
             $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime), ['class' => 'wrap1']);
             $delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address));
-            $discomment = Html::tag('span', Html::encode($model->discomment.' '.$model->discount).'%', ['class' => (!$model->disconfirm)?'agreed_none':'']);
+            $discomment = Html::tag('span', Html::encode('Скидка: '.$model->discomment.' '.(($model->discount)?$model->discount.'%':'')), ['class' => (!$model->disconfirm)?'agreed_none':'']);
             $disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
             $template .= Html::tag('div', Html::tag('div', ($model->discount || $model->discomment)? $discomment.' '.$disconfirm : '', ['class' => 'wrap3']).$delivery, ['class' => 'wrap1']);
             $contacts = ArrayHelper::map($model->faces, 'id', function ($element){

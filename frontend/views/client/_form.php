@@ -26,6 +26,7 @@ use yii\helpers\ArrayHelper;
                     <?=$model->getAttributeLabel('status')?>
                 </td>
                 <td>
+                    <? $model->isNewrecord?$model->status=10:$model->status;?>
                     <?= $form->field($model, 'status', ['template' => "{input}<div class=\"clear\"></div>"])->radioList($model->getStatusLabels(),[
                         'item' => function($index, $label, $name, $checked, $value){
                             $return = Html::beginTag('label', ['class' => 'wrap_third']);

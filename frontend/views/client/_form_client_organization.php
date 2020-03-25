@@ -36,7 +36,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
     <?php foreach($modelsOrganization as $indexOrg => $clientOrg):?>
     <div class="client_org_item">
 
-    <h2>Организация <span class="client_item_number"><?=$indexOrg+1?></span></h2>
+    <h2>Организация <span class="client_item_number" id="organization<?=$clientOrg->id?>"><?=$indexOrg+1?></span></h2>
         <?php
         //necessary for update action.
         if(!$clientOrg->isNewRecord) {
@@ -97,10 +97,11 @@ use wbraganca\dynamicform\DynamicFormWidget;
                 </td>
                 <td>
                     <div class="wrap_radio">
+                    <? $clientOrg->isNewrecord?$clientOrg->nds=10:$clientOrg->nds;?>
                     <?= $form->field($clientOrg, "[{$indexOrg}]nds", ['template' => "{input}"])->radioList($clientOrg->getNdsLabels(),[
                         'item' => function($index, $label, $name, $checked, $value){
                             $return = '<label class="wrap_third">';
-                            $return .= '<input type="radio" name="'.$name.'" value="'.$value.'"'.(($value == $checked || (!$checked && !$index))?' checked':'').'>';
+                            $return .= '<input type="radio" name="'.$name.'" value="'.$value.'"'.(($value == $checked)?' checked':'').'>';
                             $return .= '<span class="radio"></span>';
                             $return .= ucwords($label);
                             $return .= '</label>';

@@ -159,7 +159,7 @@ class ClientSearch extends Client
             }
             $query->andWhere($or);
         }
-
+        $query->orderBy(['show' => SORT_DESC]);
         return $dataProvider;
     }
 }
