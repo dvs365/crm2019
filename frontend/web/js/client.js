@@ -107,13 +107,13 @@ $(document).ready(function(){
         return false;
     });
 
-    //удалить дело по клиенту
-    $(".deltodoclient").click(function(){
-        var href = $(this).parent('.todoclientdelete').attr('action');
-        $(this).parent('.task_item').remove();
-        $(this).remove();
-        sendAjax(href, "POST");
-
+    //удалить дело по клиенту//parent добавленного элемента не видит дальнего родителя
+    $("#outputtodo").on('click', 'button',  function(){
+        var form = $(this).parent(".todoclientdelete");
+        var href = form.attr('action');
+        var td = form.parent();
+        td.parent("tr.table_item").parent().parent().parent("div.task_item").remove();
+        sendAjax(href, "POST")
     });
     //раскрытие общих контактов
     $("#contact-all").click(function(){

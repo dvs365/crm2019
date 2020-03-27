@@ -1,52 +1,28 @@
+<?php
+use yii\helpers\Html;
+use yii\widgets\ListView;
+use yii\helpers\ArrayHelper;
+use yii\widgets\ActiveForm;
+use frontend\assets\ClientAsset;
+
+$this->title = 'Clients:' . \common\models\User::findOne(Yii::$app->user->identity->id)->surnameNP;
+$this->params['breadcrumbs'][] = $this->title;
+\yii\web\YiiAsset::register($this);
+ClientAsset::register($this);
+?>
+
 <main>
     <div class="wrap2 control">
-        <a href="clients.html">Потенциальные</a><a href="clients.html">Рабочие</a><a href="clients.html">Отказные</a>
-        <a href="clients-add.html" class="btn w160 right">Добавить клиента</a>
+        <?=$this->render('menu')?>
         <div class="clear"></div>
     </div>
     <h1 class="wrap1">Передача клиентов</h1>
+    <?=$this->render('_form_transfer_search', [
+        'model' => $transferModel,
+        'users' => $users,
+    ])?>
 
-    <form class="filters wrap1" action="/asd.php" method="GET" onsubmit="send(this)">
-        <div class="wrap1 client_transfer_filters">
-            <label class="wrap_quarter_manager">Менеджер:
-                <div class="select">
-                    <div class="dropdown"></div>
-                    <select name="manager">
-                        <option value="" selected>Все</option>
-                        <option value="1">Кириллов Н.Н.</option>
-                        <option value="2">Кириллов Н.Н.</option>
-                        <option value="3">Кириллов Н.Н.</option>
-                        <option value="0">Свободные</option>
-                    </select>
-                </div>
-            </label>
-
-            <label class="wrap_quarter lh30">
-                <input type="checkbox" name="potential" value="1">
-                <span class="checkbox"></span>
-                Потенциальные
-            </label>
-
-            <label class="wrap_quarter lh30">
-                <input type="checkbox" name="working" value="1">
-                <span class="checkbox"></span>
-                Рабочие
-            </label>
-
-            <label class="wrap_quarter lh30">
-                <input type="checkbox" name="refusal" value="1">
-                <span class="checkbox"></span>
-                Отказные
-            </label>
-            <div class="clear"></div>
-        </div>
-        <input type="text" id="search" name="search" placeholder="Разделяйте варианты вертикальным слешем. Например, Иванов | 45-78-62">
-        <input type="submit" value="Найти" class="btn w160 right">
-        <div id="slash" class="btn w30 right">|</div>
-        <div class="clear"></div>
-    </form>
-
-    <form class="wrap1" action="/asd.php" method="post" onsubmit="send(this)">
+    <?php $form = ActiveForm::begin(['action' => ['client/transfer'], 'method' => 'post', 'options' => ['class' => 'wrap1', 'onsubmit' => 'send(this)']]); ?>
         <table class="clients_table wrap1">
             <tr>
                 <td class="w50">
@@ -61,56 +37,42 @@
         <div class="clear"></div>
 
         <table ID="elements" class="clients_table">
-            <tr>
-                <td class="w50 lh30">
-                    <label>
-                        <input type="checkbox" name="client1" value="1">
-                        <span class="checkbox"></span>
-                    </label>
-                </td>
-                <td>
-                    <div class="wrap4">
-                        <div class="about"><a href="client.html" class="about_client">Меридиан</a><span class="manager color_grey">Кириллов Н.Н.</span><span class="about_status color_grey">Рабочий клиент</span></div>
-                        <div class="firms">
-                            <div class="firm">ИП Мартусевич</div>
-                            <div class="firm">Аквастрой</div>
-                        </div>
-                        <div class="wrap1">
-                            <p>Открытие: 1 месяц 22 дня назад</p>
-                        </div>
-                        <div class="wrap1">
-                            <div class="wrap3"><span class="agreed_none">Скидка: на хомуты, на муфты 20%</span> <a href="" class="agreed">Согласовать</a></div>
-                            <p class="wrap3">Доставка: Владимир, Ново-Ямская, 81</p>
-                            <p><a href="http://meridian-opt.ru" target="_blank">meridian-opt.ru</a></p>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="w50 lh30">
-                    <label>
-                        <input type="checkbox" name="client2" value="1">
-                        <span class="checkbox"></span>
-                    </label>
-                </td>
-                <td>
-                    <div class="wrap4">
-                        <div class="about"><a href="client.html" class="about_client">Меридиан</a><span class="about_status color_grey">Рабочий клиент</span></div>
-                        <div class="firms">
-                            <div class="firm">ИП Мартусевич</div>
-                            <div class="firm">Аквастрой</div>
-                        </div>
-                        <div class="wrap1">
-                            <p>Открытие: 1 месяц 22 дня назад</p>
-                        </div>
-                        <div class="wrap1">
-                            <div class="wrap3"><span class="agreed_none">Скидка: на хомуты, на муфты 20%</span> <a href="" class="agreed">Согласовать</a></div>
-                            <p class="wrap3">Доставка: Владимир, Ново-Ямская, 81</p>
-                            <p><a href="http://meridian-opt.ru" target="_blank">meridian-opt.ru</a></p>
-                        </div>
-                    </div>
-                </td>
-            </tr>
+            <?= ListView::widget([
+                'dataProvider' => $dataProvider,
+                'summary' => '',
+                'pager' => [
+                    'firstPageLabel' => 'Назад',
+                    'lastPageLabel' => 'Вперед',
+                    'prevPageLabel' => '<',
+                    'nextPageLabel' => '>',
+                    'maxButtonCount' => 3,
+                ],
+                'itemOptions' => ['class' => 'wrap4'],
+                'itemView' => function ($model, $key, $index, $widget) {
+                    $template = '<tr>';
+                    $template .= '<td class="w50 lh30"><label><input type="checkbox" name="client3" value="1"><span class="checkbox"></span></label></td>';
+                    $template .= '<td><div class="wrap4">';
+                    $template .= Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']),['class' => 'about']);
+                    $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
+                        return Html::tag('div', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
+                    });
+                    $template .= Html::tag('div', implode('', $firms), ['class' => 'firms']);
+                    $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
+                    $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime).(($model->status == \common\models\Client::REJECT)?Html::tag('p', 'Причина отказа: ' . $lastTime):''), ['class' => 'wrap1']);
+                    $discomment = Html::tag('span', Html::encode('Скидка: '.$model->discomment.' '.(($model->discount)?$model->discount.'%':'')), ['class' => (!$model->disconfirm)?'agreed_none':'']);
+                    $delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address), ['class' => 'wrap3']);
+                    $webArr = explode(',', $model->website);
+                    foreach ($webArr as $web):
+                        $webs[] = Html::a(Html::encode(trim($web)), '//'.Html::encode(trim($web)), ['target' => '_blank']);
+                    endforeach;
+                    $websites = Html::tag('p', implode(' ', $webs));
+                    $disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
+                    $template .= Html::tag('div', Html::tag('div', ($model->discount || $model->discomment)? $discomment.' '.$disconfirm : '', ['class' => 'wrap3']).$delivery.$websites, ['class' => 'wrap1']);
+                    $template .= '</div></td>';
+                    return $template;
+                }
+            ])?>
+<!--
             <tr>
                 <td class="w50 lh30">
                     <label>
@@ -137,6 +99,7 @@
                     </div>
                 </td>
             </tr>
+-->
         </table>
 
         <table class="clients_transfer">
@@ -171,7 +134,7 @@
                 </td>
             </tr>
         </table>
-    </form>
+    <?php ActiveForm::end(); ?>
 
 
     <div ID="up" class="right"><a href="#header">Наверх<div class="arrow_up"></div></a></div>

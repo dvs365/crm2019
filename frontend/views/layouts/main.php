@@ -32,12 +32,15 @@ AppAsset::register($this);
     <?}else{?>
         <header ID="header" class="wrap1">
             <nav>
+                <?$checkController = function ($route) {
+                    return $route === $this->context->getUniqueId();
+                }?>
                 <?= Menu::widget([
                     'encodeLabels' => false,
                     'items' => [
-                        ['label' => 'Сводка', 'url' => ['summary/index']],
-                        ['label' => 'Клиенты', 'url' => ['client/index']],
-                        ['label' => 'Дела', 'url' => ['todo/index']],
+                        ['label' => 'Сводка', 'url' => ['summary/index'], 'active' => $checkController('summary')],
+                        ['label' => 'Клиенты', 'url' => ['client/index'], 'active' => $checkController('client')],
+                        ['label' => 'Дела', 'url' => ['todo/index'], 'active' => $checkController('todo')],
                     ],
                     'activeCssClass' => 'active',
                 ])

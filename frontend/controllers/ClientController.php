@@ -28,7 +28,7 @@ class ClientController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['update', 'view', 'index', 'disconfirm', 'note'],
+                'only' => ['update', 'view', 'index', 'disconfirm', 'note', 'transfer'],
                 'rules' => [
                     [
                         'actions' => ['index'],
@@ -44,6 +44,11 @@ class ClientController extends Controller
                         'actions' => ['note'],
                         'allow' => true,
                         'roles' => ['admin'],
+                    ],
+                    [
+                        'actions' => ['transfer'],
+                        'allow' => true,
+                        'roles' => ['admin','user'],
                     ],
                     [
                         'actions' => ['view'],
@@ -79,7 +84,6 @@ class ClientController extends Controller
         if ($role) {
             $dataProvider->query->andWhere(['status' => (int)$role]);
         }
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -517,6 +521,18 @@ class ClientController extends Controller
             'modelsFaceMail' => (empty($faceMails)) ? [[new Mailface]] : $faceMails,
             'modelsOrganization' => (empty($clientOrganizations)) ? [new Organization] : $clientOrganizations,
             'modelsUser' => User::find()->all(),
+        ]);
+    }
+
+    public function actionTransfer()
+    {
+        $searchModel = new ClientSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('_form_transfer', [
+            'users' => User::find()->indexBy('id')->all(),
+            'transferModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 

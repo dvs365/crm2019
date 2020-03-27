@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\ListView;
-use app\components\Menu\MenuActive;
 use yii\helpers\ArrayHelper;
 use frontend\assets\ClientAsset;
 
@@ -19,20 +18,7 @@ ClientAsset::register($this);
 
 <main>
     <div class="wrap2 control">
-        <?= MenuActive::widget([
-            'encodeLabels' => false,
-            'items' => [
-                ['label' => 'Потенциальные', 'url' => ['client/index', 'role' => \common\models\Client::TARGET]],
-                ['label' => 'Рабочие', 'url' => ['client/index', 'role' => \common\models\Client::LOAD]],
-                ['label' => 'Отказные', 'url' => ['client/index', 'role' => \common\models\Client::REJECT]],
-                ['label' => 'Добавить клиента', 'url' => ['client/create'], 'template' => '<a href="{url}" class="btn w160 right ml20">{label}</a>'],
-                ['label' => 'Передать клиентов', 'url' => ['client/create'], 'template' => '<a href="{url}" class="btn w160 right">{label}</a>'],
-            ],
-            'options' => ['tag' => false],
-            'itemOptions' => ['tag' => false],
-            'activeCssClass' => 'activerole',
-        ]);
-        ?>
+        <?=$this->render('menu')?>
         <div class="clear"></div>
     </div>
 

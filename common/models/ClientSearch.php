@@ -15,6 +15,7 @@ class ClientSearch extends Client
     public $permonth;
     public $task;
     public $search;
+    public $statuses;
 
     /**
      * {@inheritdoc}
@@ -24,6 +25,16 @@ class ClientSearch extends Client
         return [
             [['id', 'user', 'status', 'discount', 'disconfirm', 'update_u', 'update_a', 'permonth'], 'integer'],
             [['name', 'address', 'discomment', 'update', 'search', 'task'], 'safe'],
+            ['statuses', 'each', 'rule' => ['integer']],
+        ];
+    }
+
+    function getStatusLabels()
+    {
+        return [
+            self::TARGET => 'Потенциальные',
+            self::LOAD => 'Рабочие',
+            self::REJECT => 'Отказные'
         ];
     }
 
@@ -46,13 +57,7 @@ class ClientSearch extends Client
     public function search($params)
     {
         $query = Client::find();
-/*
-        if (Yii::$app->user->can('user')) {
-            $query->andFilterWhere([
-                'user' => Yii::$app->user->id,
-            ]);
-        }
-*/
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -159,6 +164,11 @@ class ClientSearch extends Client
             }
             $query->andWhere($or);
         }
+
+        if($this->statuses) {
+            $query->andWhere(['in', 'status', $this->statuses]);
+        }
+
         $query->orderBy(['show' => SORT_DESC]);
         return $dataProvider;
     }
