@@ -21,6 +21,9 @@ class Todo extends \yii\db\ActiveRecord
 {
     const OPEN = 10;
     const CLOSE = 20;
+	const LATE = 30;
+	const SCENARIO_TOCLOSE = 'toclose';
+
 
     public $time;
     /**
@@ -38,14 +41,29 @@ class Todo extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'date'], 'required'],
-            [['client', 'status'], 'integer'],
-            [['date', 'dateto'], 'date', 'format' => 'php:d.m.Y'],
+            [['client', 'status', 'user'], 'integer'],
+            [['date', 'dateto'], 'date', 'format' => 'php:d.m.Y', 'except' => self::SCENARIO_TOCLOSE],
             [['time'], 'safe'],
             [['name', 'description', 'nameclient'], 'string', 'max' => 255],
        //     [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }
 
+    function getStatusLabels()
+    {
+        return [
+           self::OPEN => 'Активное',
+           self::CLOSE => 'Закрытое',
+        ];
+    }
+
+    function getStatusLabel()
+    {
+        $statuses = $this->getStatusLabels();
+        return isset($statuses[$this->status]) ? $statuses[$this->status] : '';
+    }	
+	
+	
     /**
      * {@inheritdoc}
      */
@@ -72,8 +90,14 @@ class Todo extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        $this->date = \DateTime::createFromFormat('d.m.Y H:i', $this->date . ' ' . $this->time)->format('Y-m-d H:i:s');
-        $this->dateto = \DateTime::createFromFormat('d.m.Y', $this->dateto)->format('Y-m-d 23:59:59');
+		if (strtotime($this->dateto) < strtotime($this->date)) {
+			$this->dateto = $this->date;
+		}
+		
+		if ($this->scenario !== $this::SCENARIO_TOCLOSE) {
+			$this->date = \DateTime::createFromFormat('d.m.Y H:i', $this->date . ' ' . $this->time)->format('Y-m-d H:i:s');
+			$this->dateto = \DateTime::createFromFormat('d.m.Y', $this->dateto)->format('Y-m-d 23:59:59');
+		}
         return parent::beforeSave($insert);
     }
 }

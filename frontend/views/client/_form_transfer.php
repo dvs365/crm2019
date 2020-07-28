@@ -50,7 +50,9 @@ ClientAsset::register($this);
                 'itemOptions' => ['class' => 'wrap4'],
                 'itemView' => function ($model, $key, $index, $widget) {
                     $template = '<tr>';
-                    $template .= '<td class="w50 lh30"><label><input type="checkbox" name="client3" value="1"><span class="checkbox"></span></label></td>';
+                    $template .= '<td class="w50 lh30"><label>';
+                    $template .= '<input type="checkbox" name="client3" value="1">';
+                    $template .= '<span class="checkbox"></span></label></td>';
                     $template .= '<td><div class="wrap4">';
                     $template .= Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']),['class' => 'about']);
                     $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
@@ -58,7 +60,8 @@ ClientAsset::register($this);
                     });
                     $template .= Html::tag('div', implode('', $firms), ['class' => 'firms']);
                     $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
-                    $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime).(($model->status == \common\models\Client::REJECT)?Html::tag('p', 'Причина отказа: ' . $lastTime):''), ['class' => 'wrap1']);
+                    $reason = $model->desclient0['reject'];
+                    $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime).(($model->status == \common\models\Client::REJECT)?Html::tag('p', 'Причина отказа: ' . $reason):''), ['class' => 'wrap1']);
                     $discomment = Html::tag('span', Html::encode('Скидка: '.$model->discomment.' '.(($model->discount)?$model->discount.'%':'')), ['class' => (!$model->disconfirm)?'agreed_none':'']);
                     $delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address), ['class' => 'wrap3']);
                     $webArr = explode(',', $model->website);
@@ -72,34 +75,7 @@ ClientAsset::register($this);
                     return $template;
                 }
             ])?>
-<!--
-            <tr>
-                <td class="w50 lh30">
-                    <label>
-                        <input type="checkbox" name="client3" value="1">
-                        <span class="checkbox"></span>
-                    </label>
-                </td>
-                <td>
-                    <div class="wrap4">
-                        <div class="about"><a href="client.html" class="about_client">СанТехАрматура (Долгопрудный)</a><span class="about_status color_grey">Отказной клиент</span></div>
-                        <div class="firms">
-                            <div class="firm">ИП Головчанская Л.С.</div>
-                            <div class="firm">ООО "Саноптторг"</div>
-                        </div>
-                        <div class="wrap1">
-                            <p>Открытие: 1 месяц 22 дня назад</p>
-                            <p>Причина отказа: компания закрылась</p>
-                        </div>
-                        <div class="wrap1">
-                            <div class="wrap3"><span class="agreed_none">Скидка: 15%</span> <a href="" class="agreed">Согласовать</a></div>
-                            <p class="wrap3">Доставка: Московская обл., г.Долгопрудный, Лихачевский пр-т, строение 4</p>
-                            <p><a href="http://virsan.ru" target="_blank">virsan.ru</a></p>
-                        </div>
-                    </div>
-                </td>
-            </tr>
--->
+
         </table>
 
         <table class="clients_transfer">

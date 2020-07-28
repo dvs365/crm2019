@@ -21,17 +21,21 @@ $(document).ready(function(){
         }).done(function (data) {
             if (data.error == null) {
                 $("#outputtodo").html(data);
+                $("#formtodoclient input[type=text]#todo-name").val('');
+                $("#formtodoclient input[type=textarea]").val('');
             } else {
+				alert('error');
                 $("#outputtodo").html(data.error);
             }
 
         }).fail(function () {
-            $("#outputtodo").html("Error3");
+            $("#outputtodo").html(data.error);
         });
         return false;
     });
 
     $("#formcomment").on('beforeSubmit', function () {
+		alert('comment');
         var $testform = $(this);
         var met = $testform.attr('method');
         var act = $testform.attr('action');
@@ -50,7 +54,7 @@ $(document).ready(function(){
             }
 
         }).fail(function () {
-            $("#outputtodo").prepend("Error3");
+            $("#commentsTable").prepend("Error3");
         });
         return false;
     });
@@ -135,9 +139,21 @@ $(document).ready(function(){
         }, 500);
     });
 
+    //раскрытие формы у перевода в отказ
+    $("#toreject").click(function(){
+        if($('#formrejectlient').is(':visible')) {
+            $('#formrejectlient textarea').animate({'height':0}, 500);
+            $('#formrejectlient').hide();
+        } else {
+            $('#formrejectlient').show();
+            $('#formrejectlient textarea').animate({'height':'70px'}, 500);
+
+        }
+        return false;
+    });
 
     //раскрытие комментария к делу
-    $(".open_desc").click(function(){
+    $("#outputtodo").on('click','td.open_desc',function(){
         hheight = $(this).closest('table').height();
         if ($(this).parent().parent().children('.table_item_hidden').is(':visible')) {
             $(this).closest('table').css({'min-height':hheight});
@@ -228,7 +244,12 @@ $(document).ready(function(){
     $('#choise-date').on('click', 'td button', function(){
         adate =wordMonth($('#choise-date').find('.task_date__s').val());
         $('.date_a span').text(adate);
-    })
+    });
+
+    $('input[name=select-all]').click(function(){
+        if ($(this).is(':checked')) $('#elements input:checkbox').prop('checked', true);
+        else $('#elements input:checkbox').prop('checked', false);
+    });
 
     function wordMonth(adate) {
         mon={'01':'января','02':'февраля','03':'марта','04':'апреля','05':'мая','06':'июня','07':'июля','08':'августа','09':'сентября','10':'октября','11':'ноября','12':'декабря'}

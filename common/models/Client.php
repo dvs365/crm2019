@@ -161,4 +161,9 @@ class Client extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Comment::className(), ['client' => 'id'])->limit(10)->orderBy(['id' => SORT_DESC]);
     }
+
+    public function getDesclient0()
+    {
+        return $this->hasOne(Desclient::className(), ['client' => 'id']);
+    }
 }

@@ -1,40 +1,62 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use frontend\assets\TodoAsset;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Todos';
+$this->title = 'Дела';
 $this->params['breadcrumbs'][] = $this->title;
+\yii\web\YiiAsset::register($this);
+TodoAsset::register($this);
 ?>
-<div class="todo-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Todo', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'user',
-            'client',
-            'name',
-            'description',
-            //'nameclient',
-            //'date',
-            //'dateto',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
-
-</div>
+<main>
+	<div class="task left">
+		<div class="wrap1 control">
+			<?=$this->render('menu')?>
+		</div>
+		<?if (empty($status) || $status == common\models\Todo::OPEN):?>
+		<?=$this->render('_form', [
+			'model' => new common\models\Todo,
+			'action' => ['todo/create'],
+			'clients' => $clients,
+		])?>
+		<?endif;?>
+	</div>
+	<?if(\Yii::$app->user->can('admin')):?>
+	<?=$this->render('_form_user', [
+		'model' => new common\models\Todo,
+		'user' => $user,
+		'userID' => $userID,
+		'action' => ['todo/index', 'status' => $status],
+	])?>
+	<?endif;?>
+	<div class="clear"></div>
+	<?if (empty($status) || $status == common\models\Todo::OPEN):?>	
+		<?= Html::a('На неделю', ['todo/toweek'], ['class' => 'week_works__link'])?>
+		<?=$this->render('_form_date', [
+			'model' => new common\models\Todo,
+			'action' => ['todo/index', 'status' => $status],
+		])?>
+		<div class="task" id="act-task">
+				<?=$this->render('list_cur_todo', [
+					'curTodos' => $todoCur,
+					'status' => $status,
+				])?>
+		</div>
+	<?endif;?>
+	<?if (!empty($status) && $status == common\models\Todo::CLOSE):?>	
+		<?=$this->render('list_close_todo', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+			'status' => $status,
+		])?>
+	<?endif;?>
+	<?if (empty($status) || $status == common\models\Todo::LATE):?>
+		<?=$this->render('list_last_todo', [
+			'lastTodos' => $todoLate,
+		])?>
+	<?endif;?>
+</main>

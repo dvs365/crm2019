@@ -48,7 +48,7 @@ ClientAsset::register($this);
             'nextPageLabel' => '>',
             'maxButtonCount' => 3,
         ],
-        //'viewParams' => ['users' => $users],
+        'viewParams' => ['statuses' => $statuses],
         'itemOptions' => ['class' => 'wrap4'],
         'itemView' => function ($model, $key, $index, $widget) {
             //$widget->viewParams['users'][$model->user]->surnameNP
@@ -58,7 +58,9 @@ ClientAsset::register($this);
             });
             $template .= Html::tag('div', implode('', $firms), ['class' => 'firms']);
             $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
-            $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime), ['class' => 'wrap1']);
+            $reject = Html::encode($model->desclient0['reject']);
+            $reject = $model->status == $widget->viewParams['statuses']['reject'] ? Html::tag('p', 'Причина отказа: '.$reject) : '';
+            $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime).$reject, ['class' => 'wrap1']);
             $delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address));
             $discomment = Html::tag('span', Html::encode('Скидка: '.$model->discomment.' '.(($model->discount)?$model->discount.'%':'')), ['class' => (!$model->disconfirm)?'agreed_none':'']);
             $disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';

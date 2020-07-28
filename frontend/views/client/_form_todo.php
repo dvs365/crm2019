@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 <?php $form = ActiveForm::begin(['id' => 'formtodoclient', 'action' => ['todo/create', 'client' => $client->id], 'method' => 'post', 'enableAjaxValidation' => false, 'validateOnBlur' => false]); ?>
     <?=$form->field($todo, 'name', ['template' => "{input}"])->textInput(['placeholder' => 'Наименование дела', 'class' => 'wrap3', 'maxlength' => true]) ?>
     <?=$form->field($todo, 'description', ['template' => "{input}"])->textArea(['placeholder' => 'Комментарий к делу', 'id' => 'task-comment', 'class' => 'wrap3', 'maxlength' => true]) ?>
-    <?=$form->field($todo, 'date', ['template' => "{input}"])->textInput(['class' => 'task_date__s color_blue', 'readonly' => '', 'onClick' => 'xCal(this);', 'onKeyUp' => 'xCal();','maxlength' => true]) ?>
+    <?=$form->field($todo, 'date', ['template' => "{input}"])->textInput(['class' => 'task_date color_blue', 'readonly' => true, 'onClick' => 'xCal(this);', 'onKeyUp' => 'xCal();','maxlength' => true]) ?>
     <div class="task_desc color_blue">Описание дела<div class="dropdown"></div></div>
     <div class="task_time">
         <?=$form->field($todo, 'time', ['template' => "в {input}"])->dropDownList([

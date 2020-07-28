@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 use frontend\assets\ClientAsset;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Client */
@@ -33,7 +34,11 @@ ClientAsset::register($this);
         <?= Html::a('Изменить', ['update', 'id' => $client->id]) ?>
         <?= ($client->status !== 10)?Html::a('В потенциальные', ['totarget', 'id' => $client->id]):''?>
         <?= ($client->status !== 20)?Html::a('В рабочие', ['toload', 'id' => $client->id]):''?>
-        <?= ($client->status !== 30)?Html::a('В отказные', ['toreject', 'id' => $client->id]):''?>
+        <?= ($client->status !== 30)?Html::a('В отказные', ['toreject', 'id' => $client->id], ['id' => 'toreject']):''?>
+        <?php $form = ActiveForm::begin(['id' => 'formrejectlient', 'action' => ['client/toreject', 'id' => $client->id], 'method' => 'post', 'enableAjaxValidation' => false, 'validateOnBlur' => false]); ?>
+        <?=$form->field($desclient, 'reject', ['template' => "{input}"])->textArea(['placeholder' => 'Комментарий к делу', 'class' => 'wrap3', 'maxlength' => true]) ?>
+        <?=Html::submitInput('Перевести', ['class' => 'addtodo btn right'])?>
+        <?php ActiveForm::end(); ?>
     </div>
 
     <div class="wrap1">

@@ -87,6 +87,19 @@ class User extends ActiveRecord implements IdentityInterface
         return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
     }
 
+	/**
+	 * Finds all users by assignment role
+	 *
+	 * @param  \yii\rbac\Role $role
+	 * @return static|null
+	 */
+	public static function findByRole($role)
+	{
+		return static::find()
+			->join('LEFT JOIN','auth_assignment','auth_assignment.user_id = id')
+			->where(['auth_assignment.item_name' => $role->name])
+			->all();
+	}
     /**
      * Finds user by password reset token
      *

@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Desclient;
 use Yii;
 use common\models\User;
 use common\models\Client;
@@ -89,6 +90,7 @@ class ClientController extends Controller
             'dataProvider' => $dataProvider,
             'users' => User::find()->indexBy('id')->all(),
             'role' => (int)$role,
+            'statuses' => ['target' => Client::TARGET, 'load' => Client::LOAD,'reject' => Client::REJECT],
         ]);
     }
 
@@ -113,6 +115,7 @@ class ClientController extends Controller
             'clientMails' => $client->mailclients,
             'clientFaces' => $client->faces,
             'clientOrgs' => $client->organizations,
+            'desclient' => $client->desclient0 ? $client->desclient0 : new Desclient(),
             'show_uid' => $client->show_uid ? User::findOne($client->show_uid) : new User(),
             'show_aid' => $client->show_aid ? User::findOne($client->show_aid) : new User(),
         ]);
@@ -562,7 +565,14 @@ class ClientController extends Controller
     public function actionToreject($id)
     {
         $client = $this->findModel($id);
+        $desclient = Desclient::findOne(['client' => $client->id]);
+        if(!$desclient){
+            $desclient = new Desclient();
+            $desclient->client = $client->id;
+        }
         $client->status = Client::REJECT;
+        $desclient->load(Yii::$app->request->post());
+        $desclient->save();
         $client->save();
         return $this->redirect(['view', 'id' => $id]);
     }
