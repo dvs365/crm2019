@@ -14,7 +14,7 @@ use yii\helpers\ArrayHelper;
 			</td>
 			<td class="client_name">
 			<?$client = ArrayHelper::map($clients, 'id', 'name')?>
-			<?=$form->field($model, 'client', ['template' => "{input}"])->dropDownList($client, ['class' => 'searchselect'])?>
+			<?=$form->field($model, 'client', ['template' => "{input}"])->dropDownList($client, ['class' => 'searchselect', 'prompt' => ['text' => '', 'options' => ['value' => '0']]])?>
 			</td>
 		</tr>
 	</table>
