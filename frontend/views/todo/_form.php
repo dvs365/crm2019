@@ -20,7 +20,6 @@ use yii\helpers\ArrayHelper;
 			</td>
 			<td class="client_name">
 				<?$client = ArrayHelper::map($clients, 'id', 'name')?>
-				<?//echo '<pre>'; print_r($client);  echo '</pre>'; die();?>
 				<?=$form->field($model, 'client', ['template' => "{input}"])->dropDownList($client, ['class' => 'searchselect'])?>
 			</td>
 		</tr>

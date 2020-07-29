@@ -62,14 +62,14 @@ class TodoController extends Controller
 		$clients = $clientsQuery->andWhere(['status' => ['10','20']])->all();
 		if (Yii::$app->request->isAjax) {
 			return $this->renderAjax('list_cur_todo', [
-				"curTodos" => (empty($status) || $status == Todo::OPEN) ? Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['>','dateto', date('Y-m-d', $datetime)])->andwhere(['<','date', date('Y-m-d 23:59:59',$datetime)])->all():'',
+				"curTodos" => (empty($status) || $status == Todo::OPEN) ? Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['>','dateto', date('Y-m-d 00:00:00', $datetime)])->andwhere(['<','date', date('Y-m-d 23:59:59',$datetime)])->all():'',
 				"error" => null
 			]);					
 		}
         return $this->render('index', [
 			'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-			'todoCur' => (empty($status) || $status == Todo::OPEN)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['>','dateto', date('Y-m-d H:i:s')])->andwhere(['<','date', date('Y-m-d H:i:s')])->all():'',
+			'todoCur' => (empty($status) || $status == Todo::OPEN)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['>','dateto', date('Y-m-d 00:00:00')])->andwhere(['<','date', date('Y-m-d 23:59:59')])->all():'',
 			'todoLate' => (empty($status) || $status == Todo::LATE)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['<','dateto', date('Y-m-d H:i:s')])->all():'',
 			'user' => User::findByRole(Yii::$app->authManager->getRole('user')),
 			'status' => $status,
@@ -125,8 +125,7 @@ class TodoController extends Controller
             $models[$i] = Todo::find()->where(
                 ['user' => $userID, 'status' => Todo::OPEN]
             )->andWhere(['or',
-				['like', 'date', $dayOfWeek->format('Y-m-d').'%', false],
-				['and',['<', 'date', $dayOfWeek->format('Y-m-d 00:00:00')],['>', 'dateto', $dayOfWeek->format('Y-m-d 00:00:00')]]
+				['and',['<', 'date', $dayOfWeek->format('Y-m-d 23:59:59')],['>', 'dateto', $dayOfWeek->format('Y-m-d 00:00:00')]]
 			]
 			)->orderBy(['dateto' => SORT_ASC])->all();
             $day[$i] = \DateTime::createFromFormat('d.m.Y', $dayOfWeek->format('d.m.Y'));
@@ -177,7 +176,7 @@ class TodoController extends Controller
 			$model->save();
 			if (Yii::$app->request->isAjax) {
 				return $this->renderAjax('/client/_form_list_todo', [
-					"todos" => $model->find()->where(['client' => $client])->all(),
+					"todos" => $model->find()->where(['client' => $model->client])->all(),
 					"error" => null
 				]);					
 			} else {

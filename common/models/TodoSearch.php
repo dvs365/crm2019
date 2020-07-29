@@ -53,7 +53,7 @@ class TodoSearch extends Todo
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
 			'pagination' => [
-				'pageSize' => 1,
+				'pageSize' => 5,
 				'validatePage' => false,
 			],			
         ]);
