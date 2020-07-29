@@ -207,6 +207,8 @@ class TodoController extends Controller
 		$model = $this->findModel($id);
 		$model->scenario = Todo::SCENARIO_TOCLOSE;
 		$model->status = Todo::CLOSE;
+		$model->closed = date('Y-m-d H:i:s');
+		$model->closed_id = Yii::$app->user->identity->id;
 		$model->save();
 		if (!Yii::$app->request->isAjax) {
 			return $this->redirect(['index', 'status' => Todo::CLOSE]);

@@ -31,7 +31,7 @@ TodoAsset::register($this);
 		</div>
 		<div class=" task_item wrap1">
 			<p>Поставил: Кириллов Н.Н.</p>
-			<p>Исполнил: Кириллов Н.Н.</p>
+			<p>Исполнил: <?=($todo->status == $todo::CLOSE)?$todo->closeID->surnameNP:''?></p>
 		</div>
 
 		<div id="form-work">

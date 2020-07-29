@@ -43,8 +43,8 @@ use frontend\widgets\ListViewPager;
 		$t_client = $model->client ? Html::tag('span', Html::encode($model->client0['name']), ['class' => 'task_item_client']) : '';
 		$t_p1 = Html::tag('p', Html::a(Html::encode($model->name), ['view', 'id' => $model->id]).$t_client);
 		$t_desc = $model->description ? Html::tag('p', Html::encode($model->description)) : '';
-		$t_fromTo = Html::tag('p', Html::encode(date('d.m.y в H:i',strtotime($model->date)).' До '.date('d.m.y',strtotime($model->date))));
-		$t_close = '<p>Закрыто: 24.08.19 в 15:04</p>';
+		$t_fromTo = Html::tag('p', date('d.m.y в H:i',strtotime($model->date)).' До '.date('d.m.y',strtotime($model->date)));
+		$t_close = Html::tag('p', 'Закрыто: '.date('d.m.y в H:i',strtotime($model->closed)));
 		$template = Html::tag('div', $t_p1.$t_desc.$t_fromTo.$t_close, ['class' => 'task_item wrap1']);
 		return $template;
 	},

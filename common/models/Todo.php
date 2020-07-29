@@ -41,10 +41,10 @@ class Todo extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'date'], 'required'],
-            [['client', 'status', 'user'], 'integer'],
+            [['client', 'status', 'user', 'closed_id'], 'integer'],
             [['date', 'dateto'], 'date', 'format' => 'php:d.m.Y', 'except' => self::SCENARIO_TOCLOSE],
             [['time'], 'safe'],
-            [['name', 'description', 'nameclient'], 'string', 'max' => 255],
+            [['name', 'description'], 'string', 'max' => 255],
        //     [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }
@@ -74,7 +74,6 @@ class Todo extends \yii\db\ActiveRecord
             'client' => 'Client',
             'name' => 'Name',
             'description' => 'Description',
-            'nameclient' => 'Nameclient',
             'date' => 'Date',
             'dateto' => 'Dateto',
         ];
@@ -88,6 +87,11 @@ class Todo extends \yii\db\ActiveRecord
         return $this->hasOne(Client::className(), ['id' => 'client']);
     }
 
+    public function getCloseID()
+    {
+        return $this->hasOne(User::className(), ['id' => 'closed_id']);
+    }	
+	
     public function beforeSave($insert)
     {
 		if (strtotime($this->dateto) < strtotime($this->date)) {
