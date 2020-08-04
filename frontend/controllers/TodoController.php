@@ -11,6 +11,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * TodoController implements the CRUD actions for Todo model.
@@ -21,6 +22,33 @@ class TodoController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'view', 'update'],
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['view'],
+                        'allow' => true,
+                        'roles' => ['viewTodoUser'],
+                        'roleParams' => function() {
+                            return ['todo' => Todo::findOne(['id' => Yii::$app->request->get('id')])];
+                        }
+                    ],
+                    [
+                        'actions' => ['update'],
+                        'allow' => true,
+                        'roles' => ['upTodoAll'],
+                        'roleParams' => function() {
+                            return ['todo' => Todo::findOne(['id' => Yii::$app->request->get('id')])];
+                        }
+                    ],					
+                ],
+            ],		
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -81,8 +109,8 @@ class TodoController extends Controller
     public function actionView($id)
     {
 		$userID = Yii::$app->user->identity->id;
-		
 		$roles = Yii::$app->authManager->getRolesByUser($userID);
+		
 		$clientsQuery = Client::find();
 		if (!isset($roles['admin'])) {
 			$clientsQuery->andWhere(['user' => $userID]);

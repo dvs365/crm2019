@@ -29,7 +29,7 @@ class ClientController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['update', 'view', 'index', 'disconfirm', 'note', 'transfer'],
+                'only' => ['update', 'view', 'index', 'disconfirm', 'note', 'transfer', 'create'],
                 'rules' => [
                     [
                         'actions' => ['index'],
@@ -44,12 +44,12 @@ class ClientController extends Controller
                     [
                         'actions' => ['note'],
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'roles' => ['addNoteClient'],
                     ],
                     [
                         'actions' => ['transfer'],
                         'allow' => true,
-                        'roles' => ['admin','user'],
+                        'roles' => ['admin'],
                     ],
                     [
                         'actions' => ['view'],
@@ -67,6 +67,11 @@ class ClientController extends Controller
                             return ['client' => Client::findOne(['id' => Yii::$app->request->get('id')])];
                         }
                     ],
+                    [
+                        'actions' => ['create'],
+                        'allow' => true,
+                        'roles' => ['addUpNewClient'],
+                    ],					
                 ],
             ],
             'verbs' => [
@@ -529,13 +534,32 @@ class ClientController extends Controller
 
     public function actionTransfer()
     {
+		$model = new Client();
+		$desclient = new Desclient();
+		if ($model->load(Yii::$app->request->post()) && $desclient->load(Yii::$app->request->post())) {
+			$transaction = \Yii::$app->db->beginTransaction();
+            try {
+				if ($model->user && $model->clientIDs) {
+					Client::updateAll(['user' => $model->user], ['in', 'id', $model->clientIDs]);
+					Desclient::updateAll(['transfer' => $desclient->transfer], ['in', 'client', $model->clientIDs]);
+					Todo::updateAll(['user' => $model->user], ['in', 'client', $model->clientIDs]);
+				}
+				$transaction->commit();	
+				$flag = true;
+			} catch (Exception $e) {
+				$transaction->rollBack();
+			}
+		}
+		
         $searchModel = new ClientSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render('_form_transfer', [
             'users' => User::find()->indexBy('id')->all(),
+			'model' => $model,
+			'desclient' => $desclient,
             'transferModel' => $searchModel,
             'dataProvider' => $dataProvider,
+			'flag' => isset($flag) ? $flag : false, 
         ]);
     }
 

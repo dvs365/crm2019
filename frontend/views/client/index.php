@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ListView;
+use frontend\widgets\ListViewPager;
 use yii\helpers\ArrayHelper;
 use frontend\assets\ClientAsset;
 
@@ -14,6 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ClientAsset::register($this);
 
+$request = Yii::$app->request;
 ?>
 
 <main>
@@ -26,27 +27,43 @@ ClientAsset::register($this);
         'model' => $searchModel,
         'users' => $users,
         'role' => $role,
+		'sort' => $request->get('sort'),
     ])?>
 
     <div ID="sort" class="right">
-        <form action="/" method="GET" onsubmit="send(this)">
-            <input type="checkbox" name="sort" value="1">
+			<?$sort = (!$request->get('sort') || $request->get('sort') == 'show')?'-show':'show';?>
             Сначала открытые давно
-            <button class="checkbox"></button>
-        </form>
+			<?= Html::a('', ['client/index', 
+				'ClientSearch[disconfirm]' => $searchModel->disconfirm,
+				'ClientSearch[task]' => $searchModel->task,
+				'ClientSearch[user]' => $searchModel->user,
+				'ClientSearch[search]' => $searchModel->search,
+				'ClientSearch[permonth]' => $searchModel->permonth,
+				'role' => $request->get('role'),
+				'sort' => $sort], ['class' => 'checkbox', 'sort' => $sort])?>
     </div>
-    <div class="paginator"><a class="none410" href="/">Назад</a><a href="/">1</a><a href="/">...</a><a href="/">9</a><a href="/">10</a><span class="active-page">11</span><a href="/">12</a><a href="/">13</a><a href="/">...</a><a href="/">55</a><a class="none410" href="/">Вперед</a></div>
-    <div class="clear"></div>
 
-    <?= ListView::widget([
+    <?= ListViewPager::widget([
         'dataProvider' => $dataProvider,
         'summary' => '',
         'pager' => [
-            'firstPageLabel' => 'Назад',
-            'lastPageLabel' => 'Вперед',
-            'prevPageLabel' => '<',
-            'nextPageLabel' => '>',
+            'firstPageLabel' => true,
+            'lastPageLabel' => true,
+            'prevPageLabel' => 'Назад',
+            'nextPageLabel' => 'Вперед',
             'maxButtonCount' => 3,
+			// Customzing options for pager container tag
+			'options' => [
+				'tag' => 'div',
+				'class' => 'paginator',
+			],
+			// Customzing CSS class for pager link
+			//'linkOptions' => ['class' => 'mylink'],
+			'activePageCssClass' => 'active-page',
+			'disabledPageCssClass' => 'mydisable',
+			// Customzing CSS class for navigating link
+			'prevPageCssClass' => 'none410',
+			'nextPageCssClass' => 'none410',		
         ],
         'viewParams' => ['statuses' => $statuses],
         'itemOptions' => ['class' => 'wrap4'],
@@ -83,10 +100,10 @@ ClientAsset::register($this);
             endforeach;
             $template .= Html::tag('div', implode(' ', $webs), ['class' => 'contact_site wrap3']);
             return $template;
-        }
+        },
+		'layout' => "{pager}\n".'<div class="clear"></div>'."{summary}\n{items}"."{pager}",
     ])?>
 
-    <div class="paginator left"><a class="none410" href="/">Назад</a><a href="/">1</a><a href="/">...</a><a href="/">9</a><a href="/">10</a><span class="active-page">11</span><a href="/">12</a><a href="/">13</a><a href="/">...</a><a href="/">55</a><a class="none410" href="/">Вперед</a></div>
     <div ID="up" class="right"><a href="#header">Наверх<div class="arrow_up"></div></a></div>
     <div class="clear"></div>
 </main>

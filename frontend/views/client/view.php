@@ -9,7 +9,7 @@ use yii\widgets\ActiveForm;
 
 $this->title = $client->name;
 $this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title . '123';
+$this->params['breadcrumbs'][] = $this->title ;
 \yii\web\YiiAsset::register($this);
 ClientAsset::register($this);
 ?>

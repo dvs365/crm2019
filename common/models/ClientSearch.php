@@ -62,6 +62,10 @@ class ClientSearch extends Client
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+			'pagination' => [
+				'pageSize' => $params['r'] == 'client/index' ? 5 : 0,
+				'validatePage' => false,
+			],			
         ]);
 
         $this->load($params);
@@ -170,6 +174,7 @@ class ClientSearch extends Client
         }
 
         $query->orderBy(['show' => SORT_DESC]);
+		
         return $dataProvider;
     }
 }

@@ -32,6 +32,8 @@ class Client extends \yii\db\ActiveRecord
     const TARGET = 10;
     const LOAD = 20;
     const REJECT = 30;
+	
+	public $clientIDs = '';
 
     /**
      * {@inheritdoc}
@@ -65,6 +67,7 @@ class Client extends \yii\db\ActiveRecord
 
             ['status', 'default', 'value' => self::TARGET],
             ['status', 'in', 'range' => [self::TARGET, self::LOAD, self::REJECT]],
+			['clientIDs', 'each', 'rule' => ['integer']],
 
             [['user'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user' => 'id']],
         ];
@@ -103,6 +106,7 @@ class Client extends \yii\db\ActiveRecord
             'update' => 'Update',
             'update_u' => 'Update U',
             'update_a' => 'Update A',
+			'clientIDs' => '',
         ];
     }
 

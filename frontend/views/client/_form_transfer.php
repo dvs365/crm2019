@@ -9,6 +9,7 @@ $this->title = 'Clients:' . \common\models\User::findOne(Yii::$app->user->identi
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ClientAsset::register($this);
+echo ($flag)? $this->render('_popup') : '';
 ?>
 
 <main>
@@ -22,7 +23,7 @@ ClientAsset::register($this);
         'users' => $users,
     ])?>
 
-    <?php $form = ActiveForm::begin(['action' => ['client/transfer'], 'method' => 'post', 'options' => ['class' => 'wrap1', 'onsubmit' => 'send(this)']]); ?>
+    <?php $form = ActiveForm::begin(['action' => ['client/transfer'], 'method' => 'post', 'options' => ['class' => 'wrap1']]); ?>
         <table class="clients_table wrap1">
             <tr>
                 <td class="w50">
@@ -35,24 +36,15 @@ ClientAsset::register($this);
             </tr>
         </table>
         <div class="clear"></div>
-
         <table ID="elements" class="clients_table">
-            <?= ListView::widget([
-                'dataProvider' => $dataProvider,
-                'summary' => '',
-                'pager' => [
-                    'firstPageLabel' => 'Назад',
-                    'lastPageLabel' => 'Вперед',
-                    'prevPageLabel' => '<',
-                    'nextPageLabel' => '>',
-                    'maxButtonCount' => 3,
-                ],
-                'itemOptions' => ['class' => 'wrap4'],
-                'itemView' => function ($model, $key, $index, $widget) {
-                    $template = '<tr>';
-                    $template .= '<td class="w50 lh30"><label>';
-                    $template .= '<input type="checkbox" name="client3" value="1">';
-                    $template .= '<span class="checkbox"></span></label></td>';
+			<? $models = $dataProvider->getModels();
+				$template = '';
+				foreach ($models as $model) {
+                    $template .= '<tr>';
+                    $template .= '<td class="w50 lh30">';
+					$template .= '<label><input type="checkbox" name="Client[clientIDs][]" value="'.$model->id.'"><span class="checkbox"></span></label>';
+					//$template .= $form->field($model, 'clientIDs[]', ['template' => "{input}{label}"])->checkbox(['value' => $model->id])->label('<span class="checkbox"></span>');
+                    $template .= '</td>';
                     $template .= '<td><div class="wrap4">';
                     $template .= Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']),['class' => 'about']);
                     $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
@@ -71,10 +63,10 @@ ClientAsset::register($this);
                     $websites = Html::tag('p', implode(' ', $webs));
                     $disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
                     $template .= Html::tag('div', Html::tag('div', ($model->discount || $model->discomment)? $discomment.' '.$disconfirm : '', ['class' => 'wrap3']).$delivery.$websites, ['class' => 'wrap1']);
-                    $template .= '</div></td>';
-                    return $template;
-                }
-            ])?>
+                    $template .= '</div></td>';					
+				}
+				echo $template;
+			?>
 
         </table>
 
@@ -87,13 +79,8 @@ ClientAsset::register($this);
 
                         <div class="select w200">
                             <div class="dropdown"></div>
-                            <select name="manager" class="w200">
-                                <option value="1">Кириллов Н.Н.</option>
-                                <option value="2">Петрова О.И.</option>
-                                <option value="3">Перепелов О.О.</option>
-                                <option value="4">Иванов Н.Н.</option>
-                                <option value="5">Сидоров О.О.</option>
-                            </select>
+							<?$managers = ArrayHelper::map($users, 'id', 'surnameNP')?>
+							<?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => 'w200'])?>
                         </div>
                     </label>
                 </td>
@@ -101,7 +88,7 @@ ClientAsset::register($this);
             <tr>
                 <td class="lh30">Причина передачи</td>
                 <td colspan="2">
-                    <textarea name="cause"></textarea>
+                    <?=$form->field($desclient, 'transfer', ['template' => "{input}"])->textArea(['maxlength' => true]) ?>
                 </td>
             </tr>
             <tr>

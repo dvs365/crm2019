@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<?php $form = ActiveForm::begin(['action' => ['index', 'role' => $role], 'method' => 'get', 'options' => ['class' => 'filters wrap1', 'id' => 'searchclient']]); ?>
+<?php $form = ActiveForm::begin(['action' => ['index', 'sort' => $sort, 'role' => $role], 'method' => 'get', 'options' => ['class' => 'filters wrap1', 'id' => 'searchclient']]); ?>
     <div class="wrap1">
         <?if (\Yii::$app->user->can('admin')):?>
         <div class="wrap_half" id="lefthalf">
