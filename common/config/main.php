@@ -19,7 +19,8 @@ return [
 			'class' => 'yii\web\DbSession',
 			'writeCallback' => function($session){
 				return [
-					'user_id' => Yii::$app->user->id
+					'user_id' => Yii::$app->user->getIsGuest() ? null : Yii::$app->user->id,
+					'expire' => time(),
 				];
 			}
 			// 'db' => 'mydb',  // the application component ID of the DB connection. Defaults to 'db'.

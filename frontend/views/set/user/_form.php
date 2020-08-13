@@ -103,7 +103,7 @@ use yii\bootstrap\ActiveForm;
 						foreach($PermSort as $name => $permission):
 							$disabled = ($permission->name == 'addUpUser' || $permission->name == 'addUpAdmin')?:false;
 							if(!$permission->ruleName){
-								echo $form->field($model, 'rule['.$name.']', [
+								echo $form->field($model, 'rule['.$permission->name.']', [
 									'template' => $template
 									])->checkbox([
 										'value' => '1',
