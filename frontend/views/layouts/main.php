@@ -6,6 +6,7 @@
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
 use yii\widgets\Menu;
+use app\components\Menu\MenuActive;
 
 AppAsset::register($this);
 ?>
@@ -47,12 +48,16 @@ AppAsset::register($this);
                 ?>
                 <div class="btn_menu dropdown"></div>
                 <div class="right">
-                    <?= Html::a('Настройки', ['user/setting']) ?>
-                    <?= Html::a('Выйти', ['site/logout'], [
-                            'data' => [
-                                'method' => 'post',
-                            ],
-                        ]); ?>
+					<?= MenuActive::widget([
+						'encodeLabels' => false,
+						'items' => [
+							['label' => 'Настройки', 'url' => ['set/profile'], 'active' => $checkController('set')],
+							['label' => 'Выход', 'url' => ['site/logout']],
+						],
+						'options' => ['tag' => false],
+						'itemOptions' => ['tag' => false],
+						'activeCssClass' => 'active',
+					])?>
                 </div>
             </nav>
         </header>

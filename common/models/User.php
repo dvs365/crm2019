@@ -225,4 +225,18 @@ class User extends ActiveRecord implements IdentityInterface
     public function getSurnameNP() {
         return $this->surname . ' ' . mb_substr($this->name, 0, 1) . '.' . mb_substr($this->patronymic, 0, 1) . '.';
     }
+
+    function getStatusLabels()
+    {
+        return [
+           self::STATUS_DELETED => 'Архивный',
+           self::STATUS_INACTIVE => 'Не подтвержденный',
+           self::STATUS_ACTIVE => 'Активный'
+        ];
+    }
+	
+	public function getStatusLabel() {
+		$statuses = $this->getStatusLabels();
+        return isset($statuses[$this->status]) ? $statuses[$this->status] : '';
+	}
 }

@@ -28,14 +28,14 @@ class ClientController extends Controller
     {
         return [
             'access' => [
+				'only' => ['index', 'disconfirm', 'note', 'transfer', 'view', 'update', 'create'],
                 'class' => AccessControl::className(),
-                'only' => ['update', 'view', 'index', 'disconfirm', 'note', 'transfer', 'create'],
                 'rules' => [
                     [
                         'actions' => ['index'],
                         'allow' => true,
                         'roles' => ['@'],
-                    ],
+                    ],				
                     [
                         'actions' => ['disconfirm'],
                         'allow' => true,
@@ -559,15 +559,8 @@ class ClientController extends Controller
 			'desclient' => $desclient,
             'transferModel' => $searchModel,
             'dataProvider' => $dataProvider,
-			'flag' => isset($flag) ? $flag : false, 
+			'flag' => isset($flag) ? $flag : false,			
         ]);
-    }
-
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     public function actionTotarget($id)

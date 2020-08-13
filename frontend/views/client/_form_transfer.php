@@ -9,7 +9,7 @@ $this->title = 'Clients:' . \common\models\User::findOne(Yii::$app->user->identi
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ClientAsset::register($this);
-echo ($flag)? $this->render('_popup') : '';
+echo ($flag)? $this->render('_popup', []) : '';
 ?>
 
 <main>
@@ -46,7 +46,9 @@ echo ($flag)? $this->render('_popup') : '';
 					//$template .= $form->field($model, 'clientIDs[]', ['template' => "{input}{label}"])->checkbox(['value' => $model->id])->label('<span class="checkbox"></span>');
                     $template .= '</td>';
                     $template .= '<td><div class="wrap4">';
-                    $template .= Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']),['class' => 'about']);
+					$user = Html::tag('span', $model->user0->surnameNP, ['class' => 'manager color_grey']);
+					$status = Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']);
+                    $template .= Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).$user.$status, ['class' => 'about']);
                     $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
                         return Html::tag('div', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
                     });

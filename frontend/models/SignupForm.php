@@ -18,15 +18,7 @@ class SignupForm extends Model
     public $email;
     public $password;
     public $access;
-    public $addUpUser;
-    public $addUpAdmin;
-    public $viewTodoUser;
-    public $viewClientAll;
-    public $upClientAll;
-    public $confirmDiscount;
-    public $addNoteClient;
-    public $addTodoUser;
-    public $addUpNewClient;
+	public $rule; 
 
     /**
      * {@inheritdoc}
@@ -63,8 +55,9 @@ class SignupForm extends Model
             ['access', 'integer'],
             ['access', 'in', 'range' => [1, 2]],
             ['access', 'default', 'value' => 1],
-
-            [['addUpUser', 'addUpAdmin', 'viewTodoUser', 'viewClientAll', 'upClientAll', 'confirmDiscount', 'addNoteClient', 'addTodoUser', 'addUpNewClient'], 'integer'],
+			
+            ['rule', 'safe'],
+            [['rule'], 'each', 'rule' => ['integer']],			
         ];
     }
 
@@ -93,23 +86,16 @@ class SignupForm extends Model
         $user->generateEmailVerificationToken();
         if($user->save() && $this->sendEmail($user)){
             $auth->assign((($this->access == '2')? $auth->getRole('admin') : $auth->getRole('user')), $user->id);
-
-            $this->addUpUser? $auth->assign($auth->getPermission('addUpUser'), $user->id) : '';
-            $this->addUpAdmin? $auth->assign($auth->getPermission('addUpAdmin'), $user->id) : '';
-            $this->viewTodoUser? $auth->assign($auth->getPermission('viewTodoUser'), $user->id) : '';
-            $this->viewClientAll? $auth->assign($auth->getPermission('viewClientAll'), $user->id) : '';
-            $this->upClientAll? $auth->assign($auth->getPermission('upClientAll'), $user->id) : '';
-            $this->confirmDiscount? $auth->assign($auth->getPermission('confirmDiscount'), $user->id) : '';
-            $this->addNoteClient? $auth->assign($auth->getPermission('addNoteClient'), $user->id) : '';
-            $this->addTodoUser? $auth->assign($auth->getPermission('addTodoUser'), $user->id) : '';
-            $this->addUpNewClient? $auth->assign($auth->getPermission('addUpNewClient'), $user->id) : '';
-
+			$permissions = Yii::$app->authManager->getPermissions();
+			foreach($permissions as $name => $permission) {
+				!empty($this->rule[$name]) ? $auth->assign($auth->getPermission($name), $user->id) : '';
+			}
             return true;
         }
         return false;
 
     }
-
+	
     /**
      * Sends confirmation email to user
      * @param User $user user model to with email should be send
@@ -127,19 +113,5 @@ class SignupForm extends Model
             ->setTo($this->email)
             ->setSubject(' Пользователь зарегистрирован в &laquo' . Yii::$app->name . "&raquo")
             ->send();
-    }
-
-    public function attributeLabels(){
-        return [
-            'addUpUser' => 'Добавление/редактирование менеджеров',
-            'addUpAdmin' => 'Добавление/редактирование расширенных пользователей',
-            'viewTodoUser' => 'Просмотр дел менеджеров',
-            'viewClientAll' => 'Просмотр всех клиентов',
-            'upClientAll' => 'Редактирование всех клиентов',
-            'confirmDiscount' => 'Согласование скидки',
-            'addNoteClient' => 'Добавление заметок о клиенте',
-            'addTodoUser' => 'Назначение дел менеджерам',
-            'addUpNewClient' => 'Добавление/редактирование новых клиентов',
-        ];
     }
 }

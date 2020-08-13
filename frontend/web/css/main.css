@@ -422,6 +422,9 @@ input[type=file] {display:none;}
     nav .right{display:none; position:absolute; top:100%; margin-right:0; right:0; background-color:#dedede; z-index:4;}
     nav .right a {float:none;}
     nav .right span {background-color:transparent; border-radius:none;}
+	/**for_yii2***/
+	nav .right a.active{background-color:transparent; border-radius:none;}
+	/*****/
     nav .right a:nth-last-child(1) {padding-right:0;}
     .task_item_client {display:block; margin-left:0;}
 
@@ -541,4 +544,6 @@ td.client_name {width:calc(100% - 3px) !important;}
 span.select2 {width:calc(100% - 3px) !important;}
 select#todo-client option{padding:0; margin:0;  !important; color:red;}
 div.field-todo-client{display:contents;}
+
+nav .right a.active{background-color:#ffffff; border-radius:10px 10px 0 0;}
 /*******************/
