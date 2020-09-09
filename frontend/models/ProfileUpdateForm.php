@@ -7,13 +7,17 @@ use Yii;
  
 class ProfileUpdateForm extends Model
 {
+	public $id;
 	public $surname;
 	public $name;
 	public $patronymic;
 	public $position;
 	public $phone;
 	public $email;
+	public $access;
     public $rule;
+	public $status;
+	public $users;
  
     /**
      * @var User
@@ -23,13 +27,17 @@ class ProfileUpdateForm extends Model
     public function __construct(\common\models\User $user, $config = [])
     {
         $this->_user = $user;
+		$roles = \Yii::$app->authManager->getRolesByUser($user->id);
 
+		$this->id = $user->id;
 		$this->surname = $user->surname;
 		$this->name = $user->name;
 		$this->patronymic = $user->patronymic;
 		$this->position = $user->position;
         $this->phone = $user->phone;
         $this->email = $user->email;
+		$this->status = $user->status;
+		$this->access = !empty($roles['admin'])  ? '2' : '1';
 		$permissions = Yii::$app->authManager->getPermissions();
 		foreach ($permissions as $name => $permission) {
 			$this->rule[$name] = \Yii::$app->authManager->checkAccess($user->id, $name)? '1':'0';
@@ -69,9 +77,21 @@ class ProfileUpdateForm extends Model
                 'filter' => ['<>', 'id', $this->_user->id],
             ],
             ['email', 'string', 'max' => 255],
+
+            ['access', 'required'],
+            ['access', 'integer'],
+            ['access', 'in', 'range' => [1, 2]],
+            ['access', 'default', 'value' => 1],
 			
             ['rule', 'safe'],
-            [['rule'], 'each', 'rule' => ['integer']],			
+            [['rule'], 'each', 'rule' => ['integer']],
+
+			['status', 'required'],
+			['status', 'integer'],
+			['status', 'in', 'range' => [0, 9, 10]],
+			['status', 'default', 'value' => 9],
+			
+			['users', 'each', 'rule' => ['integer']],
         ];
     }
  
@@ -87,18 +107,29 @@ class ProfileUpdateForm extends Model
 			$user->position = $this->position;
 			$user->phone = $this->phone;			
 			$user->email = $this->email;
+			$user->status = $this->status;
 
 			$permissions = Yii::$app->authManager->getPermissions();
 			foreach($permissions as $name => $permission) {
 				if (!$permission->ruleName) {
 					if(!empty($this->rule[$name]) && !\Yii::$app->authManager->checkAccess($user->id, $name)) {
 						$auth->assign($auth->getPermission($name), $user->id);
-					}elseif(empty($this->rule[$name])){
+					}elseif(isset($this->rule[$name]) && empty($this->rule[$name])){
 						$auth->revoke($auth->getPermission($name), $user->id);
 					}
 				}
 			}
-
+			if (!empty($this->access)){
+				$auth->revoke($auth->getRole('admin'), $user->id);
+				$auth->revoke($auth->getRole('user'), $user->id);
+				$auth->assign((($this->access == '2')? $auth->getRole('admin') : $auth->getRole('user')), $user->id);
+			}
+			
+			if (!$user->status) {
+				// Удаление всех сессий
+				Yii::$app->db->createCommand()->delete('session', ['user_id' => $user->id])->execute();
+			}
+			
             return $user->save();
         } else {
             return false;

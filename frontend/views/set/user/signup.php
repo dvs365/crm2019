@@ -7,6 +7,8 @@
 use yii\helpers\Html;
 
 $this->title = 'Добавление пользователя';
+$model->access = 1;
+$model->status = 10;
 ?>
 <main>
     <div class="wrap1 control">

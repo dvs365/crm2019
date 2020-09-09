@@ -31,7 +31,7 @@ $request = Yii::$app->request;
     ])?>
 
     <div ID="sort" class="right">
-			<?$sort = (!$request->get('sort') || $request->get('sort') == 'show')?'-show':'show';?>
+			<?$sort = (!$request->get('sort') || $request->get('sort') == '-show')?'show':'-show';?>
             Сначала открытые давно
 			<?= Html::a('', ['client/index', 
 				'ClientSearch[disconfirm]' => $searchModel->disconfirm,
@@ -96,7 +96,7 @@ $request = Yii::$app->request;
             $template .= implode('', $contacts);
             $webArr = explode(',', $model->website);
             foreach ($webArr as $web):
-                $webs[] = Html::a(Html::encode(trim($web)), '//'.Html::encode(trim($web)));
+                $webs[] = Html::a(Html::encode(trim($web)), Html::encode(trim($web)));
             endforeach;
             $template .= Html::tag('div', implode(' ', $webs), ['class' => 'contact_site wrap3']);
             return $template;

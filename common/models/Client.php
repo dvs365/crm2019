@@ -161,6 +161,15 @@ class Client extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getTodosOpen()
+    {
+        return $this->hasMany(Todo::className(), ['client' => 'id'])->andWhere(['status' => Todo::OPEN]);
+    }	
+	
+	
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getComments()
     {
         return $this->hasMany(Comment::className(), ['client' => 'id'])->limit(10)->orderBy(['id' => SORT_DESC]);

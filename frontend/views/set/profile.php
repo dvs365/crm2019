@@ -5,9 +5,7 @@ use yii\widgets\ActiveForm;
 
 $this->title = 'Настройки:' . \common\models\User::findOne(Yii::$app->user->identity->id)->surnameNP;
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 ?>
-<?//echo '<pre>'; print_r($model); echo '</pre>'?>
 <main>
 	<?if (\Yii::$app->user->can('admin')):?>
 	<div class="wrap1 control">

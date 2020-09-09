@@ -7,7 +7,7 @@ use app\components\Menu\MenuActive;
     'items' => [
         ['label' => 'Свои', 'url' => ['set/profile']],
         ['label' => 'Пользователи', 'url' => ['set/users']],
-        ['label' => 'Товары', 'url' => ['set/goods']],
+        ['label' => 'Товары', 'url' => ['product/index']],
     ],
     'options' => ['tag' => false],
     'itemOptions' => ['tag' => false],

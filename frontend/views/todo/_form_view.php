@@ -13,8 +13,9 @@ use yii\helpers\ArrayHelper;
 				Клиент
 			</td>
 			<td class="client_name">
-			<?$client = ArrayHelper::map($clients, 'id', 'name')?>
-			<?=$form->field($model, 'client', ['template' => "{input}"])->dropDownList($client, ['class' => 'searchselect', 'prompt' => ['text' => "...", 'options' => ['value' => '0']]])?>
+			<?//$client = ArrayHelper::map($clients, 'id', 'name')?>
+			<?//=$form->field($model, 'client', ['template' => "{input}"])->dropDownList($client, ['class' => 'searchselect', 'prompt' => ['text' => "...", 'options' => ['value' => '0']]])?>
+			<?=($model->client0)?$model->client0->name:''?>
 			</td>
 		</tr>
 	</table>

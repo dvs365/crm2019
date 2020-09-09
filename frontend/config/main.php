@@ -11,6 +11,7 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+	'timeZone' => 'UTC',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
@@ -46,9 +47,10 @@ return [
         ],
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
+			'defaultTimeZone' => 'UTC',
+			'timeZone' => 'Europe/Samara',
             'dateFormat' => 'dd.MM.yyyy',
             'timeFormat' => 'HH:mm',
-            'timeZone' => 'Europe/Moscow',
             'decimalSeparator' => ' ',
             'thousandSeparator' => ' ',
             'currencyCode' => 'EUR',

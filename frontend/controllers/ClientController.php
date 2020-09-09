@@ -28,14 +28,18 @@ class ClientController extends Controller
     {
         return [
             'access' => [
-				'only' => ['index', 'disconfirm', 'note', 'transfer', 'view', 'update', 'create'],
+				//'only' => ['index', 'disconfirm', 'note', 'transfer', 'view', 'update', 'create'],
                 'class' => AccessControl::className(),
                 'rules' => [
-                    [
-                        'actions' => ['index'],
+					[ 
+						'allow' => false,
+						'roles' => ['?']
+					],
+					[
+                        'actions' => ['index', 'toreject', 'totarget', 'toload'],
                         'allow' => true,
                         'roles' => ['@'],
-                    ],				
+                    ],			
                     [
                         'actions' => ['disconfirm'],
                         'allow' => true,
@@ -137,6 +141,7 @@ class ClientController extends Controller
         $clientOrganizations = [new Organization];
 
         if ($client->load(Yii::$app->request->post())) {
+			//$client->website = parse_url($client->website, PHP_URL_HOST);
             $client->created = date('Y-m-d H:i:s');
             $client->created_id = Yii::$app->user->identity->id;
             if (empty($client->user)){
@@ -305,7 +310,7 @@ class ClientController extends Controller
         }
 
         if ($client->load(Yii::$app->request->post())) {
-
+			//$client->website = parse_url($client->website, PHP_URL_HOST);
             // reset
             $facePhones = [];
             $faceMails = [];
@@ -540,9 +545,10 @@ class ClientController extends Controller
 			$transaction = \Yii::$app->db->beginTransaction();
             try {
 				if ($model->user && $model->clientIDs) {
-					Client::updateAll(['user' => $model->user], ['in', 'id', $model->clientIDs]);
-					Desclient::updateAll(['transfer' => $desclient->transfer], ['in', 'client', $model->clientIDs]);
-					Todo::updateAll(['user' => $model->user], ['in', 'client', $model->clientIDs]);
+					
+					Client::updateAll(['user' => $model->user], ['id' => $model->clientIDs]);
+					Desclient::updateAll(['transfer' => $desclient->transfer], ['client' => $model->clientIDs]);
+					Todo::updateAll(['user' => $model->user], ['client' => $model->clientIDs]);
 				}
 				$transaction->commit();	
 				$flag = true;

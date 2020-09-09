@@ -63,7 +63,7 @@ class ClientSearch extends Client
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
 			'pagination' => [
-				'pageSize' => $params['r'] == 'client/index' ? 5 : 0,
+				'pageSize' => $params['r'] == 'client/index' ? 2 : 0,
 				'validatePage' => false,
 			],			
         ]);

@@ -23,29 +23,35 @@ class TodoController extends Controller
     {
         return [
             'access' => [
+				//'only' => ['index', 'view', 'toweek', 'update', 'toclose', 'create'],
                 'class' => AccessControl::className(),
                 'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    [
-                        'actions' => ['view'],
-                        'allow' => true,
-                        'roles' => ['viewTodoUser'],
-                        'roleParams' => function() {
-                            return ['todo' => Todo::findOne(['id' => Yii::$app->request->get('id')])];
-                        }
-                    ],
-                    [
-                        'actions' => ['update'],
-                        'allow' => true,
-                        'roles' => ['upTodoAll'],
-                        'roleParams' => function() {
-                            return ['todo' => Todo::findOne(['id' => Yii::$app->request->get('id')])];
-                        }
-                    ],					
-                ],
+					[
+						'allow' => false,
+						'roles' => ['?'],
+					],
+					[
+						'actions' => ['index', 'toweek', 'create'],
+						'allow' => true,
+						'roles' => ['@'],
+					],
+					[
+						'actions' => ['view'],
+						'allow' => true,
+						'roles' => ['viewTodoUser'],
+						'roleParams' => function() {
+							return ['todo' => Todo::findOne(['id' => Yii::$app->request->get('id')])];
+						}
+					],
+					[
+						'actions' => ['update', 'toclose', 'closeclient'],
+						'allow' => true,
+						'roles' => ['upTodoAll'],
+						'roleParams' => function() {
+							return ['todo' => Todo::findOne(['id' => Yii::$app->request->get('id')])];
+						}
+					],
+				],
             ],		
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -70,9 +76,9 @@ class TodoController extends Controller
 					'expire' => '',
 				]));
 			}
-		}
-		$cookieUserID = Yii::$app->request->cookies['userID']?:false;
-		$userID = !empty($model->user) ? $model->user : ($cookieUserID ? $cookieUserID->value : Yii::$app->user->identity->id);
+		}		
+		$cookieUserID = \Yii::$app->user->can('viewTodoUser') ? (Yii::$app->request->cookies['userID']?:false) : false;
+		$userID = !empty($model->user) && \Yii::$app->user->can('viewTodoUser') ? $model->user : ($cookieUserID ? $cookieUserID->value : Yii::$app->user->identity->id);
 	
 		$datetime = !empty($model->date) ? strtotime($model->date) : time();
 		
@@ -97,9 +103,9 @@ class TodoController extends Controller
             'dataProvider' => $dataProvider,
 			'todoCur' => (empty($status) || $status == Todo::OPEN)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['>','dateto', date('Y-m-d 00:00:00')])->andwhere(['<','date', date('Y-m-d 23:59:59')])->all():'',
 			'todoLate' => (empty($status) || $status == Todo::LATE)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['<','dateto', date('Y-m-d H:i:s')])->all():'',
-			'user' => User::findByRole(Yii::$app->authManager->getRole('user')),
 			'status' => $status,
 			'clients' => $clients,
+			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
 			'userID' => $userID,
         ]);
     }
@@ -132,10 +138,10 @@ class TodoController extends Controller
                 'value' => $model->user,
                 'expire' => '',
             ]));
-			$userID = $model->user;
+			$userID = \Yii::$app->user->can('viewTodoUser') ? $model->user : Yii::$app->user->identity->id;
 		} else {
-			$cookieUserID = Yii::$app->request->cookies['userID']?:false;
-			$userID = ($cookieUserID) ? $cookieUserID->value : Yii::$app->user->identity->id;
+			$cookieUserID = \Yii::$app->user->can('viewTodoUser') ? (Yii::$app->request->cookies['userID']?:false) : false;
+			$userID = !empty($model->user) && \Yii::$app->user->can('viewTodoUser') ? $model->user : ($cookieUserID ? $cookieUserID->value : Yii::$app->user->identity->id);
 		}		
 				
 		$datetime = \Yii::$app->request->post('date') ? Yii::$app->request->post('date') : date('d.m.Y');
@@ -185,6 +191,7 @@ class TodoController extends Controller
 			'modelsTime' => isset($modelsTime) ? $modelsTime : [],
 			'modelsLong' => isset($modelsLong) ? $modelsLong : [],
 			'cntID' => isset($cntID) ? $cntID : [],
+			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
         ]);
 	}
 	
@@ -197,12 +204,13 @@ class TodoController extends Controller
         $data = Yii::$app->request->post();
 
 		if ($model->load($data)) {
-			$model->user = \Yii::$app->user->id;
+			$model->user = ($model->user)?: \Yii::$app->user->id;
 			$model->status = Todo::OPEN;
+			$model->created_id = \Yii::$app->user->id;
 			$model->save();
 			if (Yii::$app->request->isAjax) {
 				return $this->renderAjax('/client/_form_list_todo', [
-					"todos" => $model->find()->where(['client' => $model->client])->all(),
+					"todos" => $model->find()->where(['client' => $model->client, 'status' => Todo::OPEN])->all(),
 					"error" => null
 				]);					
 			} else {
@@ -223,9 +231,10 @@ class TodoController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
+		/*
         return $this->render('update', [
             'model' => $model,
-        ]);
+        ]);*/
     }
 
 	public function actionToclose($id)
@@ -239,6 +248,7 @@ class TodoController extends Controller
 		if (!Yii::$app->request->isAjax) {
 			return $this->redirect(['index', 'status' => Todo::CLOSE]);
 		}
+		return true;
 	}
 
     public function actionDelete($id)
@@ -248,9 +258,14 @@ class TodoController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionDeleteclient($id)
+    public function actionCloseclient($id)
     {
-        return $this->findModel($id)->delete();
+		$model = $this->findModel($id);
+		$model->scenario = Todo::SCENARIO_TOCLOSE;
+		$model->status = Todo::CLOSE;
+		$model->closed = date('Y-m-d H:i:s');
+		$model->closed_id = Yii::$app->user->identity->id;
+        return $model->save();
     }
 
     protected function findModel($id)

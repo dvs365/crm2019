@@ -22,7 +22,7 @@ $(document).ready(function(){
             if (data.error == null) {
                 $("#outputtodo").html(data);
                 $("#formtodoclient input[type=text]#todo-name").val('');
-                $("#formtodoclient input[type=textarea]").val('');
+                $("#formtodoclient textarea").val('');
             } else {
 				alert('error');
                 $("#outputtodo").html(data.error);
@@ -35,7 +35,6 @@ $(document).ready(function(){
     });
 
     $("#formcomment").on('beforeSubmit', function () {
-		alert('comment');
         var $testform = $(this);
         var met = $testform.attr('method');
         var act = $testform.attr('action');
@@ -117,7 +116,7 @@ $(document).ready(function(){
         var href = form.attr('action');
         var td = form.parent();
         td.parent("tr.table_item").parent().parent().parent("div.task_item").remove();
-        sendAjax(href, "POST")
+        sendAjax(href, "GET")
     });
     //раскрытие общих контактов
     $("#contact-all").click(function(){

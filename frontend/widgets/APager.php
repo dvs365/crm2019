@@ -36,22 +36,22 @@ class APager extends LinkPager
             $buttons[] = $this->renderPageButton($firstPageLabel, 0, $this->firstPageCssClass, $currentPage <= 0, false);
         }
 
-
+		if ($pageCount > 2) {
         // internal pages
-        list($beginPage, $endPage) = $this->getPageRange();
-		if (!$beginPage) {
-			$beginPage++; 
-			$endPage++;
-		} elseif($endPage == $pageCount-1) {
-			$beginPage--; 
-			$endPage--;			
-		} 
-		$buttons[] = '...';
-        for ($i = $beginPage; $i <= $endPage; ++$i) {
-			$buttons[] = $this->renderPageButton($i + 1, $i, null, $this->disableCurrentPageButton && $i == $currentPage, $i == $currentPage);
-        }
-		$buttons[] = '...';
-		
+			list($beginPage, $endPage) = $this->getPageRange();
+			if (!$beginPage) {
+				$beginPage++; 
+				$endPage = $endPage < $pageCount-2 ? ++$endPage : $pageCount-2;
+			} elseif($endPage == $pageCount-1) {
+				$beginPage--; 
+				$endPage--;
+			} 
+			$buttons[] = '...';
+			for ($i = $beginPage; $i <= $endPage; ++$i) {
+				$buttons[] = $this->renderPageButton($i + 1, $i, null, $this->disableCurrentPageButton && $i == $currentPage, $i == $currentPage);
+			}
+			$buttons[] = '...';
+		}
         // last page
         $lastPageLabel = $this->lastPageLabel === true ? $pageCount : $this->lastPageLabel;
         if ($lastPageLabel !== false) {

@@ -88,7 +88,7 @@ class TodoSearch extends Todo
         $query->andWhere(['in', 'status', $this::CLOSE]);
 		//echo '<pre>or = '; print_r($query); echo '</pre>';
 
-        //$query->orderBy(['closed_at' => SORT_DESC]);
+        $query->orderBy(['closed' => SORT_DESC]);
         return $dataProvider;
     }
 }

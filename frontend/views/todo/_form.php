@@ -24,6 +24,19 @@ use yii\helpers\ArrayHelper;
 			</td>
 		</tr>
 	</table>
+	<table class="w100p wrap2">
+		<?if (\Yii::$app->user->can('addTodoUser')):?>
+		<tr>
+			<td class="w65">
+				Менеджер
+			</td>
+			<td class="user_name">
+				<?$users = ArrayHelper::map($users, 'id', 'surnameNP')?>
+				<?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($users, ['id' => 'todo-to-user', 'prompt' => ['text' => '', 'options' => ['value' => '0']]])?>
+			</td>
+		</tr>
+		<?endif;?>
+	</table>
 	<?=$form->field($model, 'date', ['template' => "{input}"])->textInput(['class' => 'task_date__s color_blue', 'readonly' => true, 'onClick' => 'par={class:\'xcalend\', to:\'\'};xCal(this);', 'onKeyUp' => 'xCal();','maxlength' => true]) ?>
     <div class="task_time__visible">
         <?=$form->field($model, 'time', ['template' => "в {input}"])->dropDownList([

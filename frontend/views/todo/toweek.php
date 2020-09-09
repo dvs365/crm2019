@@ -16,9 +16,10 @@ TodoAsset::register($this);
 			'model' => new common\models\Todo,
 			'action' => ['todo/create'],
 			'clients' => $clients,
+			'users' => $users,
 		])?>
 	</div>
-	<?if(\Yii::$app->user->can('admin')):?>
+	<?if(\Yii::$app->user->can('viewTodoUser')):?>
 	<?=$this->render('_form_user', [
 		'model' => new common\models\Todo,
 		'user' => $user,

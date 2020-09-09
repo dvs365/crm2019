@@ -9,6 +9,8 @@ use frontend\models\PasswordChangeForm;
 use frontend\models\SignupForm;
 use frontend\models\ProfileUpdateForm;
 use yii\filters\AccessControl;
+use common\models\Client;
+use common\models\Todo;
 /**
  * Set controller
  */
@@ -21,19 +23,24 @@ class SetController extends Controller
     {
         return [
             'access' => [
-				'only' => ['profile','users', 'update', 'signup'],
+				//'only' => ['index', 'profile','users', 'update', 'signup',],
                 'class' => AccessControl::className(),
                 'rules' => [
-                    [
+					[
+						'allow' => false,
+						'roles' => ['?'],
+					],
+					[
                         'actions' => ['signup', 'update', 'users'],
                         'allow' => true,
                         'roles' => ['addUpAdmin','addUpUser'],
                     ],
-                    [
-                        'actions' => ['profile'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],					
+					[
+						'actions' => ['profile', 'index'],
+						'allow' => true,
+						'roles' => ['@'],
+					],
+					
 				],
             ],		
             'verbs' => [
@@ -86,7 +93,7 @@ class SetController extends Controller
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();
+            return $this->redirect(['set/users']);
         }
 
         return $this->render('user/signup', [
@@ -98,12 +105,29 @@ class SetController extends Controller
 	{
 		$user = User::findOne($id);
 		$model = new ProfileUpdateForm($user);
+		$cntClient = Client::find()->where(['user' => $user->id])->count();
+		
 		if ($model->load(Yii::$app->request->post()) && $model->update()) {
-			return $this->redirect(['index']);
-		} else {
-			return $this->render('user/update', [
-				'model' => $model,
-			]);
+			$transaction = \Yii::$app->db->beginTransaction();
+            try {
+				if (!$model->status && $model->users) {
+					$client = Client::find()->where(['user' => $user->id])->select('id')->asArray()->column();
+					$clientParts = array_chunk($client, ceil($cntClient / count($model->users)));
+					foreach ($model->users as $index => $userNew) {
+						Client::updateAll(['user' => $userNew], ['id' => $clientParts[$index]]);
+						Todo::updateAll(['user' => $userNew], ['client' => $clientParts[$index]])->andWhere(['user' => $user->id]);
+					}
+				}				
+				$transaction->commit();	
+			} catch (Exception $e) {
+				$transaction->rollBack();
+			}
+			return $this->redirect(['set/users']);
 		}
+		return $this->render('user/update', [
+			'model' => $model,
+			'users' => User::find()->where(['!=', 'id', $user->id])->andWhere(['status' => User::STATUS_ACTIVE])->all(),
+			'cntClient' => $cntClient,
+		]);
 	}
 }

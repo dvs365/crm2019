@@ -8,7 +8,7 @@ use yii\rbac\Rule;
 
 class AuthorTodoRule extends Rule
 {
-    public $name = 'isAuthorTodo'; //Имя правила
+    public $name = 'isAuthorTodo'; //РРјСЏ РїСЂР°РІРёР»Р°
 
     public function execute($user_id, $item, $params)
     {

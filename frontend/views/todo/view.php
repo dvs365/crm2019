@@ -10,7 +10,7 @@ TodoAsset::register($this);
 <main>
 	<div class="task wrap1">
 		<div class="about"><h1><?=Html::encode($todo->name)?></h1><span class="manager color_grey"><?= $todo->statusLabel?></span></div>
-		<?= Html::a(Html::encode($todo->client0['name']), ['client/view', 'id' => $todo->client])?>
+		<?=($todo->client0)? Html::a(Html::encode($todo->client0['name']), ['client/view', 'id' => $todo->client]) : ''?>
 	</div>
 	<div class="wrap1 control">
 		<a href="" class="arrow_left"></a><span class="color_blue" id="open-add-work">Изменить</span>
@@ -30,8 +30,8 @@ TodoAsset::register($this);
 			<p>Завершение: <?=Html::encode(date('d.m.y',strtotime($todo->dateto)))?></p>
 		</div>
 		<div class=" task_item wrap1">
-			<p>Поставил: Кириллов Н.Н.</p>
-			<p>Исполнил: <?=($todo->status == $todo::CLOSE)?$todo->closeID->surnameNP:''?></p>
+			<p>Поставил: <?=($todo->created_id)?Html::encode($todo->createID->surnameNP):''?></p>
+			<p>Исполнил: <?=($todo->status == $todo::CLOSE)?Html::encode($todo->closeID->surnameNP):''?></p>
 		</div>
 
 		<div id="form-work">

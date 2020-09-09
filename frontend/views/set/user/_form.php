@@ -2,6 +2,11 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use frontend\assets\SettingAsset;
+use yii\helpers\ArrayHelper;
+
+\yii\web\YiiAsset::register($this);
+SettingAsset::register($this);
 ?>
 
     <?php $form = ActiveForm::begin(['id' => 'form-signup', 'options' =>  ['class' => 'settings'], 'fieldConfig' => ['enableLabel' => false]]); ?>
@@ -30,35 +35,32 @@ use yii\bootstrap\ActiveForm;
                 <td class="w180">Телефон</td>
                 <td><?= $form->field($model, 'phone', ['template' => "{input}"])->input('text', ['class' => 'mb10']) ?></td>
             </tr>
+			<? 
+			if (!empty($model->id)) :?>
 			<tr>
 				<td class="w180 cl360">Статус пользователя</td>
 				<td class="settings_user">
-					<label class="w160 left">
-						<input type="radio" name="status-user" value="1" checked>
-						<span class="radio"></span>
-						Активный
-					</label>
-					<label class="w160 left">
-						<input type="radio" name="status-user" value="2">
-						<span class="radio"></span>
-						Архивный
-					</label>
+                    <?= $form->field($model, 'status', ['template' => "{input}"])->radioList(['10' => ' Активный', '0' => ' Архивный'],[
+                            'item' => function($index, $label, $name, $checked, $value){
+                                $return = '<label class="w160 left">';
+                                $return .= '<input type="radio" name="'.$name.'" value="'.$value.'" class="access" '.($checked?'checked':'').'>';
+                                $return .= '<span class="radio"></span>';
+                                $return .= ucwords($label);
+                                $return .= '</label>';
+                                return $return;
+                            }
+                    ])->label(false); ?>
 					<div class="clear wrap3"></div>
 					<div ID="status-archive">
-						<p>У пользователя <span ID="clients_col">422</span> клиента. Выберите для них новых пользователей</p>
+						<p>У пользователя <span ID="clients_col"><?=$cntClient?></span> клиента(ов). Выберите для них новых пользователей</p>
 						<div ID="distribution" class="wrap_select">
 							<label><span class="user">Пользователь:</span>
 								<span ID="choise_user" class="select">
 									<span class="users_choised"></span>
 									<span class="dropdown"></span>
 									<span class="choise_user">
-										<select name="manager[]" multiple>
-											<option value="1">Кириллов Н.Н.</option>
-											<option value="2">Петрова О.И.</option>
-											<option value="3">Перепелов О.О.</option>
-											<option value="4">Иванов Н.Н.</option>
-											<option value="5">Сидоров О.О.</option>
-										</select>
+										<?$managers = ArrayHelper::map($users, 'id', 'surnameNP')?>
+										<?=$form->field($model, 'users[]', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'multiple'=>'multiple'])?>									
 									</span>
 								</span>
 							</label>
@@ -66,20 +68,18 @@ use yii\bootstrap\ActiveForm;
 						</div>
 					</div>
 				</td>
-			</tr>			
-            <?if(\Yii::$app->user->can('addUpUser') && \Yii::$app->user->can('addUpAdmin')){?>
+			</tr>
+			<? endif;?>
             <tr>
                 <td class="w180 cl360">Право доступа</td>
                 <td class="settings_user">
-
                     <?= $form->field($model, 'access', ['template' => "{input}"])->radioList(['1' => ' Базовый', '2' => ' Расширенный'],[
                             'item' => function($index, $label, $name, $checked, $value){
                                 $return = '<label class="w160 left">';
-                                $return .= '<input type="radio" name="'.$name.'" value="'.$value.'" class="access" '.(($value == '1')?" checked":"").'>';
+                                $return .= '<input type="radio" name="'.$name.'" value="'.$value.'" id="access" '.($checked?'checked':'').'>';
                                 $return .= '<span class="radio"></span>';
                                 $return .= ucwords($label);
                                 $return .= '</label>';
-
                                 return $return;
                             }
                     ])->label(false); ?>
@@ -87,27 +87,25 @@ use yii\bootstrap\ActiveForm;
 
                 </td>
             </tr>
-            <?}else{?>
-                <?= $form->field($model, 'access')->hiddenInput(['value' => \Yii::$app->user->can('addUpAdmin')? '2':'1'])?>
-            <?}?>
             <tr>
                 <td class="w180 cl480"></td>
                 <td class="settings_user cl480">
                     <p>Выберите доступные для пользователя функции</p>
                     <div class="user_functions">
-                        <? $template = "{beginLabel}{input}<span class=\"checkbox\"></span> {labelTitle}{endLabel}"?>
 						<?
+						$spanAddClass = $model->access == 1 ? 'checkbox_disabled' : '';
 						$permissions = Yii::$app->authManager->getPermissions();
 						foreach ($permissions as $perm) $PermSort[$perm->createdAt] = $perm;
 						ksort($PermSort);
 						foreach($PermSort as $name => $permission):
-							$disabled = ($permission->name == 'addUpUser' || $permission->name == 'addUpAdmin')?:false;
+							$notbase = ($permission->name == 'addUpUser' || $permission->name == 'addUpAdmin')?'notbase '.(($model->access == 1)?'color_grey':''):false;
 							if(!$permission->ruleName){
 								echo $form->field($model, 'rule['.$permission->name.']', [
-									'template' => $template
+									'template' => "{beginLabel}{input}<span class=\"checkbox ".($notbase ? $spanAddClass : '')."\"></span> {labelTitle}{endLabel}",
+									'labelOptions' => ['class' => $notbase],
 									])->checkbox([
 										'value' => '1',
-										'disabled' => $disabled,
+										'disabled' => ($model->access == 1 && $notbase)? true:false,
 										], false)->label($permission->description);
 							}
 						endforeach;?>

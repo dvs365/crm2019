@@ -4,11 +4,12 @@ use yii\helpers\Url;
 ?>
 
 <?foreach ($todos as $todo):?>
+	<?if (\Yii::$app->user->can('viewTodoUser') || $todo->user == Yii::$app->user->identity->id):?>
     <div class="task_item">
         <table>
             <tr class="table_item">
                 <td>
-					<?php $form = ActiveForm::begin(['action' => ['todo/deleteclient', 'id' => $todo->id], 'options' => ['class' => 'todoclientdelete'], 'method' => 'post', 'enableAjaxValidation' => false, 'validateOnBlur' => false]); ?>
+					<?php $form = ActiveForm::begin(['action' => ['todo/closeclient', 'id' => $todo->id], 'options' => ['class' => 'todoclientdelete'], 'method' => 'post', 'enableAjaxValidation' => false, 'validateOnBlur' => false]); ?>
                         <input type="checkbox" name="task" value="2">
                         <button class="checkbox deltodoclient" title="Закрыть дело"></button>
                     <?php ActiveForm::end();?>
@@ -25,4 +26,5 @@ use yii\helpers\Url;
             <?endif;?>
         </table>
     </div>
+	<?endif;?>
 <?endforeach;?>

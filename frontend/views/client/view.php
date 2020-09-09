@@ -72,7 +72,7 @@ ClientAsset::register($this);
             <div class="contact_site wrap3">
                 <?$webArr = explode(',', $client->website);?>
                     <?foreach ($webArr as $web):?>
-                        <?=Html::a(Html::encode(trim($web)), '//'.Html::encode(trim($web)));?>
+                        <?=Html::a(Html::encode(trim($web)), Html::encode(trim($web)));?>
                     <?endforeach;?>
             </div>
             <div ID="contact-all" class="color_blue">Общие контакты клиента
@@ -101,7 +101,7 @@ ClientAsset::register($this);
             <div class="clear"></div>
             <div id="outputtodo">
             <?=$this->render('_form_list_todo', [
-                'todos' => $client->todos,
+                'todos' => $client->todosOpen,
             ]);?>
             </div>
         </div>
@@ -128,43 +128,41 @@ ClientAsset::register($this);
         </div>
     </div>
     <?if(\Yii::$app->user->can('admin')):?>
-    <div class="wrap1">
-        <h2>Открытия</h2>
-        <table>
-            <tr class="table_item">
-                <?$show_u = \DateTime::createFromFormat('Y-m-d H:i:s', $client->show_u)?>
-                <td class="date color_grey"><?=$show_u->format('d.m.y в H:i')?></td>
-                <td><?=$show_uid->surnameNP?></td>
-            </tr>
-            <tr class="table_item">
-                <?$show_a = \DateTime::createFromFormat('Y-m-d H:i:s', $client->show_a)?>
-                <td class="date color_grey"><?=$show_a->format('d.m.y в H:i')?></td>
-                <td><?=$show_aid->surnameNP?></td>
-            </tr>
-        </table>
-    </div>
+		<div class="wrap1">
+			<h2>Открытия</h2>
+			<table>
+				<tr class="table_item">
+					<td class="date color_grey"><?=\Yii::$app->formatter->asDate($client->show_u, "php:d.m.y в H:i")?></td>
+					<td><?=$show_uid->surnameNP?></td>
+				</tr>
+				<tr class="table_item">
+					<td class="date color_grey"><?=\Yii::$app->formatter->asDate($client->show_a, "php:d.m.y в H:i")?></td>
+					<td><?=$show_aid->surnameNP?></td>
+				</tr>
+			</table>
+		</div>
 
-    <div class="wrap1">
-        <h2>Операции</h2>
-        <table>
-            <tr class="table_item">
-                <td class="date color_grey">07.06.19</td>
-                <td>Добавление - Кириллов Н.Н.</td>
-            </tr>
-            <tr class="table_item">
-                <?$update_u = \DateTime::createFromFormat('Y-m-d H:i:s', $client->update_u)?>
-                <td class="date color_grey"><?=$update_u->format('d.m.y в H:i')?></td>
-                <td>Изменение - <?=($client->update_uid)?\common\models\User::findOne($client->update_uid)->surnameNP:'-'?></td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="wrap1">
-        <h2>Заметка</h2>
-        <div id="note-open" class="color_blue wrap3"><?=$client->note?:'Создать'?></div>
-        <?=$this->render('_form_note', [
-            'client' => $client,
-        ]);?>
-    </div>
+		<div class="wrap1">
+			<h2>Операции</h2>
+			<table>
+				<tr class="table_item">
+					<td class="date color_grey"><?=\Yii::$app->formatter->asDate($client->created, "php:d.m.y в H:i")?></td>
+					<td>Добавление - <?=($client->created_id)?\common\models\User::findOne($client->created_id)->surnameNP:'-'?></td>
+				</tr>
+				<tr class="table_item">
+					<td class="date color_grey"><?=\Yii::$app->formatter->asDate($client->update_u, "php:d.m.y в H:i")?></td>
+					<td>Изменение - <?=($client->update_uid)?\common\models\User::findOne($client->update_uid)->surnameNP:'-'?></td>
+				</tr>
+			</table>
+		</div>
+		<?if(\Yii::$app->user->can('addNoteClient')):?>
+			<div class="wrap1">
+				<h2>Заметка</h2>
+				<div id="note-open" class="color_blue wrap3"><?=$client->note?:'Создать'?></div>
+				<?=$this->render('_form_note', [
+					'client' => $client,
+				]);?>
+			</div>
+		<?endif;?>
     <?endif;?>
 </main>

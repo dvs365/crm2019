@@ -22,13 +22,14 @@ TodoAsset::register($this);
 			'model' => new common\models\Todo,
 			'action' => ['todo/create'],
 			'clients' => $clients,
+			'users' => $users,
 		])?>
 		<?endif;?>
 	</div>
-	<?if(\Yii::$app->user->can('admin')):?>
+	<?if(\Yii::$app->user->can('viewTodoUser')):?>
 	<?=$this->render('_form_user', [
 		'model' => new common\models\Todo,
-		'user' => $user,
+		'user' => common\models\User::findByRole(Yii::$app->authManager->getRole('user')),
 		'userID' => $userID,
 		'action' => ['todo/index', 'status' => $status],
 	])?>

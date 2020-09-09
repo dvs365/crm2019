@@ -7,6 +7,7 @@
 use yii\helpers\Html;
 
 $this->title = 'Изменение пользователя';
+
 ?>
 <main>
     <div class="wrap1 control">
@@ -15,5 +16,7 @@ $this->title = 'Изменение пользователя';
     <h1 class="wrap1"><?= Html::encode($this->title) ?></h1>
 	<?=$this->render('_form', [
 		'model' => $model,
+		'users' => $users,
+		'cntClient' => $cntClient,
 	])?>
 </main>

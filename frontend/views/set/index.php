@@ -9,7 +9,6 @@ use yii\helpers\ArrayHelper;
 
 $this->title = 'Setting:' . \common\models\User::findOne(Yii::$app->user->identity->id)->surnameNP;
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 
 ?>
 

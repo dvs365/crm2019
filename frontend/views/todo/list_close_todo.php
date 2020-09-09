@@ -1,17 +1,18 @@
 <?
 use yii\helpers\Html;
 use frontend\widgets\ListViewPager;
-
+$request = Yii::$app->request;
 ?>
 <h1 class="wrap1">Закрытые дела</h1>
 <?= $this->render('_search', [
 	'model' => $searchModel,
 	'status' => $status,
+	'sort' => $request->get('sort'),
 ])?>
 
 <div ID="sort" class="right">
 		<?$request = Yii::$app->request;
-		$sort = (!$request->get('sort') || $request->get('sort') == 'date')?'-date':'date';?>
+		$sort = (!$request->get('sort') || $request->get('sort') == '-closed')?'closed':'-closed';?>
 		Сначала закрытые давно
 		<?= Html::a('', ['todo/index', 'status' => $status, 'sort' => $sort], ['class' => 'checkbox', 'sort' => $sort])?>
 </div>

@@ -18,7 +18,8 @@ class SignupForm extends Model
     public $email;
     public $password;
     public $access;
-	public $rule; 
+	public $rule;
+	public $status;
 
     /**
      * {@inheritdoc}
@@ -57,7 +58,12 @@ class SignupForm extends Model
             ['access', 'default', 'value' => 1],
 			
             ['rule', 'safe'],
-            [['rule'], 'each', 'rule' => ['integer']],			
+            [['rule'], 'each', 'rule' => ['integer']],
+
+			['status', 'required'],
+			['status', 'integer'],
+			['status', 'in', 'range' => [0, 9, 10]],
+			['status', 'default', 'value' => 9],
         ];
     }
 
@@ -89,6 +95,7 @@ class SignupForm extends Model
 			$permissions = Yii::$app->authManager->getPermissions();
 			foreach($permissions as $name => $permission) {
 				!empty($this->rule[$name]) ? $auth->assign($auth->getPermission($name), $user->id) : '';
+				(strpos($name, 'Own') !== false) ? $auth->assign($auth->getPermission($name), $user->id): '';
 			}
             return true;
         }
@@ -111,7 +118,7 @@ class SignupForm extends Model
             )
             ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
             ->setTo($this->email)
-            ->setSubject(' Пользователь зарегистрирован в &laquo' . Yii::$app->name . "&raquo")
+            ->setSubject(' Пользователь зарегистрирован в "' . Yii::$app->name . '"')
             ->send();
     }
 }
