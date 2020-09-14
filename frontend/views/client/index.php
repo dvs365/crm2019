@@ -9,7 +9,7 @@ use frontend\assets\ClientAsset;
 /* @var $searchModel common\models\ClientSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Clients:' . \common\models\User::findOne(Yii::$app->user->identity->id)->surnameNP;
+$this->title = 'Клиенты:' . \common\models\User::findOne(Yii::$app->user->identity->id)->surnameNP;
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ClientAsset::register($this);

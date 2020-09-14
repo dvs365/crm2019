@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Дела';
+$this->title = 'Дела:' . \common\models\User::findOne(Yii::$app->user->identity->id)->surnameNP;
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 TodoAsset::register($this);
