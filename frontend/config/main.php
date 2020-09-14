@@ -12,9 +12,11 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
 	'timeZone' => 'UTC',
+	'homeUrl' => '/',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+			'baseUrl' => '',
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -41,7 +43,7 @@ return [
             'bundles' => [
                 'yii\web\JqueryAsset' => [
                     'sourcePath' => null,
-                    'js' => ['frontend/web/js/jquery-2.2.4.js'],
+                    'js' => ['js/jquery-2.2.4.js'],
                 ]
             ]
         ],
@@ -55,14 +57,16 @@ return [
             'thousandSeparator' => ' ',
             'currencyCode' => 'EUR',
         ],
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+				'<controller:\w+>' => '<controller>/index',
+				'<controller:\w+>/<id:\d+>' => '<controller>/view',
+				'<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',			
             ],
         ],
-        */
     ],
     'modules' => [
       'gii' => [

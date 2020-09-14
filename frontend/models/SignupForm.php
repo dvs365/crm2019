@@ -60,7 +60,6 @@ class SignupForm extends Model
             ['rule', 'safe'],
             [['rule'], 'each', 'rule' => ['integer']],
 
-			['status', 'required'],
 			['status', 'integer'],
 			['status', 'in', 'range' => [0, 9, 10]],
 			['status', 'default', 'value' => 9],

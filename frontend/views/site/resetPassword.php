@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1 class="wrap1"><?= Html::encode($this->title) ?></h1>
     <?php $form = ActiveForm::begin(['id' => 'reset-password-form', 'options' =>  ['class' => 'login'], 'fieldConfig' => ['enableLabel' => false]]); ?>
     <span class="error color_red"><?= Html::errorSummary($model, ['header' => ''])?></span>
-    <p>Пароль должен состоять как минимум из восьми символов, среди которых как минимум одна заглавная буква, одна строчная буква, одна цифра и один символ</p>
+    <p>Пароль должен состоять как минимум из восьми символов, среди которых как минимум одна заглавная буква, одна строчная буква, одна цифра и один символ - !{}@#$%^&*_-.</p>
     <table class="w100p">
         <tr>
             <td class="w180 lh-cancel418">Новый пароль</td>

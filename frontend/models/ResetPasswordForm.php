@@ -46,7 +46,7 @@ class ResetPasswordForm extends Model
         return [
             ['password', 'required'],
             ['password', 'string', 'min' => 8],
-            ['password', 'match', 'pattern' => '/(?=.*[0-9])(?=.*[!@#$%^&*_-])(?=.*[a-zа-яё])(?=.*[A-ZА-ЯЁ])[0-9a-zа-яёA-ZА-ЯЁ!@#$%^&*_-]{8,}/'],
+	['password', 'match', 'pattern' => '/(?=.*[0-9])(?=.*[!}{@#$%^&*_-])(?=.*[a-zа-яё])(?=.*[A-ZА-ЯЁ])[0-9a-zа-яёA-ZА-ЯЁ!.@#$%^}{&*_-]{8,}/'],
 
             ['passwordr', 'required'],
             ['passwordr', 'compare', 'compareAttribute' => 'password', 'message' => 'Пароли не совпадают.'],

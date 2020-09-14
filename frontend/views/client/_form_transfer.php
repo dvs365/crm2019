@@ -42,9 +42,9 @@ echo ($flag)? $this->render('_popup', []) : '';
 				foreach ($models as $model) {
                     $template .= '<tr>';
                     $template .= '<td class="w50 lh30">';
-					$template .= '<label><input type="checkbox" name="Client[clientIDs][]" value="'.$model->id.'"><span class="checkbox"></span></label>';
-					//$template .= $form->field($model, 'clientIDs[]', ['template' => "{input}{label}"])->checkbox(['value' => $model->id])->label('<span class="checkbox"></span>');
-                    $template .= '</td>';
+					$template .= $form->field($transfer, 'clientIDs[]')->checkbox(['label' => '<span class="checkbox"></span>', 'value' => $model->id, ]);
+					$template .= $form->field($transfer, 'users['.$model->user.'][]')->label(false)->hiddenInput(['value' => $model->id]);
+					$template .= '</td>';
                     $template .= '<td><div class="wrap4">';
 					$user = Html::tag('span', $model->user0->surnameNP, ['class' => 'manager color_grey']);
 					$status = Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']);
@@ -82,7 +82,7 @@ echo ($flag)? $this->render('_popup', []) : '';
                         <div class="select w200">
                             <div class="dropdown"></div>
 							<?$managers = ArrayHelper::map($users, 'id', 'surnameNP')?>
-							<?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => 'w200'])?>
+							<?=$form->field($transfer, 'userID', ['template' => "{input}"])->dropDownList($managers, ['class' => 'w200'])?>
                         </div>
                     </label>
                 </td>
@@ -90,7 +90,7 @@ echo ($flag)? $this->render('_popup', []) : '';
             <tr>
                 <td class="lh30">Причина передачи</td>
                 <td colspan="2">
-                    <?=$form->field($desclient, 'transfer', ['template' => "{input}"])->textArea(['maxlength' => true]) ?>
+                    <?=$form->field($transfer, 'transfer', ['template' => "{input}"])->textArea(['maxlength' => true]) ?>
                 </td>
             </tr>
             <tr>

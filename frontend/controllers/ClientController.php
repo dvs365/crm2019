@@ -21,6 +21,7 @@ use yii\filters\AccessControl;
 use yii\web\Response;
 use app\base\Model;
 use yii\helpers\ArrayHelper;
+use frontend\models\TransferClientForm;
 
 class ClientController extends Controller
 {
@@ -310,7 +311,6 @@ class ClientController extends Controller
         }
 
         if ($client->load(Yii::$app->request->post())) {
-			//$client->website = parse_url($client->website, PHP_URL_HOST);
             // reset
             $facePhones = [];
             $faceMails = [];
@@ -506,6 +506,7 @@ class ClientController extends Controller
                                 $client->update_u = date('Y-m-d H:i:s');
                                 $client->update_uid = $userID;
                             }
+							Todo::updateAll(['user' => $client->user], ['client' => $client->id]);
                             if (!($flag = $client->save())) {
                                 $transaction->rollBack();
                             }
@@ -539,17 +540,10 @@ class ClientController extends Controller
 
     public function actionTransfer()
     {
-		$model = new Client();
-		$desclient = new Desclient();
-		if ($model->load(Yii::$app->request->post()) && $desclient->load(Yii::$app->request->post())) {
+		$transfer = new TransferClientForm();
+		if ($transfer->load(Yii::$app->request->post()) && $transfer->update()) {
 			$transaction = \Yii::$app->db->beginTransaction();
             try {
-				if ($model->user && $model->clientIDs) {
-					
-					Client::updateAll(['user' => $model->user], ['id' => $model->clientIDs]);
-					Desclient::updateAll(['transfer' => $desclient->transfer], ['client' => $model->clientIDs]);
-					Todo::updateAll(['user' => $model->user], ['client' => $model->clientIDs]);
-				}
 				$transaction->commit();	
 				$flag = true;
 			} catch (Exception $e) {
@@ -561,8 +555,7 @@ class ClientController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('_form_transfer', [
             'users' => User::find()->indexBy('id')->all(),
-			'model' => $model,
-			'desclient' => $desclient,
+			'transfer' => $transfer,
             'transferModel' => $searchModel,
             'dataProvider' => $dataProvider,
 			'flag' => isset($flag) ? $flag : false,			

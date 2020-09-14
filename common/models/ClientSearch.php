@@ -59,11 +59,10 @@ class ClientSearch extends Client
         $query = Client::find();
 
         // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
 			'pagination' => [
-				'pageSize' => $params['r'] == 'client/index' ? 2 : 0,
+				'pageSize' => \Yii::$app->controller->action->id == 'index' ? 2 : 0,
 				'validatePage' => false,
 			],			
         ]);

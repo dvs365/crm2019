@@ -18,4 +18,3 @@ Modal::begin([
 echo '<h2 style="text-align: center;">Клиенты переданны.</h2><br><p style="text-align: center;">Передача клиентов прошла успешно.</p>';
 
 Modal::end();
-
