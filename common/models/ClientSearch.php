@@ -62,7 +62,7 @@ class ClientSearch extends Client
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
 			'pagination' => [
-				'pageSize' => \Yii::$app->controller->action->id == 'index' ? 2 : 0,
+				'pageSize' => \Yii::$app->controller->action->id == 'index' ? 20 : 0,
 				'validatePage' => false,
 			],			
         ]);
