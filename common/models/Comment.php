@@ -24,7 +24,7 @@ class Comment extends \yii\db\ActiveRecord
             [['user', 'client', 'date', 'text'], 'required'],
             [['user', 'client'], 'integer'],
             [['date'], 'safe'],
-            [['text'], 'string', 'max' => 255],
+            [['text'], 'string', 'max' => 2990],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }

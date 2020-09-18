@@ -172,7 +172,7 @@ class Client extends \yii\db\ActiveRecord
      */
     public function getComments()
     {
-        return $this->hasMany(Comment::className(), ['client' => 'id'])->limit(10)->orderBy(['id' => SORT_DESC]);
+        return $this->hasMany(Comment::className(), ['client' => 'id'])->limit(1)->orderBy(['id' => SORT_DESC]);
     }
 
     public function getDesclient0()

@@ -60,9 +60,9 @@ class CommentController extends Controller
             $data = Yii::$app->request->post();
             if (!empty($data)) {
                 if (!empty($data['count']) && !empty($data['all'])) {
-                    $comments = $model->find()->where(['client' => $id])->offset((int)$data['count'])->orderBy(['id' => SORT_DESC])->all();
+                    $comments = $model->find()->where(['client' => $id])->offset((int)($data['count']/10)+1)->orderBy(['id' => SORT_DESC])->all();
                 }elseif (!empty($data['count'])) {
-                    $comments = $model->find()->where(['client' => $id])->limit(10)->offset((int)$data['count'])->orderBy(['id' => SORT_DESC])->all();
+                    $comments = $model->find()->where(['client' => $id])->limit(1)->offset((int)($data['count']/10)+1)->orderBy(['id' => SORT_DESC])->all();
                 }
                 return $this->renderAjax('/client/_form_list_comment', [
                     "comments" => $comments,
@@ -87,35 +87,46 @@ class CommentController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($client)
+    public function actionCreate(int $client)
     {
-        $model = new Comment();
+		$model = new Comment();
+		if ($model_ = Comment::find()->where(['client' => (int)$client])->limit(1)->orderBy(['id' => SORT_DESC])->one()) {
+			if (count(explode('&^', $model_->text)) < 10) {
+				$text = $model_->text;
+				$model = $model_;
+			}
+		}
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if ($model->load($data)) {
+				$newText = date('Y-m-d').'^&'. $model->text;
                 $model->user = \Yii::$app->user->id;
+				$model->text = (!$model->isNewRecord && $text) ? $text . '&^' . $newText : $newText;
                 $model->client = $client;
                 $model->date = date('d.m.Y H:i:s');
-                $model->save();
-                return $this->renderAjax('/client/_form_list_comment', [
-                    "comments" => $model->find()->where(['client' => $client])->limit(1)->orderBy(['id' => SORT_DESC])->all(),
-                    "error" => null
-                ]);
+                if ($model->save()) {
+					$newComment = Comment::find()->where(['client' => (int)$client])->limit(1)->orderBy(['id' => SORT_DESC])->one();
+					$newCommentTextArr = explode('&^', $newComment->text);
+					$newComment->text = end($newCommentTextArr);
+					return $this->renderAjax('/client/_form_list_comment', [
+						"comments" => [$newComment],
+						"error" => null
+					]);
+				}
             } else {
                 return [
                     "data" => null,
                     "error" => "error1"
                 ];
             }
-        } else {
-            return [
-                "data" => null,
-                "error" => "error2"
-            ];
         }
+		return [
+			"data" => null,
+			"error" => "error2"
+		];
     }
 
     /**
