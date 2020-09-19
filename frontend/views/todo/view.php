@@ -13,7 +13,7 @@ TodoAsset::register($this);
 		<?=($todo->client0)? Html::a(Html::encode($todo->client0['name']), ['client/view', 'id' => $todo->client]) : ''?>
 	</div>
 	<div class="wrap1 control">
-		<a href="" class="arrow_left"></a><span class="color_blue" id="open-add-work">Изменить</span>
+		<a href="<?=Url::to(['todo/index'])?>" class="arrow_left"></a><span class="color_blue" id="open-add-work">Изменить</span>
 		<?if ($todo->status == $todo::OPEN):?>
 		<?= Html::a('В закрытые', ['todo/toclose', 'id' => $todo->id])?>
 		<?endif;?>

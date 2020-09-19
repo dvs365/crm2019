@@ -71,6 +71,7 @@ class ClientSearch extends Client
 
         $searchArr = explode('|', $this->search);
         list($mails, $phones) = [[],[]];
+		$ids = [];
         foreach ($searchArr as $searchKey => $searchIt) {
             $searchPhone = preg_replace("/[^0-9]/","",$searchIt);
             if (strpos($searchIt, '@') && mb_strlen($searchIt) > 3) {
@@ -154,15 +155,18 @@ class ClientSearch extends Client
             $taskIDs = $todo->groupBy('client')->asArray()->column();
             $query->andWhere(['in', 'id', $taskIDs]);
         }
-
-        if($searchArr || isset($ids)) {
+		foreach ($searchArr as $searchIt) {
+			$orgIds = Organization::find()->andWhere(['like', 'name', trim($searchIt)])->select('client')->asArray()->column();
+			$ids = array_unique(array_merge($ids, $orgIds));
+		}
+        if($searchArr || !empty($ids)) {
             $or = ['or'];
             foreach ($searchArr as $searchIt) {
                 $or[] = ['like', 'name', trim($searchIt)];
                 $or[] = ['like', 'address', trim($searchIt)];
                 $or[] = ['like', 'discomment', trim($searchIt)];
             }
-            if (isset($ids)) {
+            if (!empty($ids)) {
                 $or[] = ['in', 'id', $ids];
             }
             $query->andWhere($or);
