@@ -69,7 +69,7 @@ $request = Yii::$app->request;
         'itemOptions' => ['class' => 'wrap4'],
         'itemView' => function ($model, $key, $index, $widget) {
             //$widget->viewParams['users'][$model->user]->surnameNP
-            $template = Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', Html::encode($model->user0->surnameNP), ['class' => 'manager color_grey']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
+            $template = Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', $model->user0 ? Html::encode($model->user0->surnameNP):'', ['class' => 'manager color_grey']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
             $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
                 return Html::tag('div', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
             });

@@ -107,7 +107,6 @@ class ClientController extends Controller
     public function actionView($id)
     {
         $client = $this->findModel($id);
-        $client->show = date('Y-m-d H:i:s');
         $userID = Yii::$app->user->identity->id;
         $roles = Yii::$app->authManager->getRolesByUser($userID);
         if (isset($roles['admin'])) {
@@ -115,6 +114,7 @@ class ClientController extends Controller
             $client->show_aid = $userID;
         }
         if (isset($roles['user'])) {
+			$client->show = date('Y-m-d H:i:s');
             $client->show_u = date('Y-m-d H:i:s');
             $client->show_uid = $userID;
         }

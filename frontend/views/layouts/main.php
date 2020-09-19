@@ -39,7 +39,7 @@ AppAsset::register($this);
                 <?= Menu::widget([
                     'encodeLabels' => false,
                     'items' => [
-                        ['label' => 'Сводка', 'url' => ['summary/index'], 'active' => $checkController('summary')],
+                        ['label' => 'Сводка', 'url' => ['summary/index'], 'active' => $checkController('summary'), 'visible' => false],
                         ['label' => 'Клиенты', 'url' => ['client/index'], 'active' => $checkController('client')],
                         ['label' => 'Дела', 'url' => ['todo/index'], 'active' => $checkController('todo')],
                     ],

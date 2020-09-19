@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Client */
 
-$this->title = 'Редатирование клиента';
+$this->title = 'Редактирование клиента';
 ?>
 
 <?= $this->render('_form', [
