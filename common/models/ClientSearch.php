@@ -127,12 +127,18 @@ class ClientSearch extends Client
         }
 
         // grid filtering conditions
-		if ($this->user) {
+		if (!$this->search) {
 			$query->andFilterWhere([
-				//'user' => \Yii::$app->user->can('user')? \Yii::$app->user->id : $this->user,
-				'user' => $this->user,
-			]);			
+				'user' => \Yii::$app->user->can('user') ? \Yii::$app->user->id : $this->user,
+			]);
 		}
+		
+		if ($this->search && $this->user) {
+			$query->andFilterWhere([
+				'user' => $this->user,
+			]);
+		}		
+		
         if ($this->permonth) {
             $delay = (int)$this->permonth * 30;
             $query->andWhere([
