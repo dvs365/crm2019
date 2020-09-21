@@ -138,13 +138,13 @@ use wbraganca\dynamicform\DynamicFormWidget;
             </tr>
             <tr>
                 <td class="ogrn">
-                    <?=$clientOrg->getAttributeLabel('ogrn')?>
+                    <?=$clientOrg->getAttributeLabel('ogrn').(($clientOrg->form = common\models\Organization::FORM_IP)? 'ИП':'')?>
                 </td>
                 <td>
                     <?= $form->field($clientOrg, "[{$indexOrg}]ogrn", ['template' => "{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
                 </td>
             </tr>
-            <?php if ($clientOrg->form == '60') {?>
+            <?php if ($clientOrg->form != common\models\Organization::FORM_IP):?>
             <tr class="kpp">
                 <td>
                     <?=$clientOrg->getAttributeLabel('kpp')?>
@@ -153,15 +153,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     <?= $form->field($clientOrg, "[{$indexOrg}]kpp", ['template' => "{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
                 </td>
             </tr>
-            <?}?>
-            <tr class="kpp">
-                <td>
-                    <?=$clientOrg->getAttributeLabel('kpp')?>
-                </td>
-                <td>
-                    <?= $form->field($clientOrg, "[{$indexOrg}]kpp", ['template' => "{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
-                </td>
-            </tr>
+            <?endif;?>
             <tr>
                 <td>
                     <?=$clientOrg->getAttributeLabel('payment')?>

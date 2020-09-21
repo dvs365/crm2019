@@ -42,8 +42,23 @@ class PhoneValidator extends Validator
                 $model->addError($attribute, 'double4');
             }*/
         } else {
-            $modelsPhone = $queryPhoneclient->limit(2)->asArray()->all();
+			if (isset($model->face)) {
+				$faceID = Phoneface::find()->where(['face' => $model->face])->select('face')->one();
+				//echo '<pre>faceID = '; print_r($faceID); echo '</pre>';
+				$face = Face::findOne($faceID->face);
+				//echo '<pre>face = '; print_r($face); echo '</pre>';
+			}
+						
+			$clientID = !empty($model->client) ? $model->client : $face->client;
+			//echo '<pre>clientID = '; print_r($clientID); echo '</pre>';
+			$faceIDs = Face::find()->where(['client' => $clientID])->select('id')->asArray()->column();
+			//echo '<pre>faceIDs = '; print_r($faceIDs); echo '</pre>';
+			
+			
+            $modelsPhone = $queryPhoneclient->andWhere(['<>', 'client', $clientID])->limit(2)->asArray()->all();
+			//echo '<pre>modelsPhone1 = '; print_r($modelsPhone); echo '</pre>';
             $n = count($modelsPhone);
+			//echo '<pre>n1 = '; print_r($n); echo '</pre>';
             if ($n === 1) {
                 $dbModel = reset($modelsPhone);
                 if ($model->id != $dbModel['id']){
@@ -52,8 +67,11 @@ class PhoneValidator extends Validator
             } elseif ($n > 1) {
                 $model->addError($attribute, 'телефон задублирован.');
             }
-            $modelsPhone = $queryPhoneface->limit(2)->asArray()->all();
+
+			$modelsPhone = $queryPhoneface->andWhere(['not in', 'face', $faceIDs])->limit(2)->asArray()->all();
+			//echo '<pre>modelsPhone2 = '; print_r($modelsPhone); echo '</pre>';
             $n = count($modelsPhone);
+			//echo '<pre>n2 = '; print_r($n); echo '</pre>';
             if ($n === 1) {
                 $dbModel = reset($modelsPhone);
                 if ($model->id != $dbModel['id']){
@@ -62,9 +80,10 @@ class PhoneValidator extends Validator
             } elseif ($n > 1) {
                 $model->addError($attribute, 'телефон задублирован.');
             }
-            $modelsPhone = $queryPhoneOrg->limit(2)->asArray()->all();
+            $modelsPhone = $queryPhoneOrg->andWhere(['<>', 'client', $clientID])->limit(2)->asArray()->all();
             $n = count($modelsPhone);
-            if ($n === 1) {
+            //echo '<pre>n3 = '; print_r($n); echo '</pre>';
+			if ($n === 1) {
                 $dbModel = reset($modelsPhone);
                 if ($model->id != $dbModel['id']){
                     $model->addError($attribute, 'телефон задублирован.');
