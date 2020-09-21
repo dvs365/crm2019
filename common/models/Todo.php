@@ -44,7 +44,8 @@ class Todo extends \yii\db\ActiveRecord
             [['client', 'status', 'user', 'closed_id', 'created_id'], 'integer'],
             [['date', 'dateto'], 'date', 'format' => 'php:d.m.Y', 'except' => self::SCENARIO_TOCLOSE],
             [['time'], 'safe'],
-            [['name', 'description'], 'string', 'max' => 255],
+            [['name'], 'string', 'max' => 255],
+			[['description'], 'string', 'max' => 10000],
        //     [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }

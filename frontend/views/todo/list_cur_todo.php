@@ -21,7 +21,7 @@ use yii\helpers\Url;
 			<tr class="table_item">
 				<td></td>
 				<td></td>
-				<td><?= Html::encode($curTodo->description)?></td>
+				<!--<td><?//= Html::encode($curTodo->description)?></td>-->
 			</tr>
 		</table>
 	</div>
