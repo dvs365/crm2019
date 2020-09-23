@@ -29,7 +29,7 @@ class PhoneValidator extends Validator
         $queryPhoneclient = Phoneclient::find()->where(['number_mirror' => $model->number_mirror]);
         $queryPhoneface = Phoneface::find()->where(['number_mirror' => $model->number_mirror]);
         $queryPhoneOrg = Organization::find()->where(['number_mirror' => $model->number_mirror]);
-        //$arrPhone = ;
+
         if ($model->isNewRecord) {
             $arrPhone[] = $model->number_mirror;
             if ($queryPhoneface->exists()) {
@@ -44,21 +44,14 @@ class PhoneValidator extends Validator
         } else {
 			if (isset($model->face)) {
 				$faceID = Phoneface::find()->where(['face' => $model->face])->select('face')->one();
-				//echo '<pre>faceID = '; print_r($faceID); echo '</pre>';
 				$face = Face::findOne($faceID->face);
-				//echo '<pre>face = '; print_r($face); echo '</pre>';
 			}
 						
 			$clientID = !empty($model->client) ? $model->client : $face->client;
-			//echo '<pre>clientID = '; print_r($clientID); echo '</pre>';
 			$faceIDs = Face::find()->where(['client' => $clientID])->select('id')->asArray()->column();
-			//echo '<pre>faceIDs = '; print_r($faceIDs); echo '</pre>';
-			
-			
+						
             $modelsPhone = $queryPhoneclient->andWhere(['<>', 'client', $clientID])->limit(2)->asArray()->all();
-			//echo '<pre>modelsPhone1 = '; print_r($modelsPhone); echo '</pre>';
             $n = count($modelsPhone);
-			//echo '<pre>n1 = '; print_r($n); echo '</pre>';
             if ($n === 1) {
                 $dbModel = reset($modelsPhone);
                 if ($model->id != $dbModel['id']){
@@ -69,9 +62,7 @@ class PhoneValidator extends Validator
             }
 
 			$modelsPhone = $queryPhoneface->andWhere(['not in', 'face', $faceIDs])->limit(2)->asArray()->all();
-			//echo '<pre>modelsPhone2 = '; print_r($modelsPhone); echo '</pre>';
             $n = count($modelsPhone);
-			//echo '<pre>n2 = '; print_r($n); echo '</pre>';
             if ($n === 1) {
                 $dbModel = reset($modelsPhone);
                 if ($model->id != $dbModel['id']){
@@ -82,7 +73,6 @@ class PhoneValidator extends Validator
             }
             $modelsPhone = $queryPhoneOrg->andWhere(['<>', 'client', $clientID])->limit(2)->asArray()->all();
             $n = count($modelsPhone);
-            //echo '<pre>n3 = '; print_r($n); echo '</pre>';
 			if ($n === 1) {
                 $dbModel = reset($modelsPhone);
                 if ($model->id != $dbModel['id']){
