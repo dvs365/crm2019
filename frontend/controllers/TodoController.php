@@ -102,7 +102,7 @@ class TodoController extends Controller
 			'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
 			'todoCur' => (empty($status) || $status == Todo::OPEN)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['>','dateto', date('Y-m-d 00:00:00')])->andwhere(['<','date', date('Y-m-d 23:59:59')])->orderBy(['date' => SORT_ASC])->all():'',
-			'todoLate' => (empty($status) || $status == Todo::LATE)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['<','dateto', date('Y-m-d H:i:s')])->all():'',
+			'todoLate' => (empty($status) || $status == Todo::LATE)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['<','dateto', date('Y-m-d H:i:s')])->orderBy(['date' => SORT_ASC])->all():'',
 			'status' => $status,
 			'clients' => $clients,
 			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',

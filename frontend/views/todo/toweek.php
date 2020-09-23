@@ -52,6 +52,7 @@ TodoAsset::register($this);
 				</tr>
 				</thead>
 				<tbody>
+				<?ksort($modelsTime);?>
 				<?foreach ($modelsTime as $time => $todos):?>
 					<tr>
 						<td class="tweek_fcol"><?=$time?></td>
