@@ -92,9 +92,6 @@ for (var i = 0; i < phones.length; i++){
         phone = arrnum8.join("");
         
     }
-    if(phone != '' && phone.split("").reverse().join("") == currentphone){
-        cnt++;
-    }
 
 }
 if(findText){
