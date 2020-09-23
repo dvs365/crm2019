@@ -158,121 +158,117 @@ class ClientController extends Controller
             Model::loadMultiple($clientFaces, Yii::$app->request->post());
             Model::loadMultiple($clientOrganizations, Yii::$app->request->post());
 
-            //validate all models
             $valid = $client->validate();
+            
+			$transaction = \Yii::$app->db->beginTransaction();
+            if ($valid && $flag = $client->save()) {
+				if(isset($_POST['Phoneface'][0][0])){
+					foreach ($_POST['Phoneface'] as $indexFace => $phones){
+						foreach ($phones as $indexPhone => $phone){
+							$data['Phoneface'] = $phone;
+							$facePhone = new Phoneface;
+							$facePhone ->load($data);
+							$facePhones[$indexFace][$indexPhone] = $facePhone;
+						}
+					}
+				}
+				if(isset($_POST['Mailface'][0][0])){
+					foreach ($_POST['Mailface'] as $indexFace => $mails){
+						foreach ($mails as $indexMail => $mail){
+							$data['Mailface'] = $mail;
+							$faceMail = new Mailface;
+							$faceMail ->load($data);
+							$faceMails[$indexFace][$indexMail] = $faceMail;
+						}
+					}
+				}
+				try {
+					foreach ($clientPhones as $clientPhone) {
+						if(!empty($clientPhone->number)){
+							$clientPhone->client = $client->id;
+							$valid = $clientPhone->validate() && $valid;
+							if (!$valid || !($flag = $clientPhone->save())){
+								break;
+							}
+						} else {
+							$clientPhone->delete();
+						}
+					}
+					foreach ($clientMails as $clientMail) {
+						if(!empty($clientMail->mail)) {
+							$clientMail->client = $client->id;
+							$valid = $clientMail->validate() && $valid;
+							if (!$valid || !($flag = $clientMail->save())) {
+								break;
+							}
+						} else {
+							$clientMail->delete();
+						}
+					}
+					foreach ($clientFaces as $indexFace => $clientFace) {
+						$emptyFace = true;
+						if(array_filter($clientFace->attributes) !== []) {
+							$emptyFace = false;
+						}
+						$clientFace->client = $client->id;
+						$valid = $clientFace->validate() && $valid;
+						if (!$valid || !($flag = $clientFace->save())) {
+							break;
+						}
+						$empty = true;
+						if (isset($facePhones[$indexFace]) && is_array($facePhones[$indexFace])){
+							foreach ($facePhones[$indexFace] as $indexPhone => $facePhone) {
+								if(array_filter($facePhone->attributes) !== []) {
+									$facePhone->face = $clientFace->id;
+									$facePhone->client = $client->id;
+									$valid = $facePhone->validate() && $valid;
+									if (!$valid || !($flag = $facePhone->save(false))) {
+										break 2;
+									}
+									$empty = false;
+								}
+							}
+						}
+						if (isset($faceMails[$indexFace]) && is_array($faceMails[$indexFace])){
+							foreach ($faceMails[$indexFace] as $indexMail => $faceMail) {
+								if(array_filter($faceMail->attributes) !== []) {
+									$faceMail->face = $clientFace->id;
+									$valid = $faceMail->validate() && $valid;
+									if (!$valid || !($flag = $faceMail->save())) {
+										break 2;
+									}
+									$empty = false;
+								}
+							}
+						}
+						if ($emptyFace && $empty) {
+							$clientFace->delete();
+						}
+					}
+					foreach ($clientOrganizations as $clientOrg) {
+						if (!empty($clientOrg->name)) {
+							$clientOrg->client = $client->id;
+							if (empty($clientOrg->nds)) {
+								$clientOrg->nds = Organization::WITHNDS;
+							}
+							$valid = $clientOrg->validate() && $valid;
+							if (!$valid || !($flag = $clientOrg->save())) {
+								break;
+							}
+						}
+					}
+					
+					if ($flag) {
+						$transaction->commit();
+						return $this->redirect(['view', 'id' => $client->id]);
+					} else {
+						$transaction->rollBack();
+					}
+				} catch (Exception $e) {
+					$transaction->rollBack();
+				}
+			}
 
-            $valid = Model::validateMultiple($clientPhones) && $valid;
-            $valid = Model::validateMultiple($clientMails) && $valid;
-            $valid = Model::validateMultiple($clientFaces ) && $valid;
-            $valid = Model::validateMultiple($clientOrganizations) && $valid;
-
-            if(isset($_POST['Phoneface'][0][0])){
-                foreach ($_POST['Phoneface'] as $indexFace => $phones){
-                    foreach ($phones as $indexPhone => $phone){
-                        $data['Phoneface'] = $phone;
-                        $facePhone = new Phoneface;
-                        $facePhone ->load($data);
-                        $facePhones[$indexFace][$indexPhone] = $facePhone;
-                        $valid = $facePhone->validate() && $valid;
-                    }
-                }
-            }
-            if(isset($_POST['Mailface'][0][0])){
-                foreach ($_POST['Mailface'] as $indexFace => $mails){
-                    foreach ($mails as $indexMail => $mail){
-                        $data['Mailface'] = $mail;
-                        $faceMail = new Mailface;
-                        $faceMail ->load($data);
-                        $faceMails[$indexFace][$indexMail] = $faceMail;
-                        $valid = $faceMail->validate() && $valid;
-                    }
-                }
-            }
-
-            if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-
-                    if ($flag = $client->save()) {
-                        foreach ($clientPhones as $clientPhone) {
-                            if(!empty($clientPhone->number)){
-                                $clientPhone->client = $client->id;
-                                if (!($flag = $clientPhone->save())){
-                                    break;
-                                }
-                            } else {
-                                $clientPhone->delete();
-                            }
-                        }
-                        foreach ($clientMails as $clientMail) {
-                            if(!empty($clientMail->mail)) {
-                                $clientMail->client = $client->id;
-                                if (!($flag = $clientMail->save())) {
-                                    break;
-                                }
-                            } else {
-                                $clientMail->delete();
-                            }
-                        }
-                        foreach ($clientFaces as $indexFace => $clientFace) {
-                            $emptyFace = true;
-                            if(array_filter($clientFace->attributes) !== []) {
-                                $emptyFace = false;
-                            }
-                            $clientFace->client = $client->id;
-                            if (! ($flag = $clientFace->save())) {
-                                break;
-                            }
-                            $empty = true;
-                            if (isset($facePhones[$indexFace]) && is_array($facePhones[$indexFace])){
-                                foreach ($facePhones[$indexFace] as $indexPhone => $facePhone) {
-                                    if(array_filter($facePhone->attributes) !== []) {
-                                        $facePhone->face = $clientFace->id;
-                                        if (!($flag = $facePhone->save(false))) {
-                                            break 2;
-                                        }
-                                        $empty = false;
-                                    }
-                                }
-                            }
-                            if (isset($faceMails[$indexFace]) && is_array($faceMails[$indexFace])){
-                                foreach ($faceMails[$indexFace] as $indexMail => $faceMail) {
-                                    if(array_filter($faceMail->attributes) !== []) {
-                                        $faceMail->face = $clientFace->id;
-                                        if (!($flag = $faceMail->save())) {
-                                            break 2;
-                                        }
-                                        $empty = false;
-                                    }
-                                }
-                            }
-                            if ($emptyFace && $empty) {
-                                $clientFace->delete();
-                            }
-                        }
-                        foreach ($clientOrganizations as $clientOrg) {
-                            if (!empty($clientOrg->name)) {
-                                $clientOrg->client = $client->id;
-                                if (empty($clientOrg->nds)) {
-                                    $clientOrg->nds = Organization::WITHNDS;
-                                }
-                                if (!($flag = $clientOrg->save())) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if ($flag) {
-                        $transaction->commit();
-                        return $this->redirect(['view', 'id' => $client->id]);
-                    } else {
-                        $transaction->rollBack();
-                    }
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            }
         }
 
         return $this->render('create', [
@@ -337,10 +333,6 @@ class ClientController extends Controller
 
             //validate
             $valid = $client->validate();
-            $valid = Model::validateMultiple($clientPhones) && $valid;
-            $valid = Model::validateMultiple($clientMails) && $valid;
-            $valid = Model::validateMultiple($clientFaces) && $valid;
-            $valid = Model::validateMultiple($clientOrganizations) && $valid;
 
             $facePhonesIDs = [];
             if (isset($_POST['Phoneface'][0][0])) {
@@ -351,7 +343,7 @@ class ClientController extends Controller
                         $facePhone = (isset($phone['id']) && isset($oldFacePhones[$phone['id']])) ? $oldFacePhones[$phone['id']] : new Phoneface;
                         $facePhone->load($data);
                         $facePhones[$indexFace][$indexPhone] = $facePhone;
-                        $valid = $facePhone->validate() && $valid;
+                        //$valid = $facePhone->validate() && $valid;
                     }
                 }
             }
@@ -364,7 +356,7 @@ class ClientController extends Controller
                         $faceMail = (isset($mail['id']) && isset($oldFaceMails[$mail['id']])) ? $oldFaceMails[$mail['id']] : new Mailface;
                         $faceMail->load($data);
                         $faceMails[$indexFace][$indexMail] = $faceMail;
-                        $valid = $faceMail->validate() && $valid;
+                        //$valid = $faceMail->validate() && $valid;
                     }
                 }
             }
@@ -410,7 +402,8 @@ class ClientController extends Controller
                             if (!empty($clientPhone->number)) {
                                 $clientPhone->client = $client->id;
                                 $dirty = $dirty && empty($clientPhone->getDirtyAttributes());
-                                if (!$flag = $clientPhone->save()) {
+								$valid = $clientPhone->validate() && $valid;
+                                if (!$valid || !$flag = $clientPhone->save()) {
                                     break;
                                 }
                             } else {
@@ -421,7 +414,8 @@ class ClientController extends Controller
                             if (array_filter($clientMail->attributes) !== []) {
                                 $clientMail->client = $client->id;
                                 $dirty = $dirty && empty($clientMail->getDirtyAttributes());
-                                if (!$flag = $clientMail->save()) {
+								$valid = $clientMail->validate() && $valid;
+                                if (!$valid || !$flag = $clientMail->save()) {
                                     break;
                                 }
                             }
@@ -451,14 +445,17 @@ class ClientController extends Controller
                             if (!$emptyFace || !$emptySub) {
                                 $clientFace->client = $client->id;
                                 $dirty = $dirty && empty($clientFace->getDirtyAttributes());
-                                if (!$flag = $clientFace->save()) {
+								$valid = $clientFace->validate() && $valid;
+                                if (!$valid || !$flag = $clientFace->save()) {
                                     break;
                                 }
                                 foreach ($facePhones[$indexFace] as $indexPhone => $phone) {
                                     if (!empty($phone->number) || !empty($phone->comment)) {
                                         $phone->face = $clientFace->id;
+										$phone->client = $client->id;
                                         $dirty = $dirty && empty($phone->getDirtyAttributes());
-                                        if (!($flag = $phone->save())) {
+										$valid = $phone->validate() && $valid;
+                                        if (!$valid || !($flag = $phone->save())) {
                                             break 2;
                                         }
                                     } else {
@@ -468,8 +465,10 @@ class ClientController extends Controller
                                 foreach ($faceMails[$indexFace] as $indexMail => $mail) {
                                     if (!empty($mail->mail)) {
                                         $mail->face = $clientFace->id;
+										$mail->client = $client->id;
                                         $dirty = $dirty && empty($mail->getDirtyAttributes());
-                                        if (!($flag = $mail->save())) {
+										$valid = $mail->validate() && $valid;
+                                        if (!$valid || !($flag = $mail->save())) {
                                             break 2;
                                         }
                                     } else {
@@ -487,7 +486,8 @@ class ClientController extends Controller
                                     $clientOrg->nds = Organization::WITHNDS;
                                 }
                                 $dirty = $dirty && empty($clientOrg->getDirtyAttributes());
-                                if (!$flag = $clientOrg->save()) {
+								$valid = $clientOrg->validate() && $valid;
+                                if (!$valid || !$flag = $clientOrg->save()) {
                                     break;
                                 }
                             } else {
@@ -512,7 +512,6 @@ class ClientController extends Controller
                             }
                         }
                     }
-
                     if ($flag) {
                         $transaction->commit();
                         return $this->redirect(['view', 'id' => $client->id]);

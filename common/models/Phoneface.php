@@ -17,6 +17,7 @@ use Yii;
  */
 class Phoneface extends \yii\db\ActiveRecord
 {
+	public $client;
     /**
      * {@inheritdoc}
      */
@@ -33,6 +34,7 @@ class Phoneface extends \yii\db\ActiveRecord
         return [
             ['number', 'app\components\validators\PhoneValidator'],
             [['face', 'number_mirror'], 'integer'],
+			[['client'], 'safe'],
             [['comment'], 'string', 'max' => 255],
             [['face'], 'exist', 'skipOnError' => true, 'targetClass' => Face::className(), 'targetAttribute' => ['face' => 'id']],
         ];

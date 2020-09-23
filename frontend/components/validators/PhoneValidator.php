@@ -29,66 +29,27 @@ class PhoneValidator extends Validator
         $queryPhoneclient = Phoneclient::find()->where(['number_mirror' => $model->number_mirror]);
         $queryPhoneface = Phoneface::find()->where(['number_mirror' => $model->number_mirror]);
         $queryPhoneOrg = Organization::find()->where(['number_mirror' => $model->number_mirror]);
-        //$arrPhone = ;
+		
+		$faceIDs = Face::find()->where(['client' => $model->client])->select('id')->asArray()->column();
+				
         if ($model->isNewRecord) {
-            $arrPhone[] = $model->number_mirror;
-            if ($queryPhoneface->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }elseif ($queryPhoneclient->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }elseif ($queryPhoneOrg->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }/*elseif(array_search($model->number_mirror, $arrPhone) !== false){
-                $model->addError($attribute, 'double4');
-            }*/
-        } else {
-			if (isset($model->face)) {
-				$faceID = Phoneface::find()->where(['face' => $model->face])->select('face')->one();
-				//echo '<pre>faceID = '; print_r($faceID); echo '</pre>';
-				$face = Face::findOne($faceID->face);
-				//echo '<pre>face = '; print_r($face); echo '</pre>';
-			}
-						
-			$clientID = !empty($model->client) ? $model->client : $face->client;
-			//echo '<pre>clientID = '; print_r($clientID); echo '</pre>';
-			$faceIDs = Face::find()->where(['client' => $clientID])->select('id')->asArray()->column();
-			//echo '<pre>faceIDs = '; print_r($faceIDs); echo '</pre>';
-			
-			
-            $modelsPhone = $queryPhoneclient->andWhere(['<>', 'client', $clientID])->limit(2)->asArray()->all();
-			//echo '<pre>modelsPhone1 = '; print_r($modelsPhone); echo '</pre>';
-            $n = count($modelsPhone);
-			//echo '<pre>n1 = '; print_r($n); echo '</pre>';
-            if ($n === 1) {
-                $dbModel = reset($modelsPhone);
-                if ($model->id != $dbModel['id']){
-                    $model->addError($attribute, 'телефон задублирован.');
-                }
-            } elseif ($n > 1) {
+            if ($queryPhoneface->andWhere(['not in', 'face', $faceIDs])->exists()) {
                 $model->addError($attribute, 'телефон задублирован.');
             }
-
-			$modelsPhone = $queryPhoneface->andWhere(['not in', 'face', $faceIDs])->limit(2)->asArray()->all();
-			//echo '<pre>modelsPhone2 = '; print_r($modelsPhone); echo '</pre>';
-            $n = count($modelsPhone);
-			//echo '<pre>n2 = '; print_r($n); echo '</pre>';
-            if ($n === 1) {
-                $dbModel = reset($modelsPhone);
-                if ($model->id != $dbModel['id']){
-                    $model->addError($attribute, 'телефон задублирован.');
-                }
-            } elseif ($n > 1) {
+			elseif ($queryPhoneclient->andWhere(['<>', 'client', $model->client])->exists()) {
                 $model->addError($attribute, 'телефон задублирован.');
             }
-            $modelsPhone = $queryPhoneOrg->andWhere(['<>', 'client', $clientID])->limit(2)->asArray()->all();
-            $n = count($modelsPhone);
-            //echo '<pre>n3 = '; print_r($n); echo '</pre>';
-			if ($n === 1) {
-                $dbModel = reset($modelsPhone);
-                if ($model->id != $dbModel['id']){
-                    $model->addError($attribute, 'телефон задублирован.');
-                }
-            } elseif ($n > 1) {
+			elseif ($queryPhoneOrg->andWhere(['<>', 'client', $model->client])->exists()) {
+                $model->addError($attribute, 'телефон задублирован.');
+            }
+        } else {			
+            if ($queryPhoneclient->andWhere(['<>', 'client', $model->client])->exists()) {
+                $model->addError($attribute, 'телефон задублирован.');
+            }			
+            elseif ($queryPhoneface->andWhere(['not in', 'face', $faceIDs])->exists()) {
+                $model->addError($attribute, 'телефон задублирован.');
+            }			
+			elseif ($queryPhoneOrg->andWhere(['<>', 'client', $model->client])->exists()) {
                 $model->addError($attribute, 'телефон задублирован.');
             }
         }
