@@ -41,10 +41,6 @@ class PhoneValidator extends Validator
 		elseif ($queryPhoneOrg->andWhere(['<>', 'client', $model->client])->exists()) {
 			$model->addError($attribute, 'телефон задублирован.');
 		}
-<<<<<<< HEAD
-
-=======
->>>>>>> b63c0a73c78f59beea7c3ceb0d03330b26274d9d
     }
 
     public function clientValidateAttribute($model, $attribute, $view)
