@@ -53,11 +53,11 @@ class Organization extends \yii\db\ActiveRecord
     {
         return [
             ['phone','app\components\validators\PhoneValidator'],
-            [['client', 'form', 'nds', 'number_mirror', 'mail', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
+            [['client', 'form', 'nds', 'number_mirror', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
 
             ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP]],
             ['nds', 'in', 'range' => [self::WITHNDS, self::WITHOUTNDS]],
-            [['name', 'jadds', 'fadds', 'director', 'bank'], 'string', 'max' => 255],
+            [['name', 'jadds', 'fadds', 'director', 'bank', 'mail'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }
@@ -126,4 +126,10 @@ class Organization extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Client::className(), ['id' => 'client']);
     }
+	
+    public function beforeSave($insert)
+    {
+		$this->mail = trim($this->mail);
+		return parent::beforeSave($insert);
+    }	
 }

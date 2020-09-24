@@ -54,4 +54,10 @@ class Mailclient extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Client::className(), ['id' => 'client']);
     }
+	
+    public function beforeSave($insert)
+    {
+		$this->mail = trim($this->mail);
+		return parent::beforeSave($insert);
+    }	
 }

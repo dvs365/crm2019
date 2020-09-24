@@ -32,27 +32,16 @@ class PhoneValidator extends Validator
 		
 		$faceIDs = Face::find()->where(['client' => $model->client])->select('id')->asArray()->column();
 				
-        if ($model->isNewRecord) {
-            if ($queryPhoneface->andWhere(['not in', 'face', $faceIDs])->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }
-			elseif ($queryPhoneclient->andWhere(['<>', 'client', $model->client])->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }
-			elseif ($queryPhoneOrg->andWhere(['<>', 'client', $model->client])->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }
-        } else {			
-            if ($queryPhoneclient->andWhere(['<>', 'client', $model->client])->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }			
-            elseif ($queryPhoneface->andWhere(['not in', 'face', $faceIDs])->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }			
-			elseif ($queryPhoneOrg->andWhere(['<>', 'client', $model->client])->exists()) {
-                $model->addError($attribute, 'телефон задублирован.');
-            }
-        }
+		if ($queryPhoneface->andWhere(['not in', 'face', $faceIDs])->exists()) {
+			$model->addError($attribute, 'телефон задублирован.');
+		}
+		elseif ($queryPhoneclient->andWhere(['<>', 'client', $model->client])->exists()) {
+			$model->addError($attribute, 'телефон задублирован.');
+		}
+		elseif ($queryPhoneOrg->andWhere(['<>', 'client', $model->client])->exists()) {
+			$model->addError($attribute, 'телефон задублирован.');
+		}
+
     }
 
     public function clientValidateAttribute($model, $attribute, $view)
@@ -91,9 +80,6 @@ for (var i = 0; i < phones.length; i++){
         arrnum8[0] = '7';
         phone = arrnum8.join("");
         
-    }
-    if(phone != '' && phone.split("").reverse().join("") == currentphone){
-        cnt++;
     }
 
 }

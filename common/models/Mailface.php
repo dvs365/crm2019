@@ -15,6 +15,7 @@ use Yii;
  */
 class Mailface extends \yii\db\ActiveRecord
 {
+	public $client;
     /**
      * {@inheritdoc}
      */
@@ -31,6 +32,7 @@ class Mailface extends \yii\db\ActiveRecord
         return [
             [['face'], 'integer'],
             [['mail'], 'string', 'max' => 255],
+			[['client'], 'safe'],
             [['face'], 'exist', 'skipOnError' => true, 'targetClass' => Face::className(), 'targetAttribute' => ['face' => 'id']],
         ];
     }
@@ -53,5 +55,11 @@ class Mailface extends \yii\db\ActiveRecord
     public function getFace0()
     {
         return $this->hasOne(Face::className(), ['id' => 'face']);
+    }
+	
+    public function beforeSave($insert)
+    {
+		$this->mail = trim($this->mail);
+		return parent::beforeSave($insert);
     }
 }

@@ -169,16 +169,22 @@ class ClientSearch extends Client
         if($searchArr || !empty($ids)) {
             $or = ['or'];
             foreach ($searchArr as $searchIt) {
-                $or[] = ['like', 'name', trim($searchIt)];
-                $or[] = ['like', 'address', trim($searchIt)];
-                $or[] = ['like', 'discomment', trim($searchIt)];
+				$words = explode(' ', $searchIt);
+				$and = ['name' => ['and'], 'address' => ['and'], 'discomment' => ['and']];
+				foreach ($words as $word) {
+					$and['name'][] = ['like', 'name', trim($word)];
+					$and['address'][] = ['like', 'address', trim($word)];
+					$and['discomment'][] = ['like', 'discomment', trim($word)];					
+				}
+				$or[] = $and['name'];
+				$or[] = $and['address'];
+				$or[] = $and['discomment'];
             }
             if (!empty($ids)) {
                 $or[] = ['in', 'id', $ids];
             }
             $query->andWhere($or);
         }
-
         if($this->statuses) {
             $query->andWhere(['in', 'status', $this->statuses]);
         }
