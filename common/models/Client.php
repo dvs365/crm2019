@@ -52,7 +52,8 @@ class Client extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['name'], 'trim'],
 
-            [['name', 'address', 'website', 'discomment'], 'string', 'max' => 255],
+            [['name', 'website', 'discomment'], 'string', 'max' => 255],
+			[['address'], 'string', 'max' => 2000],
             [['user', 'disconfirm'], 'integer'],
             [['update'], 'safe'],
 

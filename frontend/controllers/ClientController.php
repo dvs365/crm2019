@@ -145,6 +145,7 @@ class ClientController extends Controller
 			//$client->website = parse_url($client->website, PHP_URL_HOST);
             $client->created = date('Y-m-d H:i:s');
             $client->created_id = Yii::$app->user->identity->id;
+			$client->disconfirm = \Yii::$app->user->can('confirmDiscount') ? 1 : 0;
             if (empty($client->user)){
                 $client->user = Yii::$app->user->identity->id;
             }
@@ -157,7 +158,6 @@ class ClientController extends Controller
             Model::loadMultiple($clientMails, Yii::$app->request->post());
             Model::loadMultiple($clientFaces, Yii::$app->request->post());
             Model::loadMultiple($clientOrganizations, Yii::$app->request->post());
-
             $valid = $client->validate();
             
 			$transaction = \Yii::$app->db->beginTransaction();
@@ -373,9 +373,7 @@ class ClientController extends Controller
                     $dirtyClient = $client->getDirtyAttributes();
                     $dirty = empty($dirtyClient);
                     if (array_key_exists('discomment', $dirtyClient) || array_key_exists('discount', $dirtyClient)){
-                        if(!\Yii::$app->user->can('confirmDiscount')){
-                            $client->disconfirm = 0;
-                        }
+                        $client->disconfirm = \Yii::$app->user->can('confirmDiscount') ? 1 : 0;
                     }
                     if ($flag = $client->save(false)) {
                         if (!empty($deleteFacePhonesIDs)) {
