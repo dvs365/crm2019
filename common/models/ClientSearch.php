@@ -149,6 +149,7 @@ class ClientSearch extends Client
             $query->andFilterWhere([
                 'disconfirm' => 0,
             ]);
+			//именить базу UPDATE `client` SET `disconfirm` = 1 WHERE discount = 0 и discomment = ''
             $query->andWhere(['or',
                     ['<>', 'discount', 0],
                     ['<>', 'discomment', '']
@@ -167,23 +168,25 @@ class ClientSearch extends Client
 			$ids = array_unique(array_merge($ids, $orgIds));
 		}
         if($searchArr || !empty($ids)) {
-            $or = ['or'];
+            $or_ = ['or'];
             foreach ($searchArr as $searchIt) {
 				$words = explode(' ', $searchIt);
-				$and = ['name' => ['and'], 'address' => ['and'], 'discomment' => ['and']];
+				$and = ['and'];
 				foreach ($words as $word) {
-					$and['name'][] = ['like', 'name', trim($word)];
-					$and['address'][] = ['like', 'address', trim($word)];
-					$and['discomment'][] = ['like', 'discomment', trim($word)];					
+					if (mb_strlen($word , 'UTF-8') < 4) continue; 
+					$or = ['or'];
+					$or[] = ['like', 'name', trim($word)];
+					$or[] = ['like', 'address', trim($word)];
+					//$or[] = ['like', 'discomment', trim($word)];
+					$and[] = $or;
 				}
-				$or[] = $and['name'];
-				$or[] = $and['address'];
-				$or[] = $and['discomment'];
+				$or_[] = $and;
             }
             if (!empty($ids)) {
-                $or[] = ['in', 'id', $ids];
+                $or_[] = ['in', 'id', $ids];
             }
-            $query->andWhere($or);
+			//echo '<pre>'; print_r($or_); echo '</pre>';
+            $query->andWhere($or_);
         }
         if($this->statuses) {
             $query->andWhere(['in', 'status', $this->statuses]);
