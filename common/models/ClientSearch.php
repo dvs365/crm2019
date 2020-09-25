@@ -164,7 +164,8 @@ class ClientSearch extends Client
             $query->andWhere(['in', 'id', $taskIDs]);
         }
 		foreach ($searchArr as $searchIt) {
-			$orgIds = Organization::find()->andWhere(['like', 'name', trim($searchIt)])->select('client')->asArray()->column();
+			$words = array_diff(explode(' ', $searchIt), ['']);
+			$orgIds = Organization::find()->andWhere(['like', 'name', $words])->select('client')->asArray()->column();
 			$ids = array_unique(array_merge($ids, $orgIds));
 		}
         if($searchArr || !empty($ids)) {
@@ -185,7 +186,6 @@ class ClientSearch extends Client
             if (!empty($ids)) {
                 $or_[] = ['in', 'id', $ids];
             }
-			//echo '<pre>'; print_r($or_); echo '</pre>';
             $query->andWhere($or_);
         }
         if($this->statuses) {
