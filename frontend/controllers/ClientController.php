@@ -258,7 +258,7 @@ class ClientController extends Controller
 						}
 					}
 					
-					if ($flag) {
+					if ($flag && $valid) {
 						$transaction->commit();
 						return $this->redirect(['view', 'id' => $client->id]);
 					} else {
@@ -510,7 +510,7 @@ class ClientController extends Controller
                             }
                         }
                     }
-                    if ($flag) {
+                    if ($flag && $valid) {
                         $transaction->commit();
                         return $this->redirect(['view', 'id' => $client->id]);
                     } else {
