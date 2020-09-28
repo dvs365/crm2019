@@ -30,6 +30,7 @@ class Mailface extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+			['mail', 'app\components\validators\MailValidator'],
             [['face'], 'integer'],
             [['mail'], 'string', 'max' => 255],
 			[['client'], 'safe'],

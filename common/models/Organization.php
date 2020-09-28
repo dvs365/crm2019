@@ -53,6 +53,7 @@ class Organization extends \yii\db\ActiveRecord
     {
         return [
             ['phone','app\components\validators\PhoneValidator'],
+			['mail', 'app\components\validators\MailValidator'],
             [['client', 'form', 'nds', 'number_mirror', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
 
             ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP]],

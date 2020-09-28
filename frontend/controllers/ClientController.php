@@ -233,6 +233,7 @@ class ClientController extends Controller
 							foreach ($faceMails[$indexFace] as $indexMail => $faceMail) {
 								if(array_filter($faceMail->attributes) !== []) {
 									$faceMail->face = $clientFace->id;
+									$faceMail->client = $client->id;
 									$valid = $faceMail->validate() && $valid;
 									if (!$valid || !($flag = $faceMail->save())) {
 										break 2;

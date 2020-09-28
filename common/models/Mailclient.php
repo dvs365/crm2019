@@ -29,6 +29,7 @@ class Mailclient extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+			['mail', 'app\components\validators\MailValidator'],
             [['client'], 'integer'],
             [['mail'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],

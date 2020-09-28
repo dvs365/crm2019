@@ -23,26 +23,14 @@ class MailValidator extends Validator
 		
 		$faceIDs = Face::find()->where(['client' => $model->client])->select('id')->asArray()->column();
 				
-        if ($model->isNewRecord) {
-            if ($queryMailface->andWhere(['not in', 'face', $faceIDs])->exists()) {
-                $model->addError($attribute, 'e-mail задублирован.');
-            }
-			elseif ($queryMailclient->andWhere(['<>', 'client', $model->client])->exists()) {
-                $model->addError($attribute, 'e-mail задублирован.');
-            }
-			elseif ($queryMailOrg->andWhere(['<>', 'client', $model->client])->exists()) {
-                $model->addError($attribute, 'e-mail задублирован.');
-            }
-        } else {			
-            if ($queryMailclient->andWhere(['<>', 'client', $model->client])->exists()) {
-                $model->addError($attribute, 'e-mail задублирован.');
-            }			
-            elseif ($queryMailface->andWhere(['not in', 'face', $faceIDs])->exists()) {
-                $model->addError($attribute, 'e-mail задублирован.');
-            }			
-			elseif ($queryMailOrg->andWhere(['<>', 'client', $model->client])->exists()) {
-                $model->addError($attribute, 'e-mail задублирован.');
-            }
-        }
+		if ($queryMailface->andWhere(['not in', 'face', $faceIDs])->exists()) {
+			$model->addError($attribute, 'e-mail задублирован.');
+		}
+		elseif ($queryMailclient->andWhere(['<>', 'client', $model->client])->exists()) {
+			$model->addError($attribute, 'e-mail задублирован.');
+		}
+		elseif ($queryMailOrg->andWhere(['<>', 'client', $model->client])->exists()) {
+			$model->addError($attribute, 'e-mail задублирован.');
+		}
     }
 }
