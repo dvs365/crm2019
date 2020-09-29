@@ -57,7 +57,7 @@ class ClientSearch extends Client
     public function search($params)
     {
         $query = Client::find();
-
+		$whereFlag = false;
         // add conditions that should always apply here
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -138,6 +138,7 @@ class ClientSearch extends Client
 		}
 		
         if ($this->permonth) {
+			$whereFlag = true;
             $delay = (int)$this->permonth * 30;
             $query->andWhere([
                 '>', 'show_u', (new \DateTime('-'.$delay.' days'))->format('Y-m-d')
@@ -146,6 +147,7 @@ class ClientSearch extends Client
 
         // grid filtering conditions
         if ($this->disconfirm) {
+			$whereFlag = true;
             $query->andFilterWhere([
                 'disconfirm' => 0,
             ]);
@@ -157,6 +159,7 @@ class ClientSearch extends Client
         }
         // grid filtering conditions
         if ($this->task) {
+			$whereFlag = true;
             $todo = Todo::find()->select('client')->andFilterWhere([
                 'status' => 10,
             ]);
@@ -169,6 +172,7 @@ class ClientSearch extends Client
 			$ids = array_unique(array_merge($ids, $orgIds));
 		}
         if($searchArr || !empty($ids)) {
+			$whereFlag = true;
             $or_ = ['or'];
             foreach ($searchArr as $searchIt) {
 				$words = explode(' ', $searchIt);
@@ -189,8 +193,12 @@ class ClientSearch extends Client
             $query->andWhere($or_);
         }
         if($this->statuses) {
+			$whereFlag = true;
             $query->andWhere(['in', 'status', $this->statuses]);
         }
+		if (!$whereFlag && $this->search) {
+			$query->andWhere(['id' => '0']);
+		}
 
         $query->orderBy(['show' => SORT_DESC]);
 		
