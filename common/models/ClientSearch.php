@@ -166,11 +166,7 @@ class ClientSearch extends Client
             $taskIDs = $todo->groupBy('client')->asArray()->column();
             $query->andWhere(['in', 'id', $taskIDs]);
         }
-		foreach ($searchArr as $searchIt) {
-			$words = array_diff(explode(' ', $searchIt), ['']);
-			$orgIds = Organization::find()->andWhere(['like', 'name', $words])->select('client')->asArray()->column();
-			$ids = array_unique(array_merge($ids, $orgIds));
-		}
+
         if($searchArr || !empty($ids)) {
 			$whereFlag = true;
             $or_ = ['or'];
@@ -178,11 +174,11 @@ class ClientSearch extends Client
 				$words = explode(' ', $searchIt);
 				$and = ['and'];
 				foreach ($words as $word) {
-					if (mb_strlen($word , 'UTF-8') < 4) continue; 
+					if (mb_strlen($word , 'UTF-8') < 4) continue;
 					$or = ['or'];
 					$or[] = ['like', 'name', trim($word)];
 					$or[] = ['like', 'address', trim($word)];
-					//$or[] = ['like', 'discomment', trim($word)];
+					$or[] = ['id' => Organization::find()->andWhere(['like', 'name', $word])->select('client')->asArray()->column()];
 					$and[] = $or;
 				}
 				$or_[] = $and;
