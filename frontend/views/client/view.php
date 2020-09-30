@@ -72,7 +72,7 @@ ClientAsset::register($this);
             <div class="contact_site wrap3">
                 <?$webArr = explode(',', $client->website);?>
                     <?foreach ($webArr as $web):?>
-                        <?=Html::a(Html::encode(trim($web)), Html::encode(trim($web)));?>
+                        <?=Html::a(Html::encode(trim($web)), Html::encode(trim($web)), ['target' => '_blank']);?>
                     <?endforeach;?>
             </div>
             <div ID="contact-all" class="color_blue">Общие контакты клиента
