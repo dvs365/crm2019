@@ -83,7 +83,7 @@ class ClientSearch extends Client
                 }
                 $phones[] = strrev($searchPhone);
                 unset($searchArr[$searchKey]);
-            }elseif (mb_strlen($searchIt) < 4) {
+            }elseif (mb_strlen($searchIt) < 3) {
                 unset($searchArr[$searchKey]);
             }
         }
@@ -174,7 +174,7 @@ class ClientSearch extends Client
 				$words = explode(' ', $searchIt);
 				$and = ['and'];
 				foreach ($words as $word) {
-					if (mb_strlen($word , 'UTF-8') < 4) continue;
+					if (mb_strlen($word , 'UTF-8') < 3) continue;
 					$or = ['or'];
 					$or[] = ['like', 'name', trim($word)];
 					$or[] = ['like', 'address', trim($word)];
