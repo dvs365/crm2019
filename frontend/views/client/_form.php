@@ -103,11 +103,11 @@ use yii\helpers\ArrayHelper;
         ?>
         <div class="wrap_select left">
             <?if(\Yii::$app->user->can('upClientAll')):?>
-            <label>Менеджер:
+            <label>Менеджер:<?$model->user = (!empty($model->user)) ? $model->user : Yii::$app->user->identity->id?>
                 <div class="select">
                     <div class="dropdown"></div>
                         <?$managers = ArrayHelper::map($modelsUser, 'id', 'surnameNP')?>
-                    <?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'options' => [Yii::$app->user->identity->id => ['selected' => true]]])?>
+                    <?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'options' => [$model->user => ['selected' => true]]])?>
                 </div>
             </label>
             <?endif;?>
