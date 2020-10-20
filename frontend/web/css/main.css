@@ -548,4 +548,43 @@ div.field-todo-client{display:contents;}
 nav .right a.active{background-color:#ffffff; border-radius:10px 10px 0 0;}
 
 select#todo-to-user {background-color: #f7f7f7; border: 1px solid #aaa; border-radius: 4px;}
+form.settings input[type="date"] {position:relative; height:30px; padding-left:4px; left:-4px;
+    border:1px solid #dedede;border-radius:4px; box-sizing:border-box; font-family:'verdana';
+    font-size:14px; -moz-appearance: textfield;}
+form.settings input[type="date"] {left: 0}
+
+a mark {
+  margin-top: 5px;	
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;   
+  width: 20px;
+  height: 20px;  
+  background-color: #FF6B6B;
+  top: -5px;
+  left: -10px;
+  font-size: 10px;
+  line-height: 20px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  color: #FFF;
+  font-weight: 700;
+}
+
+a mark.big{
+  width: 11px;
+  height: 11px;  
+  -webkit-border-radius: 11px;
+  -moz-border-radius: 11px;
+  border-radius: 11px;
+  line-height: 11px;  
+  font-size: 5px;  
+  top: -5px;
+  left: -15px;
+  float:right;
+}
+nav div.right a:nth-child(1) {
+  display: block;
+  position: relative;
+}  
 /*******************/ 

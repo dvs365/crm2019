@@ -17,6 +17,7 @@ class ProfileUpdateForm extends Model
 	public $access;
     public $rule;
 	public $status;
+	public $birthday;
 	public $users;
  
     /**
@@ -37,6 +38,7 @@ class ProfileUpdateForm extends Model
         $this->phone = $user->phone;
         $this->email = $user->email;
 		$this->status = $user->status;
+		$this->birthday = \Yii::$app->formatter->asDate($user->birthday, "php:Y-m-d");
 		$this->access = !empty($roles['admin'])  ? '2' : '1';
 		$permissions = Yii::$app->authManager->getPermissions();
 		foreach ($permissions as $name => $permission) {
@@ -92,6 +94,8 @@ class ProfileUpdateForm extends Model
 			['status', 'default', 'value' => 9],
 			
 			['users', 'each', 'rule' => ['integer']],
+			
+			['birthday', 'date', 'format' => 'php:Y-m-d'],
         ];
     }
  
@@ -108,6 +112,7 @@ class ProfileUpdateForm extends Model
 			$user->phone = $this->phone;			
 			$user->email = $this->email;
 			$user->status = $this->status;
+			$user->birthday = $this->birthday;
 
 			$permissions = Yii::$app->authManager->getPermissions();
 			foreach($permissions as $name => $permission) {

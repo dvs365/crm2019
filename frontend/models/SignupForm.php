@@ -20,6 +20,7 @@ class SignupForm extends Model
     public $access;
 	public $rule;
 	public $status;
+	public $birthday;
 
     /**
      * {@inheritdoc}
@@ -63,6 +64,8 @@ class SignupForm extends Model
 			['status', 'integer'],
 			['status', 'in', 'range' => [0, 9, 10]],
 			['status', 'default', 'value' => 9],
+			
+			['birthday', 'date', 'format' => 'php:Y-m-d'],
         ];
     }
 
@@ -84,6 +87,7 @@ class SignupForm extends Model
         $user->position = $this->position;
         $user->phone = $this->phone;
         $user->email = $this->email;
+		$user->birthday = $this->birthday;
         $this->password = bin2hex(openssl_random_pseudo_bytes(4));
 
         $user->setPassword($this->password);

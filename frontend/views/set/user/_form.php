@@ -35,6 +35,10 @@ SettingAsset::register($this);
                 <td class="w180">Телефон</td>
                 <td><?= $form->field($model, 'phone', ['template' => "{input}"])->input('text', ['class' => 'mb10']) ?></td>
             </tr>
+            <tr>
+                <td class="w180">День рождения</td>
+                <td><?= $form->field($model, 'birthday', ['template' => "{input}"])->input('date', ['class' => 'mb10']) ?></td>
+            </tr>			
 			<? 
 			if (!empty($model->id)) :?>
 			<tr>

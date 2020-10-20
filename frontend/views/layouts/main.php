@@ -48,10 +48,11 @@ AppAsset::register($this);
                 ?>
                 <div class="btn_menu dropdown"></div>
                 <div class="right">
+					<?$setMark = (\Yii::$app->user->can('alertBirthday') && \Yii::$app->mark->birthday(3))?'<mark class="big"></mark>':'';?>
 					<?= MenuActive::widget([
 						'encodeLabels' => false,
 						'items' => [
-							['label' => 'Настройки', 'url' => ['set/profile'], 'active' => $checkController('set')],
+							['label' => 'Настройки'.$setMark, 'url' => ['set/profile'], 'active' => $checkController('set')],
 							['label' => 'Выход', 'url' => ['site/logout']],
 						],
 						'options' => ['tag' => false],
