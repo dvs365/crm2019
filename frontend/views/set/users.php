@@ -66,7 +66,7 @@ BirthdayAsset::register($this);
 				<?foreach ($users as $user):?>
 					<?if ($user->birthday):?>
 					<?$date = new DateTime($user->birthday);?>
-					<div data-dd="<?=$date->format('d')?>" data-mm="<?=$date->format('m')?>" data-text="<?=$user->surnameNP?>"></div>
+					<div data-dd="<?=$date->format('j')?>" data-mm="<?=$date->format('n')?>" data-text="<?=$user->surnameNP?>"></div>
 					<?endif;?>
 				<?endforeach;?>
 			</div>
