@@ -117,7 +117,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     <?=$clientOrg->getAttributeLabel('phone')?>
                 </td>
                 <td>
-                    <?= $form->field($clientOrg, "[{$indexOrg}]phone", ['template' => "{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
+                    <?= $form->field($clientOrg, "[{$indexOrg}]phone", ['template' => "{error}{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
                 </td>
             </tr>
             <tr>
@@ -125,7 +125,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     <?=$clientOrg->getAttributeLabel('mail')?>
                 </td>
                 <td>
-                    <?= $form->field($clientOrg, "[{$indexOrg}]mail", ['template' => "{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
+                    <?= $form->field($clientOrg, "[{$indexOrg}]mail", ['template' => "{error}{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
                 </td>
             </tr>
             <tr>

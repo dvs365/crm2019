@@ -31,7 +31,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                 echo Html::activeHiddenInput($clientMail, "[{$index}]id");
             }
             ?>
-            <?= $form->field($clientMail, "[{$index}]mail", ['template' => "{input}"])->textInput(['class' => 'mail', 'maxlength' => true])?>
+            <?= $form->field($clientMail, "[{$index}]mail", ['template' => "{error}{input}"])->textInput(['class' => 'mail', 'maxlength' => true])?>
             <div class="add-cmail btn right">Добавить</div>
         </td>
     </tr>

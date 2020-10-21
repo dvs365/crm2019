@@ -31,7 +31,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     echo Html::activeHiddenInput($facePhone, "[{$indexFace}][{$indexPhone}]id");
                 }
                 ?>
-                <?= $form->field($facePhone, "[{$indexFace}][{$indexPhone}]number", ['template' => "{input}"])->textInput(['class' => 'phone_number', 'maxlength' => true,'placeholder' => '+7'])?>
+                <?= $form->field($facePhone, "[{$indexFace}][{$indexPhone}]number", ['template' => "{error}{input}"])->textInput(['class' => 'phone_number', 'maxlength' => true,'placeholder' => '+7'])?>
                 <?= $form->field($facePhone, "[{$indexFace}][{$indexPhone}]comment", ['template' => "{input}"])->textInput(['class' => 'phone_comment', 'maxlength' => true,'placeholder' => 'Комментарий к телефону'])?>
                 <div class="add-fphone btn right">Добавить</div>
                 <div class="clear"></div>
