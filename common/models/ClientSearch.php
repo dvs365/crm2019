@@ -178,7 +178,8 @@ class ClientSearch extends Client
 					$or = ['or'];
 					$or[] = ['like', 'name', trim($word)];
 					$or[] = ['like', 'address', trim($word)];
-					$or[] = ['id' => Organization::find()->andWhere(['like', 'name', $word])->select('client')->asArray()->column()];
+					$or[] = ['id' => Organization::find()->andWhere(['like', 'name', trim($word)])->select('client')->asArray()->column()];
+					$or[] = ['id' => Face::find()->andWhere(['like', 'fullname', trim($word)])->select('client')->asArray()->column()];					
 					$and[] = $or;
 				}
 				$or_[] = $and;
