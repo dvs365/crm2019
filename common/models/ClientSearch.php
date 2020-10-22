@@ -77,7 +77,7 @@ class ClientSearch extends Client
             if (strpos($searchIt, '@') && mb_strlen($searchIt) > 3) {
                 $mails[] = trim($searchIt);
                 unset($searchArr[$searchKey]);
-            }elseif (mb_strlen($searchPhone) > 5) {
+            }elseif (mb_strlen($searchPhone) > 3) {
                 if (mb_strlen($searchPhone) == 11 && ($searchPhone[0] == 7 || $searchPhone[0] == 8)){
                     $searchPhone = substr($searchPhone, 1);
                 }
