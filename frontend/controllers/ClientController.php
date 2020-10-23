@@ -565,7 +565,7 @@ class ClientController extends Controller
         $client = $this->findModel($id);
         $client->status = Client::TARGET;
         $client->save();
-        return $this->redirect(['view', 'id' => $id]);
+        return $this->redirect(['view', 'id' => $id, 'ref' => Yii::$app->request->get('ref')]);
     }
 
     public function actionToload($id)
@@ -573,7 +573,7 @@ class ClientController extends Controller
         $client = $this->findModel($id);
         $client->status = Client::LOAD;
         $client->save();
-        return $this->redirect(['view', 'id' => $id]);
+        return $this->redirect(['view', 'id' => $id, 'ref' => Yii::$app->request->get('ref')]);
     }
 
     public function actionToreject($id)
@@ -588,7 +588,7 @@ class ClientController extends Controller
         $desclient->load(Yii::$app->request->post());
         $desclient->save();
         $client->save();
-        return $this->redirect(['view', 'id' => $id]);
+        return $this->redirect(['view', 'id' => $id, 'ref' => Yii::$app->request->get('ref')]);
     }
 
     public function actionDisconfirm($id)

@@ -30,12 +30,16 @@ ClientAsset::register($this);
     </div>
 
     <div class="wrap1 control">
-        <?= Html::a('', ['client/index'], ['class' => 'arrow_left']) ?>
-        <?= Html::a('Изменить', ['update', 'id' => $client->id]) ?>
-        <?= ($client->status !== 10)?Html::a('В потенциальные', ['totarget', 'id' => $client->id]):''?>
-        <?= ($client->status !== 20)?Html::a('В рабочие', ['toload', 'id' => $client->id]):''?>
-        <?= ($client->status !== 30)?Html::a('В отказные', ['toreject', 'id' => $client->id], ['id' => 'toreject']):''?>
-        <?php $form = ActiveForm::begin(['id' => 'formrejectlient', 'action' => ['client/toreject', 'id' => $client->id], 'method' => 'post', 'enableAjaxValidation' => false, 'validateOnBlur' => false]); ?>
+		<?$backLink = (strpos(Yii::$app->request->referrer, 'update') === false && 
+			strpos(Yii::$app->request->referrer, 'create') === false)? Yii::$app->request->referrer : ['client/index'];
+			$ref = (Yii::$app->request->get('ref')?: $backLink);
+			?>
+        <?= Html::a('', Yii::$app->request->get('ref')?:$backLink, ['class' => 'arrow_left']) ?>
+        <?= Html::a('Изменить', ['update', 'id' => $client->id, 'ref' => $ref]) ?>
+        <?= ($client->status !== 10)?Html::a('В потенциальные', ['totarget', 'id' => $client->id, 'ref' => $ref]):''?>
+        <?= ($client->status !== 20)?Html::a('В рабочие', ['toload', 'id' => $client->id, 'ref' => $ref]):''?>
+        <?= ($client->status !== 30)?Html::a('В отказные', ['toreject', 'id' => $client->id, 'ref' => $ref], ['id' => 'toreject']):''?>
+        <?php $form = ActiveForm::begin(['id' => 'formrejectlient', 'action' => ['client/toreject', 'id' => $client->id, 'ref' => $ref], 'method' => 'post', 'enableAjaxValidation' => false, 'validateOnBlur' => false]); ?>
         <?=$form->field($desclient, 'reject', ['template' => "{input}"])->textArea(['placeholder' => 'Комментарий к делу', 'class' => 'wrap3', 'maxlength' => true]) ?>
         <?=Html::submitInput('Перевести', ['class' => 'addtodo btn right'])?>
         <?php ActiveForm::end(); ?>

@@ -113,7 +113,7 @@ use yii\helpers\ArrayHelper;
             <?endif;?>
         </div>
         <div class="right">
-            <?=Html::a('Отменить', ['client/view', 'id' => $model->id], ['class' => 'btn cancel'])?>
+            <?=Html::a('Отменить', ['client/view', 'id' => $model->id, 'ref' => Yii::$app->request->get('ref')], ['class' => 'btn cancel'])?>
             <?=Html::submitInput('Сохранить', ['class' => 'btn'])?>
         </div>
         <div class="clear"></div>
