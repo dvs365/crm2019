@@ -261,7 +261,7 @@ class ClientController extends Controller
 					
 					if ($flag && $valid) {
 						$transaction->commit();
-						return $this->redirect(['view', 'id' => $client->id]);
+						return $this->redirect(['view', 'id' => $client->id, 'ref' => Yii::$app->request->get('ref')]);
 					} else {
 						$transaction->rollBack();
 					}
@@ -513,7 +513,7 @@ class ClientController extends Controller
                     }
                     if ($flag && $valid) {
                         $transaction->commit();
-                        return $this->redirect(['view', 'id' => $client->id]);
+                        return $this->redirect(['view', 'id' => $client->id, 'ref' => Yii::$app->request->get('ref')]);
                     } else {
                         $transaction->rollBack();
                     }

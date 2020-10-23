@@ -59,10 +59,11 @@ class CommentController extends Controller
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (!empty($data)) {
+				$add = ((int)$data['count']%10)?1:0;
                 if (!empty($data['count']) && !empty($data['all'])) {
-                    $comments = $model->find()->where(['client' => $id])->offset((int)($data['count']/10)+1)->orderBy(['id' => SORT_DESC])->all();
+                    $comments = $model->find()->where(['client' => $id])->offset((int)($data['count']/10)+$add)->orderBy(['id' => SORT_DESC])->all();
                 }elseif (!empty($data['count'])) {
-                    $comments = $model->find()->where(['client' => $id])->limit(1)->offset((int)($data['count']/10)+1)->orderBy(['id' => SORT_DESC])->all();
+                    $comments = $model->find()->where(['client' => $id])->limit(1)->offset((int)($data['count']/10)+$add)->orderBy(['id' => SORT_DESC])->all();
                 }
                 return $this->renderAjax('/client/_form_list_comment', [
                     "comments" => $comments,
