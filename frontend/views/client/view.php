@@ -30,7 +30,7 @@ ClientAsset::register($this);
     </div>
 
     <div class="wrap1 control">
-        <?= Html::a('', Yii::$app->request->referrer, ['class' => 'arrow_left']) ?>
+        <?= Html::a('', ['client/index'], ['class' => 'arrow_left']) ?>
         <?= Html::a('Изменить', ['update', 'id' => $client->id]) ?>
         <?= ($client->status !== 10)?Html::a('В потенциальные', ['totarget', 'id' => $client->id]):''?>
         <?= ($client->status !== 20)?Html::a('В рабочие', ['toload', 'id' => $client->id]):''?>
