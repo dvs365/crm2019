@@ -86,7 +86,7 @@ $request = Yii::$app->request;
                 $fullname = Html::tag('div', Html::encode($element['fullname']));
                 $position = Html::tag('div', Html::encode($element['position']), ['class' => 'color_grey']);
                 $facephones = ArrayHelper::map($element->phonefaces, 'id', function ($phoneface){
-                    return Html::tag('div', Html::a(Html::encode($phoneface->number), 'tel:'.Html::encode($phoneface->number)),['class' => 'contact_item']);
+                    return Html::tag('div', Html::a(Html::encode($phoneface->number), 'tel:'.Html::encode($phoneface->number)) . ' '.$phoneface->comment,['class' => 'contact_item']);
                 });
                 $facemails = ArrayHelper::map($element->mailfaces, 'id', function ($mailface){
                     return Html::tag('div', Html::a(Html::encode($mailface->mail), 'mailto:'.Html::encode($mailface->mail)), ['class' => 'contact_item']);
