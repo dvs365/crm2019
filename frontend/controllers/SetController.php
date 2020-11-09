@@ -115,7 +115,7 @@ class SetController extends Controller
 					$clientParts = array_chunk($client, ceil($cntClient / count($model->users)));
 					foreach ($model->users as $index => $userNew) {
 						Client::updateAll(['user' => $userNew], ['id' => $clientParts[$index]]);
-						Todo::updateAll(['user' => $userNew], ['client' => $clientParts[$index]])->andWhere(['user' => $user->id]);
+						Todo::updateAll(['user' => $userNew], ['and', ['client' => $clientParts[$index]], ['user' => $user->id]]);
 					}
 				}				
 				$transaction->commit();	
