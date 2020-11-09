@@ -66,9 +66,14 @@ class ClientSearch extends Client
 				'validatePage' => false,
 			],			
         ]);
-
+		
         $this->load($params);
-
+		if (\Yii::$app->controller->action->id == 'transfer') {
+			if (!$this->search && !$this->user && !$this->status){
+				$query->andWhere(['id' => '0']);
+				return $dataProvider;
+			}
+		}
         $searchArr = explode('|', $this->search);
         list($mails, $phones) = [[],[]];
 		$ids = [];
