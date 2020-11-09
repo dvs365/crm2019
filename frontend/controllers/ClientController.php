@@ -108,12 +108,11 @@ class ClientController extends Controller
     {
         $client = $this->findModel($id);
         $userID = Yii::$app->user->identity->id;
-        $roles = Yii::$app->authManager->getRolesByUser($userID);
-        if (isset($roles['admin'])) {
+        if (\Yii::$app->user->can('admin')) {
             $client->show_a = date('Y-m-d H:i:s');
             $client->show_aid = $userID;
         }
-        if (isset($roles['user'])) {
+        if ($client->user == $userID) {
 			$client->show = date('Y-m-d H:i:s');
             $client->show_u = date('Y-m-d H:i:s');
             $client->show_uid = $userID;
@@ -496,12 +495,11 @@ class ClientController extends Controller
                         if (!$dirty) {
                             $client->update = date('Y-m-d H:i:s');
                             $userID = Yii::$app->user->identity->id;
-                            $roles = Yii::$app->authManager->getRolesByUser($userID);
-                            if (isset($roles['admin'])) {
+                            if (\Yii::$app->user->can('admin')) {
                                 $client->update_a = date('Y-m-d H:i:s');
                                 $client->update_aid = $userID;
                             }
-                            if (isset($roles['user'])) {
+                            if ($client->user == $userID) {
                                 $client->update_u = date('Y-m-d H:i:s');
                                 $client->update_uid = $userID;
                             }
