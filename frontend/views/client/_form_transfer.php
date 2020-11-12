@@ -59,6 +59,7 @@ echo ($flag)? $this->render('_popup', []) : '';
                     $discomment = Html::tag('span', Html::encode('Скидка: '.$model->discomment.' '.(($model->discount)?$model->discount.'%':'')), ['class' => (!$model->disconfirm)?'agreed_none':'']);
                     $delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address), ['class' => 'wrap3']);
                     $webArr = explode(',', $model->website);
+					$webs = [];
                     foreach ($webArr as $web):
                         $webs[] = Html::a(Html::encode(trim($web)), '//'.Html::encode(trim($web)), ['target' => '_blank']);
                     endforeach;

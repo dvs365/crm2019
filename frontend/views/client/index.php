@@ -18,8 +18,9 @@ $request = Yii::$app->request;
 ?>
 
 <main>
-    <div class="wrap2 control">
-        <?=$this->render('menu')?>
+    <div class="wrap4">
+        <?=$this->render('menuStatus')?>
+		<?=$this->render('menuAddTransfer')?>
         <div class="clear"></div>
     </div>
 
@@ -42,7 +43,7 @@ $request = Yii::$app->request;
 				'role' => $request->get('role'),
 				'sort' => $sort], ['class' => 'checkbox', 'sort' => $sort])?>
     </div>
-
+    <?$up = Html::tag('div', Html::a('Наверх' . Html::tag('div', '', ['class' => 'arrow_up']), '#header', ), ['id' => 'up','class' => 'right'])?>
     <?= ListViewPager::widget([
         'dataProvider' => $dataProvider,
         'summary' => '',
@@ -69,41 +70,34 @@ $request = Yii::$app->request;
         'itemOptions' => ['class' => 'wrap4'],
         'itemView' => function ($model, $key, $index, $widget) {
             //$widget->viewParams['users'][$model->user]->surnameNP
-            $template = Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', $model->user0 ? Html::encode($model->user0->surnameNP):'', ['class' => 'manager color_grey']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
+            $pAbout = Html::tag('p', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
             $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
-                return Html::tag('div', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
+                return Html::tag('li', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
             });
-            $template .= Html::tag('div', implode('', $firms), ['class' => 'firms']);
-            $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
+			$ulFirms = Html::tag('ul', implode('', $firms), ['class' => 'firms']);
+			//комментарий по клиенту
+			$divComm = Html::tag('div', '',['class' => 'client_comment']);
             $reject = Html::encode($model->desclient0['reject']);
             $reject = $model->status == $widget->viewParams['statuses']['reject'] ? Html::tag('p', 'Причина отказа: '.$reject) : '';
-            $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime).$reject, ['class' => 'wrap1']);
-            $delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address));
-            $discomment = Html::tag('span', Html::encode('Скидка: '.$model->discomment.' '.(($model->discount)?$model->discount.'%':'')), ['class' => (!$model->disconfirm)?'agreed_none':'']);
+            $template = Html::tag('div', Html::tag('div', $pAbout.$ulFirms.$reject, ['class' => 'wrap3']).$divComm, ['class' => 'wrap1']);
+            $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
+			$userName = ($model->user0) ? Html::encode($model->user0->surnameNP) : '';
+            $template .= Html::tag('div', Html::tag('p', $userName.' ' . Html::tag('span', 'Открытие: '. $lastTime, ['class' => 'color_grey'])), ['class' => 'wrap1']);
+            //$delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address));
             $disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
-            $template .= Html::tag('div', Html::tag('div', ($model->discount || $model->discomment)? $discomment.' '.$disconfirm : '', ['class' => 'wrap3']).$delivery, ['class' => 'wrap1']);
-            $contacts = ArrayHelper::map($model->faces, 'id', function ($element){
-                $fullname = Html::tag('div', Html::encode($element['fullname']));
-                $position = Html::tag('div', Html::encode($element['position']), ['class' => 'color_grey']);
-                $facephones = ArrayHelper::map($element->phonefaces, 'id', function ($phoneface){
-                    return Html::tag('div', Html::a(Html::encode($phoneface->number), 'tel:'.Html::encode($phoneface->number)) . ' '.$phoneface->comment,['class' => 'contact_item']);
-                });
-                $facemails = ArrayHelper::map($element->mailfaces, 'id', function ($mailface){
-                    return Html::tag('div', Html::a(Html::encode($mailface->mail), 'mailto:'.Html::encode($mailface->mail)), ['class' => 'contact_item']);
-                });
-                return Html::tag('div', $fullname.$position.implode('',$facephones).implode('',$facemails), ['class' => 'wrap2 contact']);
-            });
-            $template .= implode('', $contacts);
-            $webArr = explode(',', $model->website);
+            $discount = Html::tag('span', $model->discount.'%', ['class' => (!$model->disconfirm)?'agreed_none':'']);
+			$trDiscount = Html::tag('tr', Html::tag('th', 'Скидка:').Html::tag('td', $discount.$disconfirm.Html::tag('br').Html::tag('span', $model->discomment, ['class' => (!$model->disconfirm)?'agreed_none':'']))); 
+			$template .= ($model->discount || $model->discomment)?Html::tag('div', Html::tag('table', $trDiscount, ['class' => 'client_discount']), ['class' => 'wrap1']):'';
+            $liDelivery = Html::tag('li', Html::encode($model->address));
+			$trDelivery = Html::tag('tr', Html::tag('td', Html::tag('b', 'Доставка:')).Html::tag('td', Html::tag('ul', $liDelivery)));
+			$template .= Html::tag('div', Html::tag('table', $trDelivery, ['class' => 'clients_list_delivery']),['class' => 'wrap1']);
+			$webArr = explode(',', $model->website);
             foreach ($webArr as $web):
                 $webs[] = Html::a(Html::encode(trim($web)), Html::encode(trim($web)));
             endforeach;
-            $template .= Html::tag('div', implode(' ', $webs), ['class' => 'contact_site wrap3']);
+            $template .= Html::tag('div', implode(' ', $webs), ['class' => 'contact_site']);
             return $template;
         },
-		'layout' => "{pager}\n".'<div class="clear"></div>'."{summary}\n{items}"."{pager}",
+		'layout' => "{pager}\n".'<div class="clear"></div><div class="wrap_clients_list">'."{summary}\n{items}</div>".'<div class="wrap4">'."{pager}".$up. '</div><div class="clear"></div>',
     ])?>
-
-    <div ID="up" class="right"><a href="#header">Наверх<div class="arrow_up"></div></a></div>
-    <div class="clear"></div>
 </main>

@@ -5,10 +5,14 @@
 
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
+use frontend\assets\App2Asset;
 use yii\widgets\Menu;
 use app\components\Menu\MenuActive;
-
-AppAsset::register($this);
+if(\Yii::$app->controller->id == 'client' && \Yii::$app->controller->action->id == 'index') {
+	App2Asset::register($this);
+} else {
+	AppAsset::register($this);
+}
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
