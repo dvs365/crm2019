@@ -70,7 +70,14 @@ $request = Yii::$app->request;
         'itemOptions' => ['class' => 'wrap4'],
         'itemView' => function ($model, $key, $index, $widget) {
             //$widget->viewParams['users'][$model->user]->surnameNP
-            $pAbout = Html::tag('p', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
+			if (\Yii::$app->user->can('user') && $model->user != Yii::$app->user->identity->id) {
+				$nameClient = Html::tag('span', Html::encode($model->name), ['class' => 'about_client']);
+				$whoseClient = '';
+			} else {
+				$nameClient = Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']);
+				$whoseClient = $model->user0 ? Html::encode($model->user0->surnameNP):'';
+			}
+            $pAbout = Html::tag('p', $nameClient.Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
             $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
                 return Html::tag('li', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
             });
@@ -81,8 +88,7 @@ $request = Yii::$app->request;
             $reject = $model->status == $widget->viewParams['statuses']['reject'] ? Html::tag('p', 'Причина отказа: '.$reject) : '';
             $template = Html::tag('div', Html::tag('div', $pAbout.$ulFirms.$reject, ['class' => 'wrap3']).$divComm, ['class' => 'wrap1']);
             $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
-			$userName = ($model->user0) ? Html::encode($model->user0->surnameNP) : '';
-            $template .= Html::tag('div', Html::tag('p', $userName.' ' . Html::tag('span', 'Открытие: '. $lastTime, ['class' => 'color_grey'])), ['class' => 'wrap1']);
+            $template .= Html::tag('div', Html::tag('p', $whoseClient.' ' . Html::tag('span', 'Открытие: '. $lastTime, ['class' => 'color_grey'])), ['class' => 'wrap1']);
             //$delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address));
             $disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
             $discount = Html::tag('span', $model->discount.'%', ['class' => (!$model->disconfirm)?'agreed_none':'']);
