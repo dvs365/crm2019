@@ -481,7 +481,7 @@ class ClientController extends Controller
                             if (!empty($clientOrg->name)) {
                                 $clientOrg->client = $client->id;
                                 if (empty($clientOrg->nds)) {
-                                    $clientOrg->nds = Organization::WITHNDS;
+                                    $clientOrg->nds = Organization::UNKNOWNNDS;
                                 }
                                 $dirty = $dirty && empty($clientOrg->getDirtyAttributes());
 								$valid = $clientOrg->validate() && $valid;

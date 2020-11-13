@@ -37,7 +37,7 @@ class Organization extends \yii\db\ActiveRecord
     const FORM_ZAO = 80;
     const FORM_GUP = 90;
 	
-
+	const UNKNOWNNDS = 0;
     const WITHNDS = 10;
     const WITHOUTNDS = 20;
 
@@ -61,7 +61,7 @@ class Organization extends \yii\db\ActiveRecord
             [['client', 'form', 'nds', 'number_mirror', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
 
             ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP, self::FORM_TOO, self::FORM_ZAO, self::FORM_GUP]],
-            ['nds', 'in', 'range' => [self::WITHNDS, self::WITHOUTNDS]],
+            ['nds', 'in', 'range' => [self::WITHNDS, self::WITHOUTNDS, self::UNKNOWNNDS]],
             [['name', 'jadds', 'fadds', 'director', 'bank', 'mail'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
@@ -70,6 +70,7 @@ class Organization extends \yii\db\ActiveRecord
     function getNdsLabels()
     {
         return [
+			self::UNKNOWNNDS => 'Неизвестно',
             self::WITHNDS => 'С НДС',
             self::WITHOUTNDS => 'Без НДС',
         ];
@@ -78,6 +79,7 @@ class Organization extends \yii\db\ActiveRecord
     function getNdsConst()
     {
         return [
+			'unknownnds' => self::UNKNOWNNDS,
             'with' => self::WITHNDS,
             'without' => self::WITHOUTNDS,
         ];

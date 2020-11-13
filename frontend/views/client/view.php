@@ -22,7 +22,7 @@ ClientAsset::register($this);
             <?foreach($orgs as $org){?>
                 <div class="firm">
                     <?= Html::a($org->formLabel.' '.$org->name, ['client/update', 'id' => $client->id, '#' => 'organization'.$org->id]) ?>
-                    <span class="nds color_grey <?=($org->nds == $org->ndsConst['without'])?'nds_none':''?>"><?=$org->getAttributeLabel('nds')?></span>
+                    <span class="nds color_grey <?=($org->nds == $org->ndsConst['without'])?'nds_none':''?>"><?=$org->nds ? $org->getAttributeLabel('nds'):''?></span>
                 </div>
             <?}?>
         </div>

@@ -17,6 +17,7 @@ class MailValidator extends Validator
 
     public function validateAttribute($model, $attribute)
     {
+		$model->mail = trim($model->mail);
         $queryMailclient = Mailclient::find()->where(['mail' => $model->mail]);
         $queryMailface = Mailface::find()->where(['mail' => $model->mail]);
         $queryMailOrg = Organization::find()->where(['mail' => $model->mail]);
