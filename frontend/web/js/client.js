@@ -33,7 +33,7 @@ $(document).ready(function(){
         });
         return false;
     });
-
+	
     $("#formcomment").on('beforeSubmit', function () {
         var $testform = $(this);
         var met = $testform.attr('method');
@@ -138,17 +138,12 @@ $(document).ready(function(){
         }, 500);
     });
 
-    //раскрытие формы у перевода в отказ
-    $("#toreject").click(function(){
-        if($('#formrejectlient').is(':visible')) {
-            $('#formrejectlient textarea').animate({'height':0}, 500);
-            $('#formrejectlient').hide();
-        } else {
-            $('#formrejectlient').show();
-            $('#formrejectlient textarea').animate({'height':'70px'}, 500);
-
-        }
-        return false;
+    //раскрытие причины отказа
+    $("#refusal").click(function(){
+        event.preventDefault();
+        $(this).css({'color':'#000', 'cursor':'default'});
+        $('#refusal-case').css({'z-index':'1'});
+        $('#refusal-case').animate({'opacity':'1', 'max-height':'500px'}, 200);
     });
 
     //раскрытие комментария к делу
@@ -169,7 +164,7 @@ $(document).ready(function(){
     $(".task_item td form").click(function(){
         $(this).closest('.task_item').hide('fast');
     });
-
+	
     //раскрытие поля для заметки
     $("#note-open").click(function(){
         $(this).hide('fast');
@@ -204,6 +199,9 @@ $(document).ready(function(){
     $("#open-add-work").click(function(){
         $(this).removeClass('color_blue');
         $('#form-work').show(0);
+        $('#form-work').find('textarea').each(function(){
+            autoChangeTextarea($(this));
+        })
         $('#form-work').animate({'max-height':'500px'}, 200);
     });
 
@@ -257,13 +255,79 @@ $(document).ready(function(){
         Month = mon[adate.substring(3,5)];
         return Day + ' ' + Month + ' ' + Year;
     }
-    //отправка запроса на сервер
-    function sendAjax(act, met, mas, suc) {
-        $.ajax({
-           type: met,
-           url: act,
-           data: mas,
-           success: suc
-        });
-    }
+	
+    $(".task_comment").each(function(){
+        if ($(this).height() >= 100) {
+            $(this).find(".task_comment_gradient").css({'display':'block'});
+        }
+    })
+
+    $(".task_comment_gradient").click(function(){
+        $(this).closest('.task_comment').animate({'max-height':'9999px'}, 500);
+        $(this).remove();
+    });
+	
+    $('main').on('keypress keyup click', '.autoheight', function(event){
+        autoChangeTextarea($(this));
+    })
+    $('main').find('.autoheight').each(function(){
+        autoChangeTextarea($(this));
+    });	
 });
+//отправка запроса на сервер
+function sendAjax(act, met, mas, suc) {
+	$.ajax({
+	   type: met,
+	   url: act,
+	   data: mas,
+	   success: suc
+	});
+}
+
+//расширить textarea
+function autoChangeTextarea(block) {
+    if (block.hasClass('h36')) mh = 28;
+    else mh = 48;
+    fake = block.parent().parent().children('.fake_textarea');
+    fake.width(block.width());
+    str = block.val();
+    str = str.replace(/</g,"_").replace(/\n/g,"<br>").replace(/  /g,"&ensp;");
+    fake.html(str);
+    if ((fake.height()+8) < (mh + 1)) return false;
+    else if ((fake.height()+8) != mh) block.css({'height': (fake.height() + 8)+'px'}, 200);
+}
+
+//изменить дело по клиенту formtodoclient
+function changeTask(i) {
+	var met = $(i).parent().attr('method');
+	var act = $(i).parent().attr('action');
+	var mas = $(i).parent().serializeArray();
+	var suc = $("#outputtodo");
+	$.ajax({
+		type: met,
+		url: act,
+		data: mas,
+	}).done(function (data) {
+		if (data.error == null) {
+			$("#outputtodo").html(data);
+		} else {
+			alert('error');
+			$("#outputtodo").html(data.error);
+		}
+	}).fail(function () {
+		$("#outputtodo").html(data.error);
+	});
+	return false;
+}
+
+//раскрытие редактирования дела
+function openChangeTask(i){
+	event.preventDefault();
+	block = $(i).closest('.task_item');
+	block.find('form.task_change').show(200);
+	setTimeout(function(){
+		block.find('textarea.autoheight').each(function(){
+			autoChangeTextarea($(i));
+		})
+	},200);
+}	

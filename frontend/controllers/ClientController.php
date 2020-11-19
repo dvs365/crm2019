@@ -249,7 +249,7 @@ class ClientController extends Controller
 						if (!empty($clientOrg->name)) {
 							$clientOrg->client = $client->id;
 							if (empty($clientOrg->nds)) {
-								$clientOrg->nds = Organization::WITHNDS;
+								$clientOrg->nds = Organization::UNKNOWNNDS;
 							}
 							$valid = $clientOrg->validate() && $valid;
 							if (!$valid || !($flag = $clientOrg->save())) {

@@ -229,8 +229,16 @@ class TodoController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+			if (Yii::$app->request->isAjax) {
+				return $this->renderAjax('/client/_form_list_todo', [
+					"todos" => $model->find()->where(['client' => $model->client, 'status' => Todo::OPEN])->all(),
+					"error" => null
+				]);
+			} else {
+				return $this->redirect(['view', 'id' => $model->id]);
+			}
         }
+		
 		/*
         return $this->render('update', [
             'model' => $model,

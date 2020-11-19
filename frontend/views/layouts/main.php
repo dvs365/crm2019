@@ -8,7 +8,7 @@ use frontend\assets\AppAsset;
 use frontend\assets\App2Asset;
 use yii\widgets\Menu;
 use app\components\Menu\MenuActive;
-if(\Yii::$app->controller->id == 'client' && \Yii::$app->controller->action->id == 'index') {
+if(\Yii::$app->controller->id == 'client' && array_search(\Yii::$app->controller->action->id, ['index', 'view']) !== false) {
 	App2Asset::register($this);
 } else {
 	AppAsset::register($this);

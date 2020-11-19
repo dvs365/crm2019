@@ -14,17 +14,20 @@ use yii\helpers\Url;
                         <button class="checkbox deltodoclient" title="Закрыть дело"></button>
                     <?php ActiveForm::end();?>
                 </td>
-                <td class="date"><?=date('d.m.y',strtotime($todo->date))?></td>
-                <td <?=(!empty($todo->description))?' class="open_desc color_blue"':''?>><?=$todo->name?></td>
+                <td class="date"><a href="#" class="task_change_open" onClick="openChangeTask(this);"><?=date('d.m.y',strtotime($todo->date))?></a></td>
+                <td><a href="<?=Url::to(['todo/view', 'id' => $todo->id])?>"><?=$todo->name?></a></td>
             </tr>
             <?if(!empty($todo->description)):?>
-                <tr class="table_item table_item_hidden">
+                <tr class="table_item tr_comment">
                     <td></td>
                     <td class="date">в <?=date('H:i',strtotime($todo->date))?></td>
-                    <td><?=$todo->description?></td>
+                    <td><div class="task_comment"><?=$todo->description?><span class="task_comment_gradient pink color_blue">Весь комментарий <span class="dropdown"></span></span></div></td>
                 </tr>
             <?endif;?>
         </table>
+		<?= $this->render('_form_todo_up', [
+			'todo' => $todo,
+		]) ?>
     </div>
 	<?endif;?>
 <?endforeach;?>

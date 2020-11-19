@@ -14,6 +14,7 @@ w: "Пн</td><td>Вт</td><td>Ср</td><td>Чт</td><td>Пт</td><td>Сб</td><t
 	}
 }
 
+var obname = '';
 
 function iss(n){if(typeof n==="undefined" || n===null)return false;return true}
 function Nod(n){if(typeof n=='string') n=document.getElementById(n);return n}
@@ -32,261 +33,307 @@ function scrol(y) {
 }
 
 window.xCal = function(ob, delim, order) {
-var def = {
-	lang: "ru",
-	id: "",
-	"class": par.class,
-	delim: ".",
-	order: 0,
-	o: {value: ""},
-	year: -1, month: -1, dat: -1, day: -1, dop: "",
-	autoOn: 1, autoOff: 1, now:1, set0: 0, x: 1, hide: 1, to: par.to, fn: ""
-}
-var a={};
-for(var key in def) a[key] = def[key];
-if(typeof delim==="object") {
-	for(var key in delim) a[key] = delim[key];
-} else {
-	if(iss(delim)) a.delim = delim;
-	if(iss(order)) a.order = order;
-}
-if(a.id==="") a.id = a['class'];
+    var def = {
+	    lang: "ru",
+	    id: "",
+	    "class": par.class,
+	    delim: ".",
+	    order: 0,
+	    o: {value: ""},
+	    year: -1, month: -1, dat: -1, day: -1, dop: "",
+	    autoOn: 1, autoOff: 1, now:1, set0: 0, x: 1, hide: 1, to: par.to, fn: ""
+    }
+    var a={};
+    for(var key in def) a[key] = def[key];
+    if(typeof delim==="object") {
+	    for(var key in delim) a[key] = delim[key];
+    } else {
+	    if(iss(delim)) a.delim = delim;
+	    if(iss(order)) a.order = order;
+    }
+    if(a.id==="") a.id = a['class'];
 
-if(typeof ob!=="object") {
-	if((typeof ob==="undefined" || ob==0 || ob==1) && Nod(a.id)) {
-		if(a.hide==1) {
-			if(typeof delim!=="string") Nod(a.id).style.display="none";
-			else Nod(delim).style.display="none";
-		}
-		return false;
-	}
-	if(ob==2 || ob==="now") {
-		var D = new Date(), d = D.getDate(), m = D.getMonth()+1, y = D.getFullYear();
-		if(d<10) d = "0"+d;
-		if(m<10) m = "0"+m;
-		if(a.order==1) return y+a.delim+m+a.delim+d;
-		if(a.order==2) return m+a.delim+d+a.delim+y;
-		else return d+a.delim+m+a.delim+y;
-	}
-}
-a.o = Nod(ob);
-a.f = function() {
-	var m = a.month+1, d = a.dat, y = a.year;
-	a.sdat = a.dat; a.smonth = a.month; a.syear = a.year;
-	if(a.order==1) {d = y; y = a.dat}
-	else if(a.order==2) {d = m; m = a.dat}
-	if(y<10) y="0"+y;
-	if(m<10) m="0"+m;
-	if(d<10) d="0"+d;
-	d += a.delim+m+a.delim+y;
-	if(a.dop!=="") d += " "+a.dop;
-	if(a.o) a.o.value = xCal.value = d;
-	if(a.hide==1) Nod(a.id).style.display="none";
-	if(typeof a.fn==="function") a.fn(d, a);
-	else if(typeof a.fn==="string" && a.fn!=="") eval(a.fn+"('"+d+"');");
-}
+    if (document.querySelector('input[name="date-from"]')) {
+        startDate = document.querySelector('input[name="date-from"]').value;
+        stD = reverseDate(startDate);
+    } else stD = 0;
+    if (typeof document.activeElement.name !=="undefined") obname = document.activeElement.name;
 
-if(typeof a.o==="undefined") return false;
-a=xCal.gVal(a);
-a=xCal.gDat(a);
+    if(typeof ob!=="object") {
+	    if((typeof ob==="undefined" || ob==0 || ob==1) && Nod(a.id)) {
+	    	isd = reverseDate(xCal.value);
+            
+            if ((obname == 'date-to') && (isd < stD)) {
+                Nod(a.id).style.display="block";
+                return false;
+            }
+		    if(a.hide==1) {
+			    if(typeof delim!=="string") Nod(a.id).style.display="none";
+			    else Nod(delim).style.display="none";
+		    }
+		    return false;
+	    }
+	    if(ob==2 || ob==="now") {
+		    var D = new Date(), d = D.getDate(), m = D.getMonth()+1, y = D.getFullYear();
+		    if(d<10) d = "0"+d;
+		    if(m<10) m = "0"+m;
+		    if(a.order==1) return y+a.delim+m+a.delim+d;
+		    if(a.order==2) return m+a.delim+d+a.delim+y;
+		    else return d+a.delim+m+a.delim+y;
+	    }
+    }
+    a.o = Nod(ob);
+    a.f = function() {
+	    var m = a.month+1, d = a.dat, y = a.year;
+	    a.sdat = a.dat; a.smonth = a.month; a.syear = a.year;
+	    if(a.order==1) {d = y; y = a.dat}
+	    else if(a.order==2) {d = m; m = a.dat}
+	    if(y<10) y="0"+y;
+	    if(m<10) m="0"+m;
+	    if(d<10) d="0"+d;
+	    d += a.delim+m+a.delim+y;
+	    if(a.dop!=="") d += " "+a.dop;
+	    isd = reverseDate(d);
+        if (((a.o.name == 'date-to') && (isd >= stD)) || (a.o.name != 'date-to')) { 
+            if(a.o) a.o.value = xCal.value = d;
+            if(a.hide==1) Nod(a.id).style.display="none";
+        } else {
+            xCal.value = d;
+            Nod(a.id).style.display="block";
+            return false;
+        }
+        if ((a.o.name == 'date-from') && (document.querySelector('input[name="date-to"]'))) {
+        	dto = reverseDate(document.querySelector('input[name="date-to"]').value);
+        	dfrom = reverseDate(xCal.value);
+            if (dfrom > dto) document.querySelector('input[name="date-to"]').value = xCal.value;
+        }
+	    if(typeof a.fn==="function") a.fn(d, a);
+	    else if(typeof a.fn==="string" && a.fn!=="") eval(a.fn+"('"+d+"');");
+    }
 
-if(!Nod(a.id)) {
-	if(a.to=="") a.to=document.body; else a.to=Nod(a.to);
-	HTM(a.to, '<table id="'+a.id+'" class="'+a['class']+'"><thead></thead><tbody></tbody><tfoot></tfoot></table>');
-} else Nod(a.id).style.display="";
+    if(typeof a.o==="undefined") return false;
+    a=xCal.gVal(a);
+    a=xCal.gDat(a);
 
-var oo = a.o.getBoundingClientRect();
+    if(!Nod(a.id)) {
+	    if(a.to=="") a.to=document.body; else a.to=Nod(a.to);
+	    HTM(a.to, '<table id="'+a.id+'" class="'+a['class']+'"><thead></thead><tbody></tbody><tfoot></tfoot></table>');
+    } else Nod(a.id).style.display="";
 
-xCal.fM = function(a) {
-var m=a.month, ca='', j=1,
-months=lang[a.lang].m;
-ca += '<td colspan=2 title="12"';
-if(m==11) ca += ' class="today"';
-else if(a.tmonth==(11)) ca += ' class="tday"';
-ca += '>'+lang[a.lang].m[11]+'</td>';
-for(var i=0; i<(months.length-1); i++) {
-	j++;
-	ca += '<td colspan=2 title="'+(i+1)+'"';
-	if(m==i) ca += ' class="today"';
-	else if(a.tmonth==(i)) ca += ' class="tday"';
-	ca += '>'+months[i]+"</td>";
-	if(j>2) {ca += '</tr><tr>'; j=0}
-}
-Del(document.querySelector("#"+a.id+" tbody"));
-HTM(a.id, '<tbody><tr><th rowspan=4></th>'+ca+'</tr></tbody>');
-var k = document.querySelectorAll("#"+a.id+" tbody td");
-for(var i=0; i<k.length; i++) {
-	k[i].onclick = function() {
-		var t = this.title;
-		if(t=='') return;
-		a.month=parseInt(t)-1;
-		xCal.f(a);
-	}
-}
-}
+    var oo = a.o.getBoundingClientRect();
 
-xCal.fY = function(a) {
-var y=a.year, ca='', j=0;
-for(var i=-8; i<7; i++) {
-	j++;
-	ca += '<td colspan=2';
-	if(y==(y+i)) ca += ' class="today"';
-	else if(a.tyear==(y+i)) ca += ' class="tday"';
-	ca += '>'+(y+i)+"</td>";
-	if(j>2) {ca += '</tr><tr>'; j=0}
-}
-Del(document.querySelector("#"+a.id+" tbody"));
-HTM(a.id, '<tbody><tr><th rowspan=5></th>'+ca+'</tr></tbody>');
-var k = document.querySelectorAll("#"+a.id+" tbody td");
-for(var i=0; i<k.length; i++) {
-	k[i].onclick = function() {
-		var t = this.innerHTML;
-		if(t=='' || t=="&nbsp;") return;
-		a.year=parseInt(t);
-		xCal.f(a);
-	}
-}
-}
+    xCal.fM = function(a) {
+        var m=a.month, ca='', j=1,
+        months=lang[a.lang].m;
+        ca += '<td colspan=2 title="12"';
+        if(m==11) ca += ' class="today"';
+        else if(a.tmonth==(11)) ca += ' class="tday"';
+        ca += '>'+lang[a.lang].m[11]+'</td>';
+        for(var i=0; i<(months.length-1); i++) {
+	        j++;
+	        ca += '<td colspan=2 title="'+(i+1)+'"';
+	        if(m==i) ca += ' class="today"';
+	        else if(a.tmonth==(i)) ca += ' class="tday"';
+	        ca += '>'+months[i]+"</td>";
+	        if(j>2) {ca += '</tr><tr>'; j=0}
+        }
+        Del(document.querySelector("#"+a.id+" tbody"));
+        HTM(a.id, '<tbody><tr><th rowspan=4></th>'+ca+'</tr></tbody>');
+        var k = document.querySelectorAll("#"+a.id+" tbody td");
+        for(var i=0; i<k.length; i++) {
+	        k[i].onclick = function() {
+		        var t = this.title;
+		        if(t=='') return;
+		        a.month=parseInt(t)-1;
+		        xCal.f(a);
+	        }
+        }
+    }
 
-xCal.f = function(a) {
-Del(document.querySelector("#"+a.id+" thead"));
-Del(document.querySelector("#"+a.id+" tbody"));
-Del(document.querySelector("#"+a.id+" tfoot"));
-var mm, y=a.year, m=a.month, dat=a.dat,
-	Dlast = new Date(y, m+1, 0).getDate(),
-	DNlast = new Date(y, m, Dlast).getDay(),
-	DNfirst = new Date(y, m, 1).getDay(),
-	ca = '', j=0,
-	months=lang[a.lang].mo;
-if(DNfirst != 0) j = DNfirst-1;
-else j = 6;
+    xCal.fY = function(a) {
+        var y=a.year, ca='', j=0;
+        for(var i=-8; i<7; i++) {
+	        j++;
+	        ca += '<td colspan=2';
+	        if(y==(y+i)) ca += ' class="today"';
+	        else if(a.tyear==(y+i)) ca += ' class="tday"';
+	        ca += '>'+(y+i)+"</td>";
+	        if(j>2) {ca += '</tr><tr>'; j=0}
+        }
+        Del(document.querySelector("#"+a.id+" tbody"));
+        HTM(a.id, '<tbody><tr><th rowspan=5></th>'+ca+'</tr></tbody>');
+        var k = document.querySelectorAll("#"+a.id+" tbody td");
+        for(var i=0; i<k.length; i++) {
+	        k[i].onclick = function() {
+		        var t = this.innerHTML;
+		        if(t=='' || t=="&nbsp;") return;
+		        a.year=parseInt(t);
+		        xCal.f(a);
+	        }
+        }
+    }
 
-HTM(a.id, '<thead><tr><td class="cal-l" title="'+lang[a.lang].pre+'">‹</td><td colspan=3 class="cal-m"></td><td colspan=2 class="cal-y"></td><td class="cal-r" title="'+lang[a.lang].nex+'">›</td></tr><tr><td>'+lang[a.lang].w+'</td></tr></thead>');
+    xCal.f = function(a) {
+        Del(document.querySelector("#"+a.id+" thead"));
+        Del(document.querySelector("#"+a.id+" tbody"));
+        Del(document.querySelector("#"+a.id+" tfoot"));
+        var mm, y=a.year, m=a.month, dat=a.dat,
+	    Dlast = new Date(y, m+1, 0).getDate(),
+	    DNlast = new Date(y, m, Dlast).getDay(),
+	    DNfirst = new Date(y, m, 1).getDay(),
+	    ca = '', j=0,
+	    months=lang[a.lang].mo;
+        if(DNfirst != 0) j = DNfirst-1;
+        else j = 6;
 
-if(j>0) {// ‹ &larr;
-	if(m==0) mm = 11; else mm = m-1;
-	if(j>1) {
-		ca += '<td colspan='+j+' class="cal-l" align=left title="'+lang[a.lang].pre+' '+lang[a.lang].mo[mm]+'"><b>‹ '+lang[a.lang].m[mm]+'</b></td>';
-	} else ca += '<td class="cal-l" title="'+lang[a.lang].pre+' '+lang[a.lang].mo[mm]+'"><b>‹</b></td>';
-}
+        HTM(a.id, '<thead><tr><td class="cal-l" title="'+lang[a.lang].pre+'">‹</td><td colspan=3 class="cal-m"></td><td colspan=2 class="cal-y"></td><td class="cal-r" title="'+lang[a.lang].nex+'">›</td></tr><tr><td>'+lang[a.lang].w+'</td></tr></thead>');
 
-for(var i=1; i<=Dlast; i++) {
-	j++;
-	ca += '<td';
-	if(i==dat) {
-		if(m==a.smonth && y==a.syear) ca += ' class="today"';
-		else ca += ' class="tday"';
-	} else if(i==a.tdat && m==a.tmonth && y==a.tyear) ca += ' class="tday"';
-	if(par.to!="") {
-	    if(i!=a.tdat) ca += '><button class="color_blue">'+i+'</button></td>';
-	    else ca += '>'+i+'</td>';
-    } else ca += '>'+i+'</td>';
-	if(j>6) {ca += '</tr><tr>'; j=0}
-}
-if(DNlast>0) {// › &rarr;
-	if(m>10) mm = 0; else mm = m+1;
-	if(DNlast<6) {
-		ca += '<td colspan='+(7-DNlast)+' class="cal-r" align=right title="'+lang[a.lang].nex+' '+lang[a.lang].mo[mm]+'"><b>'+lang[a.lang].m[mm]+' ›</b></td>';
-	} else ca += '<td class="cal-r" title="'+lang[a.lang].nex+' '+lang[a.lang].mo[mm]+'"><b>›</b></td>';
-}
+        if(j>0) {
+	        if(m==0) mm = 11; else mm = m-1;
+	        if(j>1) {
+		        ca += '<td colspan='+j+' class="cal-l" align=left title="'+lang[a.lang].pre+' '+lang[a.lang].mo[mm]+'"><b>‹ '+lang[a.lang].m[mm]+'</b></td>';
+	        } else ca += '<td class="cal-l" title="'+lang[a.lang].pre+' '+lang[a.lang].mo[mm]+'"><b>‹</b></td>';
+        }
+
+        if (a.o.name == 'date-to') {
+            isMonth = a.month + 1;
+            if (isMonth < 10) isMonth = '0' + isMonth;
+            for(var i=1; i<=Dlast; i++) {
+                j++;
+                if (i < 10) isDay = '0' + i;
+                else isDay = i;
+                var isDate = '';
+                isDate = String(a.year) + String(isMonth) + String(isDay);
+                ca += '<td';
+                if (Number(stD) > Number(isDate)) ca += ' class="disabled"';
+                else if(i==dat) {
+                    if(m==a.smonth && y==a.syear) ca += ' class="today"';
+                    else ca += ' class="tday"';
+                } else if(i==a.tdat && m==a.tmonth && y==a.tyear) ca += ' class="tday"';
+                ca += '>'+i+'</td>';
+                if(j>6) {ca += '</tr><tr>'; j=0}
+            }
+        } else {
+            for(var i=1; i<=Dlast; i++) {
+	            j++;
+	            ca += '<td';
+	            if(i==dat) {
+		            if(m==a.smonth && y==a.syear) ca += ' class="today"';
+		            else ca += ' class="tday"';
+	            } else if(i==a.tdat && m==a.tmonth && y==a.tyear) ca += ' class="tday"';
+	            if(par.to!="") {
+	                if(i!=a.tdat) ca += '><button class="color_blue">'+i+'</button></td>';
+	                else ca += '>'+i+'</td>';
+                } else ca += '>'+i+'</td>';
+	            if(j>6) {ca += '</tr><tr>'; j=0}
+	        }
+        }
+        if(DNlast>0) {
+	        if(m>10) mm = 0; else mm = m+1;
+	        if(DNlast<6) {
+		        ca += '<td colspan='+(7-DNlast)+' class="cal-r" align=right title="'+lang[a.lang].nex+' '+lang[a.lang].mo[mm]+'"><b>'+lang[a.lang].m[mm]+' ›</b></td>';
+	        } else ca += '<td class="cal-r" title="'+lang[a.lang].nex+' '+lang[a.lang].mo[mm]+'"><b>›</b></td>';
+        }
+
+        HTM(a.id, '<tbody><tr class="cal-first">'+ca+'</tr></tbody>');
+        ca='';
+        var k, kk=[3,3,1];
+        if(!a.now) kk[0]=0;
+        if(!a.set0) kk[1]=0;
+        if(!a.x) kk[2]=0;
+        if(a.now) {
+	        k=kk[0]+kk[1]+kk[2];
+	        if(k<7) kk[0] += (7-k);
+	        ca += '<td colspan='+kk[0]+' class="cal-nw"></td>';
+        }
+        if(a.set0) {
+	        k=kk[0]+kk[1]+kk[2];
+	        if(k<7) kk[1] += (7-k);
+	        ca += '<td colspan='+kk[1]+' class="cal-s0">'+lang[a.lang].clear+'</td>';
+        }
+        if(a.x) {
+	        k=kk[0]+kk[1]+kk[2];
+	        if(k<7) kk[2] += (7-k);
+	        ca += '<td colspan='+kk[2]+' onClick="document.getElementById(\''+a.id+'\').style.display=\'none\'" title="'+lang[a.lang].x+'" class="bold">'+(kk[2]>2 ? lang[a.lang].x : '&#215;')+'</td>';
+        }
+        HTM(a.id, '<tfoot><tr>'+ca+'</tr></tfoot>');
+        if (($(window).width() - Nod(a.id).offsetWidth-20) < (oo.left+scrol('X'))) {
+            //Nod(a.id).style.left = $(document).width() - Nod(a.id).offsetWidth+"px";
+            Nod(a.id).style.right = ($(window).width() - $('main').width()) / 2 + "px";
+            Nod(a.id).style.left = 'auto';
+        } else {Nod(a.id).style.left=oo.left+scrol('X')+"px"; Nod(a.id).style.right = 'auto';}
+        if (((Nod(a.id).offsetHeight) > ($(window).height() - oo.bottom)) && (oo.top > Nod(a.id).offsetHeight)) {
+            Nod(a.id).style.top = oo.top - Nod(a.id).offsetHeight + scrol() +"px";
+        } else Nod(a.id).style.top=oo.bottom+scrol()+"px";
+
+        document.querySelector("#"+a.id+" thead td.cal-m").innerHTML = months[m];
+        document.querySelector("#"+a.id+" thead td.cal-y").innerHTML = y;
+        document.querySelector("#"+a.id+" thead td.cal-l").onclick = function() {xCal.mmm(a)}
+        document.querySelector("#"+a.id+" thead td.cal-r").onclick = function() {xCal.mpp(a)}
+        document.querySelector("#"+a.id+" thead td.cal-m").onclick = function() {xCal.fM(a)}
+        document.querySelector("#"+a.id+" thead td.cal-y").onclick = function() {xCal.fY(a)}
 
 
-HTM(a.id, '<tbody><tr class="cal-first">'+ca+'</tr></tbody>');
-ca='';
-var k, kk=[3,3,1];
-if(!a.now) kk[0]=0;
-if(!a.set0) kk[1]=0;
-if(!a.x) kk[2]=0;
-if(a.now) {
-	k=kk[0]+kk[1]+kk[2];
-	if(k<7) kk[0] += (7-k);
-	ca += '<td colspan='+kk[0]+' class="cal-nw"></td>';
-}
-if(a.set0) {
-	k=kk[0]+kk[1]+kk[2];
-	if(k<7) kk[1] += (7-k);
-	ca += '<td colspan='+kk[1]+' class="cal-s0">'+lang[a.lang].clear+'</td>';
-}
-if(a.x) {
-	k=kk[0]+kk[1]+kk[2];
-	if(k<7) kk[2] += (7-k);
-	ca += '<td colspan='+kk[2]+' onClick="document.getElementById(\''+a.id+'\').style.display=\'none\'" title="'+lang[a.lang].x+'" class="bold">'+(kk[2]>2 ? lang[a.lang].x : '&#215;')+'</td>';
-}
-HTM(a.id, '<tfoot><tr>'+ca+'</tr></tfoot>');
 
-if (($(document).width() - 220) < (oo.left+scrol('X'))) {
-    Nod(a.id).style.left = $(document).width() - 220+"px";
-} else Nod(a.id).style.left=oo.left+scrol('X')+"px";
-if (((Nod(a.id).offsetHeight) > ($(window).height() - oo.bottom)) && (oo.top > Nod(a.id).offsetHeight)) {
-	Nod(a.id).style.top = oo.top - Nod(a.id).offsetHeight + scrol() +"px";
-} else Nod(a.id).style.top=oo.bottom+scrol()+"px";
+        k = document.querySelector("#"+a.id+" tfoot td.cal-nw");
+        if(k) {
+	        k.innerHTML = xCal(2, a);
+	        k.onclick = function() {
+		        var dop="";
+		        a=xCal.gDop(a);
+		        if(a.dop!="") dop = " "+a.dop;
+		        if(a.o) a.o.value=xCal.value=this.innerHTML+dop;
+		        if(a.hide==1) {
+			        document.getElementById(a.id).style.display='none';
+		        } else {
+			        var o=document.querySelectorAll("#"+a.id+" .today");
+			        for(var j=0; j<o.length; j++) {o[j].className=""}
+			        a=xCal.gDat(a);
+			        var D = new Date(); a.year = D.getFullYear(); a.month = D.getMonth(); a.dat = D.getDate();
+		        }
+		        a.sdat = a.dat; a.smonth = a.month; a.syear = a.year;
+		        if(typeof a.fn==="function") a.fn(this.innerHTML, a);
+		        else if(typeof a.fn==="string" && a.fn!=="") eval(a.fn+"('"+this.innerHTML+"');");
+		        if(a.hide!=1) xCal.f(a);
+	        }
+        }
+        k = document.querySelector("#"+a.id+" tfoot td.cal-s0");
+        if(k) {
+	        k.onclick = function() {
+		        var t='00'+a.delim+'00'+a.delim+'00';
+		        if(a.order==1) t='00'+t; else t+='00';
+		        if(a.o) a.o.value=xCal.value=t;
+		        a.sdat = a.dat; a.smonth = a.month; a.syear = a.year;
+		        if(a.hide==1) document.getElementById(a.id).style.display='none';
+	        }
+        }
+        if(a.autoOff){Nod(a.id).onmouseleave = function() {xCal()}}
 
-document.querySelector("#"+a.id+" thead td.cal-m").innerHTML = months[m];
-document.querySelector("#"+a.id+" thead td.cal-y").innerHTML = y;
-document.querySelector("#"+a.id+" thead td.cal-l").onclick = function() {xCal.mmm(a)}
-document.querySelector("#"+a.id+" thead td.cal-r").onclick = function() {xCal.mpp(a)}
-document.querySelector("#"+a.id+" thead td.cal-m").onclick = function() {xCal.fM(a)}
-document.querySelector("#"+a.id+" thead td.cal-y").onclick = function() {xCal.fY(a)}
+        if (par.class=="xcalend") var k = document.querySelectorAll("#"+a.id+" tbody td");
+        else if (par.class=="xcalend2") var k = document.querySelectorAll("#"+a.id+" tbody td button");
+        for(var i=0; i<k.length; i++) {
+	        k[i].onclick = function() {
+		        var t = this.innerHTML;
+		        if(t=='' || t=="&nbsp;") return;
+		        if(a.hide!=1) {
+			        var o=document.querySelectorAll("#"+a.id+" .today");
+			        for(var j=0; j<o.length; j++) {o[j].className=""}
+			        this.className="today";
+		        }
+		        a=xCal.gDop(a);
+		        a.dat=t;
+		        if(typeof a.f==="function") a.f(a.id);
+	        }
+        }
+        var r=document.querySelector("#"+a.id+" tbody td.cal-l");
+        if(r!=null){r.onclick = function() {xCal.mmm(a)}}
+        r=document.querySelector("#"+a.id+" tbody td.cal-r");
+        if(r!=null){r.onclick = function() {xCal.mpp(a)}}
+    }
 
-k = document.querySelector("#"+a.id+" tfoot td.cal-nw");
-if(k) { // a.now
-	k.innerHTML = xCal(2, a);
-	k.onclick = function() {
-		var dop="";
-		a=xCal.gDop(a);
-		if(a.dop!="") dop = " "+a.dop;
-		if(a.o) a.o.value=xCal.value=this.innerHTML+dop;
-		if(a.hide==1) {
-			document.getElementById(a.id).style.display='none';
-		} else {
-			var o=document.querySelectorAll("#"+a.id+" .today");
-			for(var j=0; j<o.length; j++) {o[j].className=""}
-			a=xCal.gDat(a);
-			var D = new Date(); a.year = D.getFullYear(); a.month = D.getMonth(); a.dat = D.getDate();
-		}
-		a.sdat = a.dat; a.smonth = a.month; a.syear = a.year;
-		if(typeof a.fn==="function") a.fn(this.innerHTML, a);
-		else if(typeof a.fn==="string" && a.fn!=="") eval(a.fn+"('"+this.innerHTML+"');");
-		if(a.hide!=1) xCal.f(a);//xCal(a.id, a);
-	}
-}
-k = document.querySelector("#"+a.id+" tfoot td.cal-s0");
-if(k) { // a.set0
-	k.onclick = function() {
-		var t='00'+a.delim+'00'+a.delim+'00';
-		if(a.order==1) t='00'+t; else t+='00';
-		if(a.o) a.o.value=xCal.value=t;
-		a.sdat = a.dat; a.smonth = a.month; a.syear = a.year;
-		if(a.hide==1) document.getElementById(a.id).style.display='none';
-	}
-}
-if(a.autoOff){Nod(a.id).onmouseleave = function() {xCal()}}
+    xCal.f(a);
 
-if (par.class=="xcalend") var k = document.querySelectorAll("#"+a.id+" tbody td");
-else if (par.class=="xcalend2") var k = document.querySelectorAll("#"+a.id+" tbody td button");
-for(var i=0; i<k.length; i++) {
-	k[i].onclick = function() {
-		var t = this.innerHTML;
-		if(t=='' || t=="&nbsp;") return;
-		if(a.hide!=1) {
-			var o=document.querySelectorAll("#"+a.id+" .today");
-			for(var j=0; j<o.length; j++) {o[j].className=""}
-			this.className="today";
-		}
-		a=xCal.gDop(a);
-		a.dat=t;
-		if(typeof a.f==="function") a.f(a.id);
-	}
-}
-var r=document.querySelector("#"+a.id+" tbody td.cal-l");
-if(r!=null){r.onclick = function() {xCal.mmm(a)}}
-r=document.querySelector("#"+a.id+" tbody td.cal-r");
-if(r!=null){r.onclick = function() {xCal.mpp(a)}}
-}
-
-xCal.f(a);
-
-return false;
+    return false;
 }
 
 xCal.mmm = function(a) {
@@ -363,6 +410,15 @@ xCal.all = function(cl, delim, order) {
 			if(("autoOn" in delim) && delim.autoOn) Eve(o, "mouseenter", function() {xCal(this, delim, order)});
 		} else if(def.autoOn) Eve(o, "mouseenter", function() {xCal(this, delim, order)});
 	}
+}
+
+function reverseDate(stDate) {
+    sd = '';
+    stDate = stDate.split('.').reverse();
+    stDate.forEach(function(item, i, arr) {
+        sd += stDate[i];
+    });
+    return(sd);
 }
 
 })();
