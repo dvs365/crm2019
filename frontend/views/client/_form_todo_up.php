@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 	</span>
 	<?$todo->time = date('H:i',strtotime($todo->date))?>
 	<?$todo->date = date('d.m.Y',strtotime($todo->date))?>
-	<?=$form->field($todo, 'date', ['template' => "{input}"])->textInput(['class' => 'task_date color_blue', 'readonly' => true, 'onClick' => 'xCal(this);', 'onKeyUp' => 'xCal();','maxlength' => true]) ?>
+	<?=$form->field($todo, 'date', ['template' => "{input}"])->textInput(['class' => 'task_date__r color_blue', 'readonly' => true, 'onClick' => 'xCal(this);', 'onKeyUp' => 'xCal();','maxlength' => true]) ?>
     <div class="task_time__visible">
         <?=$form->field($todo, 'time', ['template' => "в {input}"])->dropDownList([
                 '01:00'=>'01:00',
