@@ -36,6 +36,7 @@ class Organization extends \yii\db\ActiveRecord
     const FORM_TOO = 70;
     const FORM_ZAO = 80;
     const FORM_GUP = 90;
+    const FORM_GP = 100;	
 	
 	const UNKNOWNNDS = 0;
     const WITHNDS = 10;
@@ -60,7 +61,7 @@ class Organization extends \yii\db\ActiveRecord
 			['mail', 'app\components\validators\MailValidator'],
             [['client', 'form', 'nds', 'number_mirror', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
 
-            ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP, self::FORM_TOO, self::FORM_ZAO, self::FORM_GUP]],
+            ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP, self::FORM_TOO, self::FORM_ZAO, self::FORM_GUP, self::FORM_GP]],
             ['nds', 'in', 'range' => [self::WITHNDS, self::WITHOUTNDS, self::UNKNOWNNDS]],
             [['name', 'jadds', 'fadds', 'director', 'bank', 'mail'], 'string', 'max' => 255],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
@@ -92,6 +93,7 @@ class Organization extends \yii\db\ActiveRecord
 			self::FORM_IP => 'ИП',
             self::FORM_AO => 'АО',
 			self::FORM_GUP => 'ГУП',
+			self::FORM_GP => 'ГП',
 			self::FORM_ZAO => 'ЗАО',
             self::FORM_MUP => 'МУП',
             self::FORM_PAO => 'ПАО',
