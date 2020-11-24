@@ -38,20 +38,21 @@ ClientAsset::register($this);
 		<div class="wrap4">
 			<div class="wrap4">
 				<div class="about"><h1><?=$client->name?></h1><span class="manager color_grey"><?=$client->user0->surnameNP?></span></div>
-				<? if($client->organizations){?>
-				<ul class="firms wrap3">
-					<?$orgs = $client->organizations;?>
-					<?foreach($orgs as $org){?>
-						<li class="firm">
-							<?= Html::a($org->formLabel.' '.$org->name, ['client/update', 'id' => $client->id, '#' => 'organization'.$org->id]) ?>
-							<span class="nds color_grey <?=($org->nds == $org->ndsConst['without'])?'nds_none':''?>"><?=$org->nds ? $org->getAttributeLabel('nds'):''?></span>
-						</li>
-					<?}?>
-				</ul>
-				<?}?>
-				<!--<div class="wrap1">
-					<div class="client_comment">Комментарий по клиенту. Комментарий по клиенту. Комментарий по клиенту.</div>
-				</div>-->				
+				<?if($client->organizations):?>
+					<ul class="firms wrap3">
+						<?$orgs = $client->organizations;?>
+						<?foreach($orgs as $org){?>
+							<li class="firm">
+								<?= Html::a($org->formLabel.' '.$org->name, ['client/update', 'id' => $client->id, '#' => 'organization'.$org->id]) ?>
+								<span class="nds color_grey <?=($org->nds == $org->ndsConst['without'])?'nds_none':''?>"><?=$org->nds ? $org->getAttributeLabel('nds'):''?></span>
+							</li>
+						<?}?>
+					</ul>
+				<?endif;?>
+				<?if($client->comment):?>
+					<?$commentDiv = Html::tag('div', Html::encode($client->comment), ['class' => 'client_comment']);?>
+					<?=Html::tag('div', $commentDiv, ['class' => 'wrap1'])?>
+				<?endif;?>
 			</div>
 			
 			<div class="wrap1">

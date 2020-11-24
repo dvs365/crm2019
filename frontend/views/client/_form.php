@@ -10,23 +10,32 @@ use yii\helpers\ArrayHelper;
 ?>
 
 <main>
-    <?php $form = ActiveForm::begin(['id' => 'dynamic-form', 'options' =>  ['class' => 'client_add wrap4']]); ?>
+    <?php $form = ActiveForm::begin(['id' => 'dynamic-form', 'options' =>  ['class' => 'client_add']]); ?>
         <h1><?= Html::encode($this->title) ?></h1>
-        <table class="w100p">
+        <table class="w100p wrap3-0">
             <tr>
-                <td class="w180">
+                <td>
                     <?=$model->getAttributeLabel('name')?>
                 </td>
                 <td>
                     <?= $form->field($model, 'name', ['template' => "{input}"])->textInput(['maxlength' => true]) ?>
                 </td>
             </tr>
+			<tr>
+				<td>
+					<?=$model->getAttributeLabel('comment')?>
+				</td>
+				<td>
+					<?=$form->field($model, 'comment', ['template' => "{input}"])->textArea(['placeholder' => 'Новый комментарий', 'class' => 'client_add_delivery autoheight', 'maxlength' => true]) ?>
+					<?=Html::tag('div', Html::tag('pre'), ['class' => 'fake_textarea'])?>
+				</td>
+			</tr>
             <tr>
                 <td>
                     <?=$model->getAttributeLabel('status')?>
                 </td>
                 <td>
-                    <? $model->isNewrecord?$model->status=10:$model->status;?>
+                    <? $model->isNewrecord?$model->status = common\models\Client::TARGET : $model->status;?>
                     <?= $form->field($model, 'status', ['template' => "{input}<div class=\"clear\"></div>"])->radioList($model->getStatusLabels(),[
                         'item' => function($index, $label, $name, $checked, $value){
                             $return = Html::beginTag('label', ['class' => 'wrap_third']);
@@ -94,29 +103,34 @@ use yii\helpers\ArrayHelper;
             'model' => $model,
         ]);
         ?>
-        <div class="f17">Организации клиента</div>
+        <div class="f17 wrap3-0">Организации клиента</div>
         <?=$this->render('_form_client_organization', [
             'form' => $form,
             'modelsOrganization' => $modelsOrganization,
             'model' => $model,
         ]);
         ?>
-        <div class="wrap_select left">
-            <?if(\Yii::$app->user->can('upClientAll')):?>
-            <label>Менеджер:<?$model->user = (!empty($model->user)) ? $model->user : Yii::$app->user->identity->id?>
-                <div class="select">
-                    <div class="dropdown"></div>
-                        <?$managers = ArrayHelper::map($modelsUser, 'id', 'surnameNP')?>
-                    <?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'options' => [$model->user => ['selected' => true]]])?>
-                </div>
-            </label>
-            <?endif;?>
-        </div>
-        <div class="right">
-            <?=Html::a('Отменить', ['client/view', 'id' => $model->id, 'ref' => Yii::$app->request->get('ref')], ['class' => 'btn cancel'])?>
-            <?=Html::submitInput('Сохранить', ['class' => 'btn'])?>
-        </div>
-        <div class="clear"></div>
+        <div class="fixed_footer">
+			<div class="w900">
+				<div class="wrap_select left">
+					<?if(\Yii::$app->user->can('upClientAll')):?>
+					<label>Менеджер:<?$model->user = (!empty($model->user)) ? $model->user : Yii::$app->user->identity->id?>
+						<span class="select">
+							<span class="dropdown"></span>
+							<?$managers = ArrayHelper::map($modelsUser, 'id', 'surnameNP')?>
+							<?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'options' => [$model->user => ['selected' => true]]])?>
+						</span>
+					</label>
+					<?endif;?>
+				</div>
+				<div class="right">
+					<?=Html::a('Отменить', ['client/view', 'id' => $model->id, 'ref' => Yii::$app->request->get('ref')], ['class' => 'btn cancel'])?>
+					<?=Html::submitInput('Сохранить', ['class' => 'btn'])?>
+				</div>
+				<div class="clear"></div>					
+			</div>
+		</div>
+
     <?php ActiveForm::end(); ?>
 
 

@@ -52,7 +52,7 @@ class Client extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['name'], 'trim'],
 
-            [['name', 'website', 'discomment'], 'string', 'max' => 255],
+            [['name', 'website', 'discomment','comment'], 'string', 'max' => 255],
 			[['address'], 'string', 'max' => 2000],
             [['user', 'disconfirm'], 'integer'],
             [['update'], 'safe'],
@@ -108,6 +108,7 @@ class Client extends \yii\db\ActiveRecord
             'update_u' => 'Update U',
             'update_a' => 'Update A',
 			'clientIDs' => '',
+			'comment' => 'Комментарий',
         ];
     }
 

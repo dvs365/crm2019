@@ -21,11 +21,11 @@ use wbraganca\dynamicform\DynamicFormWidget;
         'comment'
     ],
 ]); ?>
-<table class="w100p container-items_client_phone">
+<table class="w100p wrap3-0 container-items_client_phone">
     <?$lastIDcphone = count($modelsClientPhone) - 1;?>
     <?php foreach($modelsClientPhone as $index => $clientPhone):?>
     <tr class="item_client_phone">
-        <td class="w180"></td>
+        <td></td>
         <td>
             <?php
             //necessary for update action.

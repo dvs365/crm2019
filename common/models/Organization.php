@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property int $client
  * @property string $name
+ * @property string $valid
  * @property int $form
  * @property string $jadds
  * @property string $fadds
@@ -41,6 +42,9 @@ class Organization extends \yii\db\ActiveRecord
 	const UNKNOWNNDS = 0;
     const WITHNDS = 10;
     const WITHOUTNDS = 20;
+	
+	const VALID = 1;
+    const NO_VALID = 0;	
 
 
     /**
@@ -57,9 +61,10 @@ class Organization extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+			['valid', 'in', 'range' => [self::VALID, self::NO_VALID]],
             ['phone','app\components\validators\PhoneValidator'],
 			['mail', 'app\components\validators\MailValidator'],
-            [['client', 'form', 'nds', 'number_mirror', 'inn', 'ogrn', 'kpp', 'payment'], 'integer'],
+            [['client', 'form', 'nds', 'number_mirror', 'inn', 'ogrn', 'kpp', 'payment', 'valid'], 'integer'],
 
             ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP, self::FORM_TOO, self::FORM_ZAO, self::FORM_GUP, self::FORM_GP]],
             ['nds', 'in', 'range' => [self::WITHNDS, self::WITHOUTNDS, self::UNKNOWNNDS]],
@@ -128,6 +133,7 @@ class Organization extends \yii\db\ActiveRecord
             'kpp' => 'КПП',
             'payment' => 'Расчётный счёт',
             'bank' => 'Банк',
+			'valid' => 'Рабочая',
         ];
     }
 

@@ -18,6 +18,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
     'formId' => 'dynamic-form',
     'formFields' => [
         'name',
+		'valid',
         'form',
         'jadds',
         'fadds',
@@ -36,7 +37,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
     <?php foreach($modelsOrganization as $indexOrg => $clientOrg):?>
     <div class="client_org_item">
 
-    <h2>Организация <span class="client_item_number" id="organization<?=$clientOrg->id?>"><?=$indexOrg+1?></span></h2>
+    <!--<h2>Организация <span class="client_item_number" id="organization<?=$clientOrg->id?>"><?=$indexOrg+1?></span></h2>-->
         <?php
         //necessary for update action.
         if(!$clientOrg->isNewRecord) {
@@ -44,6 +45,16 @@ use wbraganca\dynamicform\DynamicFormWidget;
         }
         ?>
         <table class="w100p">
+			<tr>
+				<td>
+					<h2>Организация <span class="client_item_number" id="organization<?=$clientOrg->id?>"><?=$indexOrg+1?></span></h2>
+				</td>
+				<td>
+					<span class="client_item_main"><label>
+						<?=$form->field($clientOrg, "[{$indexOrg}]valid", ['template' => "{input}<span class=\"checkbox\"></span> ".$clientOrg->getAttributeLabel('valid')])->checkbox([], false)?>
+					</label></span>
+				</td>
+			</tr>		
             <tr>
                 <td class="w180 lh">
                     Форма собственности

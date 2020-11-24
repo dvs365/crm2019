@@ -83,7 +83,7 @@ $request = Yii::$app->request;
             });
 			$ulFirms = Html::tag('ul', implode('', $firms), ['class' => 'firms']);
 			//комментарий по клиенту
-			$divComm = Html::tag('div', '',['class' => 'client_comment']);
+			$divComm = Html::tag('div', $model->comment, ['class' => 'client_comment']);
             $reject = Html::encode($model->desclient0['reject']);
             $reject = $model->status == $widget->viewParams['statuses']['reject'] ? Html::tag('p', 'Причина отказа: '.$reject) : '';
             $template = Html::tag('div', Html::tag('div', $pAbout.$ulFirms.$reject, ['class' => 'wrap3']).$divComm, ['class' => 'wrap1']);
