@@ -24,7 +24,6 @@ use wbraganca\dynamicform\DynamicFormWidget;
 <div class="container-faces">
     <?php foreach($modelsFace as $indexFace => $clientFace):?>
     <div class="face-item">
-        <h2>Контактное лицо <span class="client_item_number"><?=$indexFace+1?></span></h2>
         <?php
         //necessary for update action.
         if(!$clientFace->isNewRecord) {
@@ -32,6 +31,16 @@ use wbraganca\dynamicform\DynamicFormWidget;
         }
         ?>
         <table class="w100p">
+			<tr>
+				<td><h2>Контакт <span class="client_item_number"><?=$indexFace+1?></span></h2></td>
+				<td>
+					<span class="client_item_main"><label>
+						<input type="radio" name="main-contact-person"  class="main-contact-person" value="<?=$indexFace+1?>" <?=($clientFace->main)?'checked':''?>>
+						<span class="radio"></span>
+						Основной
+					</label></span>				
+				</td>
+			</tr>
             <tr>
                 <td class="w180">
                     ФИО

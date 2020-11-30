@@ -31,6 +31,7 @@ jQuery(function ($) {
         var pers_num_old = Number($(item).prev('.face-item').find('.client_item_number').text());
         var pers_num_new = pers_num_old + 1;
         $(item).find('.client_item_number').text(pers_num_new);
+		$(item).find('.main-contact-person').val(pers_num_new);
     });
 
     $(".dynamicform_wrapper_client_org").on("afterInsert", function (e, item) {

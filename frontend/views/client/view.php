@@ -85,7 +85,8 @@ ClientAsset::register($this);
 		<div class="contacts">
 			<?php foreach($clientFaces as $clientFace):?>
 			<div class="wrap1 contact">
-				<?= Html::tag('div', Html::encode($clientFace->fullname), ['class' => 'f1125'])?>
+				<?$mainFaceClass = $clientFace->main ? ' contact_main' : ''?>
+				<?= Html::tag('div', Html::encode($clientFace->fullname), ['class' => 'f1125'.$mainFaceClass])?>
 				<?= Html::tag('div', Html::encode($clientFace->position), ['class' => 'color_grey'])?>
 				<?$fphones = $clientFace->phonefaces; $fmails = $clientFace->mailfaces;?>
 				<?php foreach($fphones as $fphone):?>

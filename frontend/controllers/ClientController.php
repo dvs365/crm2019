@@ -206,10 +206,12 @@ class ClientController extends Controller
 					}
 					foreach ($clientFaces as $indexFace => $clientFace) {
 						$emptyFace = true;
+						$mainFace = ($indexFace+1 == Yii::$app->request->post('main-contact-person')) ? '1':'0';
 						if(array_filter($clientFace->attributes) !== []) {
 							$emptyFace = false;
 						}
 						$clientFace->client = $client->id;
+						$clientFace->main = $mainFace;
 						$valid = $clientFace->validate() && $valid;
 						if (!$valid || !($flag = $clientFace->save())) {
 							break;
@@ -421,6 +423,7 @@ class ClientController extends Controller
                         foreach ($clientFaces as $indexFace => $clientFace) {
                             $emptyFace = true;
                             $emptySub = true;
+							$mainFace = ($indexFace+1 == Yii::$app->request->post('main-contact-person')) ? '1':'0';
                             if (!empty($clientFace->fullname) || !empty($clientFace->position)) {
                                 $emptyFace = false;
                             }
@@ -442,6 +445,7 @@ class ClientController extends Controller
                             }
                             if (!$emptyFace || !$emptySub) {
                                 $clientFace->client = $client->id;
+								$clientFace->main = $mainFace;
                                 $dirty = $dirty && empty($clientFace->getDirtyAttributes());
 								$valid = $clientFace->validate() && $valid;
                                 if (!$valid || !$flag = $clientFace->save()) {
