@@ -8,11 +8,13 @@ use yii\helpers\ArrayHelper;
 <div id="form-work" class="wrap1">
 	<table class="w100p">
 		<tr>
-			<td class="w120 f128">Новое дело</td>
+			<td class="w140 f128">Новое дело</td>
 			<td>
 <? $form = ActiveForm::begin(['action' => $action, 'method' => 'post']); ?>
-	<?=$form->field($model, 'name', ['template' => "{input}"])->textInput(['placeholder' => 'Наименование дела', 'class' => 'wrap3', 'maxlength' => true]) ?>
-	<?=$form->field($model, 'description', ['template' => "{input}"])->textArea(['placeholder' => 'Комментарий к делу', 'class' => 'wrap3', 'maxlength' => true]) ?>
+	<?=$form->field($model, 'name', ['template' => "{input}"])->textInput(['placeholder' => 'Наименование дела', 'class' => 'wrap3 autoheight h36', 'maxlength' => true]) ?>
+	<div class="fake_textarea h36"><pre></pre></div>
+	<?=$form->field($model, 'description', ['template' => "{input}"])->textArea(['placeholder' => 'Комментарий к делу', 'class' => 'wrap3 autoheight', 'maxlength' => true]) ?>
+	<div class="fake_textarea"><pre></pre></div>
 	<table class="w100p wrap2">
 		<tr>
 			<td class="w65">

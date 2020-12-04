@@ -26,18 +26,6 @@ $(document).ready(function(){
         }
         return false;
     });
-	
-    //получение сегодняшней даты в формате dd.mm.yyyy
-    function nowDate() {
-        var now = new Date();
-        Year = now.getFullYear();
-        Month = now.getMonth();
-        Day = now.getDate();
-        Month = Month + 1;
-        if (Month < 10) Month = '0' + Month;
-        if (Day < 10) Day = '0' + Day;
-        return Day + '.' + Month + '.' + Year;
-    }
 
     now = nowDate();
     $('.task_date').val(now);
@@ -102,27 +90,50 @@ $(document).ready(function(){
         input.selectionEnd = start + 1;
     });
 	
-	//обработка формы
-	function send(form) {
-		event.preventDefault();
-		act = form.action;
-		met = form.method;
-		mas = $(form).serializeArray();
-		name = $(form).find(':submit').attr('name');
-		suc = function(html){
-			alert(html);
-		};
-		mas.push({ name: name, value: '' });
-		sendAjax(act, met, mas, suc);
-	}	
-	
-	//отправка запроса на сервер
-    function sendAjax(act, met, mas, suc) {
-        $.ajax({
-           type: met,
-           url: act,
-           data: mas,
-           success: suc
-        });
-    }
+    $(".task_comment").each(function(){
+        if ($(this).height() >= 100) {
+            $(this).find(".task_comment_gradient").css({'display':'block'});
+        }
+    })
+
+    $(".task_comment_gradient").click(function(){
+        $(this).closest('.task_comment').animate({'max-height':'9999px'}, 500);
+        $(this).remove();
+    });	
 });
+
+//получение сегодняшней даты в формате dd.mm.yyyy
+function nowDate() {
+	var now = new Date();
+	Year = now.getFullYear();
+	Month = now.getMonth();
+	Day = now.getDate();
+	Month = Month + 1;
+	if (Month < 10) Month = '0' + Month;
+	if (Day < 10) Day = '0' + Day;
+	return Day + '.' + Month + '.' + Year;
+}
+
+//обработка формы
+function send(form) {
+	event.preventDefault();
+	act = form.action;
+	met = form.method;
+	mas = $(form).serializeArray();
+	name = $(form).find(':submit').attr('name');
+	suc = function(html){
+		alert(html);
+	};
+	mas.push({ name: name, value: '' });
+	sendAjax(act, met, mas, suc);
+}	
+
+//отправка запроса на сервер
+function sendAjax(act, met, mas, suc) {
+	$.ajax({
+	   type: met,
+	   url: act,
+	   data: mas,
+	   success: suc
+	});
+}

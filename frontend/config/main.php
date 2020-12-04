@@ -70,6 +70,9 @@ return [
 		'mark' => [
             'class' => 'frontend\components\Mark',
         ],
+		'todo' => [
+			'class' => 'frontend\components\TodoCnt',
+		],
     ],
     'modules' => [
       'gii' => [

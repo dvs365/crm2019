@@ -14,16 +14,18 @@ use yii\helpers\Url;
 						<button class="checkbox" title="Закрыть дело"></button>
 					</form>
 				</td>
-				<td><?= Html::a(Html::encode($curTodo->name), ['view', 'id' => $curTodo->id], ['class' => ($last) ? 'color_red' : ''])?> 
-				<?if ($curTodo->client):?>
-				<span class="task_item_client"><?= Html::encode($curTodo->client0['name'])?></span></td>
-				<?endif;?>
+				<td>
+					<?=Html::a(Html::encode($curTodo->client0['name'])?:'Собственное', ['view', 'id' => $curTodo->id], ['class' => 'task_item_client'.(($last)?' color_red':'')])?> 
+					<?=Html::tag('p', $curTodo->name)?>
+				</td>
 			</tr>
+			<?if($curTodo->description):?>
 			<tr class="table_item">
 				<td></td>
 				<td></td>
-				<!--<td><?//= Html::encode($curTodo->description)?></td>-->
+				<td><?=Html::tag('div', Html::encode($curTodo->description).Html::tag('span', 'Весь комментарий '.Html::tag('span', '', ['class' => 'dropdown']),['class' => 'task_comment_gradient color_blue']),['class' => 'task_comment'])?></td>
 			</tr>
+			<?endif;?>
 		</table>
 	</div>
 <?endforeach;?>

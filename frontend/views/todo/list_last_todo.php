@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
-	<div class="pink_background wrap1">
+	<div class="wrap4 wrap_work pink_background" data-work="2">
 		<div class="task">
 		<h1>Просроченные дела</h1>
 	<?foreach ($lastTodos as $lastTodo):?>
@@ -17,17 +17,15 @@ use yii\helpers\Url;
 						</form>
 					</td>
 					<td>
-						<?= Html::a(Html::encode($lastTodo->name), ['view', 'id' => $lastTodo->id])?>
-						<?if ($lastTodo->client):?>
-						<span class="task_item_client"><?= Html::encode($lastTodo->client0['name'])?></span>
-						<?endif;?>
+						<?=Html::a(Html::encode($lastTodo->client0['name'])?:'Собственное', ['view', 'id' => $lastTodo->id], ['class' => 'task_item_client'])?>
+						<?=Html::tag('p', $lastTodo->name)?>
 					</td>
 				</tr>
-				<?if ($lastTodo->description):?>
-				<tr class="table_item">
+				<?if($lastTodo->description):?>
+				<tr class="table_item tr_comment">
 					<td></td>
 					<td></td>
-					<td><?= Html::encode($lastTodo->description)?></td>
+					<td><?=Html::tag('div', Html::encode($lastTodo->description).Html::tag('span', 'Весь комментарий '.Html::tag('span', '', ['class' => 'dropdown']),['class' => 'task_comment_gradient pink color_blue']),['class' => 'task_comment'])?></td>
 				</tr>
 				<?endif;?>
 			</table>
