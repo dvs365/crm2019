@@ -32,7 +32,7 @@ class Mailclient extends \yii\db\ActiveRecord
 			['mail', 'app\components\validators\MailValidator'],
             [['client'], 'integer'],
 			['mail', 'trim'],
-			['mail', 'email'],
+			//['mail', 'email'],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }
