@@ -33,7 +33,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
             }
             ?>
             <?= $form->field($clientMail, "[{$index}]mail", ['template' => "{error}{input}"])
-			->textInput(['class' => 'mail', 'maxlength' => true])?>
+			->input('email', ['class' => 'mail', 'maxlength' => true])?>
 			<?= $form->field($clientMail, "[{$index}]comment", ['template' => "{error}{input}"])
 			->textInput(['class' => 'mail_comment', 'placeholder' => 'Комментарий к e-mail', 'maxlength' => true])?>
 			<div class="add-cmail btn right">Добавить</div>
