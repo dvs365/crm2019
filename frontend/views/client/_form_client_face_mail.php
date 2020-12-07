@@ -16,6 +16,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
     'formId' => 'dynamic-form',
     'formFields' => [
         'mail',
+		'comment',
     ],
 ]); ?>
 <table class="w100p">
@@ -30,7 +31,10 @@ use wbraganca\dynamicform\DynamicFormWidget;
                         echo Html::activeHiddenInput($faceMail, "[{$indexFace}][{$indexMail}]id");
                     }
                     ?>
-                    <?= $form->field($faceMail, "[{$indexFace}][{$indexMail}]mail", ['template' => "{error}{input}"])->textInput(['class' => 'mail', 'maxlength' => true])?>
+                    <?= $form->field($faceMail, "[{$indexFace}][{$indexMail}]mail", ['template' => "{error}{input}"])
+					->textInput(['class' => 'mail', 'maxlength' => true])?>
+					<?= $form->field($faceMail, "[{$indexFace}][{$indexMail}]comment", ['template' => "{error}{input}"])
+					->textInput(['class' => 'mail_comment', 'placeholder' => 'Комментарий к e-mail', 'maxlength' => true])?>					
                     <div class="add-fmail btn right">Добавить</div>
                     <div class="clear"></div>
                 </td>
