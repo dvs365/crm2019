@@ -25,13 +25,19 @@ class TransferClientForm extends Model
     public function update()
     {
         if ($this->validate()) {
-			$this->clientIDs = array_diff($this->clientIDs, ['0']);
-			\common\models\Client::updateAll(['user' => $this->userID], ['id' => $this->clientIDs]);
-			\common\models\Desclient::updateAll(['transfer' => $this->transfer], ['client' => $this->clientIDs]);
-			foreach ($this->users as $userOld => $clientIDs) {
-				\common\models\Todo::updateAll(['user' => $this->userID], ['client' => $clientIDs, 'user' => $userOld]);
+			$transaction = \Yii::$app->db->beginTransaction();
+			try {
+				$this->clientIDs = array_diff($this->clientIDs, ['0']);
+				\common\models\Client::updateAll(['user' => $this->userID], ['id' => $this->clientIDs]);
+				\common\models\Desclient::updateAll(['transfer' => $this->transfer], ['client' => $this->clientIDs]);
+				foreach ($this->users as $userOld => $clientIDs) {
+					\common\models\Todo::updateAll(['user' => $this->userID], ['client' => $clientIDs, 'user' => $userOld]);
+				}
+				$transaction->commit();
+				return true;
+			} catch (Exception $e) {
+				$transaction->rollBack();
 			}
-			return true;
         } else {
             return false;
         }
