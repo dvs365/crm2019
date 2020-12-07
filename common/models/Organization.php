@@ -68,7 +68,9 @@ class Organization extends \yii\db\ActiveRecord
 
             ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP, self::FORM_TOO, self::FORM_ZAO, self::FORM_GUP, self::FORM_GP]],
             ['nds', 'in', 'range' => [self::WITHNDS, self::WITHOUTNDS, self::UNKNOWNNDS]],
-            [['name', 'jadds', 'fadds', 'director', 'bank', 'mail'], 'string', 'max' => 255],
+            [['name', 'jadds', 'fadds', 'director', 'bank'], 'string', 'max' => 255],
+			['mail', 'trim'],
+			['mail', 'email'],
             [['client'], 'exist', 'skipOnError' => true, 'targetClass' => Client::className(), 'targetAttribute' => ['client' => 'id']],
         ];
     }

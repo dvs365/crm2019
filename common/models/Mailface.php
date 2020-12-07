@@ -32,7 +32,8 @@ class Mailface extends \yii\db\ActiveRecord
         return [
 			['mail', 'app\components\validators\MailValidator'],
             [['face'], 'integer'],
-            [['mail'], 'string', 'max' => 255],
+			['mail', 'trim'],
+            ['mail', 'email'],
 			[['client'], 'safe'],
             [['face'], 'exist', 'skipOnError' => true, 'targetClass' => Face::className(), 'targetAttribute' => ['face' => 'id']],
         ];
