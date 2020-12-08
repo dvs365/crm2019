@@ -93,7 +93,7 @@ ClientAsset::register($this);
 					<div class="contact_item"><a href="tel:<?=$fphone->number?>"><?=$fphone->number?></a><?=' '.$fphone->comment?></div>
 				<?php endforeach;?>
 				<?php foreach($fmails as $fmail):?>
-					<div class="contact_item"><a href="mailto:<?=$fmail->mail?>"><?=$fmail->mail?></a></div>
+					<div class="contact_item"><a href="mailto:<?=$fmail->mail?>"><?=$fmail->mail?></a><?=' '.$fmail->comment?></div>
 				<?php endforeach;?>
 			</div>
 			<?php endforeach;?>
@@ -119,7 +119,7 @@ ClientAsset::register($this);
 				<div class="contact_all">
 					<?php foreach($cmails as $cmail):?>
 						<div class="contact_item">
-							<a href="mailto:<?=Html::encode($cmail->mail)?>"><?=Html::encode($cmail->mail)?></a>
+							<a href="mailto:<?=Html::encode($cmail->mail)?>"><?=Html::encode($cmail->mail)?></a><?=' '.$cmail->comment?>
 						</div>
 					<?php endforeach;?>
 				</div>
