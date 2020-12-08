@@ -107,6 +107,7 @@ class ClientController extends Controller
     public function actionView($id)
     {
         $client = $this->findModel($id);
+		$cloned = clone $client;
         $userID = Yii::$app->user->identity->id;
         if (\Yii::$app->user->can('admin')) {
             $client->show_a = date('Y-m-d H:i:s');
@@ -119,14 +120,14 @@ class ClientController extends Controller
         }
         $client->save();
         return $this->render('view', [
-            'client' => $client,
-            'clientPhones' => $client->phoneclients,
-            'clientMails' => $client->mailclients,
-            'clientFaces' => $client->faces,
-            'clientOrgs' => $client->organizations,
-            'desclient' => $client->desclient0 ? $client->desclient0 : new Desclient(),
-            'show_uid' => $client->show_uid ? User::findOne($client->show_uid) : new User(),
-            'show_aid' => $client->show_aid ? User::findOne($client->show_aid) : new User(),
+            'client' => $cloned,
+            'clientPhones' => $cloned->phoneclients,
+            'clientMails' => $cloned->mailclients,
+            'clientFaces' => $cloned->faces,
+            'clientOrgs' => $cloned->organizations,
+            'desclient' => $cloned->desclient0 ? $client->desclient0 : new Desclient(),
+            'show_uid' => $cloned->show_uid ? User::findOne($client->show_uid) : new User(),
+            'show_aid' => $cloned->show_aid ? User::findOne($client->show_aid) : new User(),
         ]);
     }
 
