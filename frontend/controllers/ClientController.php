@@ -542,7 +542,6 @@ class ClientController extends Controller
     public function actionTransfer()
     {
 		$transfer = new TransferClientForm();
-		$transaction = \Yii::$app->db->beginTransaction();
 		if ($transfer->load(Yii::$app->request->post()) && $transfer->update()) {
 			$flag = true;
 		}

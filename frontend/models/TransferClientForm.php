@@ -28,7 +28,7 @@ class TransferClientForm extends Model
 			$transaction = \Yii::$app->db->beginTransaction();
 			try {
 				$this->clientIDs = array_diff($this->clientIDs, ['0']);
-				\common\models\Client::updateAll(['user' => $this->userID], ['id' => $this->clientIDs]);
+				\common\models\Client::updateAll(['user' => $this->userID, 'show' => ''], ['id' => $this->clientIDs]);
 				\common\models\Desclient::updateAll(['transfer' => $this->transfer], ['client' => $this->clientIDs]);
 				foreach ($this->users as $userOld => $clientIDs) {
 					\common\models\Todo::updateAll(['user' => $this->userID], ['client' => $clientIDs, 'user' => $userOld]);
@@ -38,9 +38,8 @@ class TransferClientForm extends Model
 			} catch (Exception $e) {
 				$transaction->rollBack();
 			}
-        } else {
-            return false;
         }
+        return false;
     }
 	
 	public function checkIsArrayArrayID($attribute, $params)
