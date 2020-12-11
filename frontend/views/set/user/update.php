@@ -17,6 +17,7 @@ $this->title = 'Изменение пользователя';
 	<?=$this->render('_form', [
 		'model' => $model,
 		'users' => $users,
+		'user' => common\models\User::find()->all(),
 		'cntClient' => $cntClient,
 	])?>
 </main>

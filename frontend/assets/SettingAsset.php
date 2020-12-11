@@ -10,6 +10,7 @@ class SettingAsset extends AssetBundle
     public $baseUrl = '@web';
     public $js = [
         'js/setting.js',
+		'js/datepicker.js?1',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

@@ -8,14 +8,18 @@ BirthdayAsset::register($this);
 ?>
 
 <main>
-	<div class="wrap1 control">
-		<?=$this->render('_menu')?>
-		<a href="<?=Url::toRoute(['set/signup'])?>" class="btn w200 right ml20">Добавить пользователя</a>
+	<div class="wrap4">
+		<div class="control left">
+			<?=$this->render('_menu')?>
+		</div>
+		<div class="control_btn w460">
+			<a href="<?=Url::toRoute(['set/signup'])?>" class="btn w220 ml20">Добавить пользователя</a>
+			<div class="clear"></div>
+		</div>
 		<div class="clear"></div>
 	</div>
 	<h1 class="wrap1">Список пользователей</h1>
 	<div class="wrap_users_list">
-		<table><tr><td>
 		<table class="users_list">
 			<tr>
 				<th>ФИО</th>
@@ -35,12 +39,14 @@ BirthdayAsset::register($this);
 				<?endif;?>
 			<?endforeach;?>
 		</table>
-		</td><td>
-			
-			<table id="calendarBig">
-				<thead>
-					<tr><td><td><td>
-				<tbody>
+	</div>
+	<h2 class="f17 mb20">Календарь событий</h2>
+	<div class="wrap_users_list">
+		<table id="calendarBig">
+			<thead>
+				<tr><td></td><td></td><td></td></tr>
+			</thead>
+			<tbody>
 				<?$month = [
 					'1' => 'Январь', '2' => 'Февраль', '3' => 'Март', '4' => 'Апрель', '5' => 'Май', '6' => 'Июнь',
 					'7' => 'Июль', '8' => 'Август', '9' => 'Сентябрь', '10' => 'Октябрь', '11' => 'Ноябрь', '12' => 'Декабрь'
@@ -52,25 +58,25 @@ BirthdayAsset::register($this);
 					<?for ($j=1; $j <= 3; $j++):?>
 					<td>
 						<table data-m="<?=$m++?>">
-						<thead>
-						<tr><td colspan="7"><?=$month[$m]?></td></tr>
-						<tr><td>Пн</td><td>Вт</td><td>Ср</td><td>Чт</td><td>Пт</td><td>Сб</td><td>Вс</td></tr>
-						<tbody>
+							<thead>
+								<tr><td colspan="7"><?=$month[$m]?></td></tr>
+								<tr><td>Пн</td><td>Вт</td><td>Ср</td><td>Чт</td><td>Пт</td><td>Сб</td><td>Вс</td></tr>
+							</thead>
+							<tbody></tbody>
 						</table>
 					</td>
 					<?endfor;?>
 				</tr>
-				<?endfor;?>
-			</table>
-			<div id="calendarTable">
-				<?foreach ($users as $user):?>
-					<?if ($user->birthday):?>
-					<?$date = new DateTime($user->birthday);?>
-					<div data-dd="<?=$date->format('j')?>" data-mm="<?=$date->format('n')?>" data-text="<?=$user->surnameNP?>"></div>
-					<?endif;?>
-				<?endforeach;?>
-			</div>
-	
-		</td></tr></table>
+				<?endfor;?>				
+			</tbody>
+		</table>	
+		<div id="calendarTable">
+			<?foreach ($users as $user):?>
+				<?if ($user->birthday):?>
+				<?$date = new DateTime($user->birthday);?>
+				<div data-dd="<?=$date->format('j')?>" data-mm="<?=$date->format('n')?>" data-text="День рождения <?=$user->surnameNP?>"></div>
+				<?endif;?>
+			<?endforeach;?>
+		</div>
 	</div>
 </main>

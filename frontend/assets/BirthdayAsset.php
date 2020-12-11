@@ -7,12 +7,9 @@ use yii\web\AssetBundle;
 class BirthdayAsset extends AssetBundle
 {
     public $basePath = '@webroot';
-    public $baseUrl = '@web';
-    public $css = [
-        'css/calendar_birthday.css',
-    ];	
+    public $baseUrl = '@web';	
     public $js = [
-        'js/calendar_birthday.js',
+        'js/calendar.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

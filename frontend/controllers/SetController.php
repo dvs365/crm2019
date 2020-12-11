@@ -72,7 +72,9 @@ class SetController extends Controller
 
     public function actionUsers()
     {
-		$users = User::find()->all();
+		$user = User::findOne(Yii::$app->user->identity->id);
+		$managerIDs = array_diff(explode(',', $user->managers), ['all', Yii::$app->user->identity->id]);
+		$users = User::find()->where(['id' => $managerIDs])->all();
         return $this->render('users', [
 			'users' => $users,
 		]);

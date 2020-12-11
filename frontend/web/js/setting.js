@@ -1,5 +1,13 @@
 $(document).ready(function(){
-
+    //добавление всех по клику по доступу ко всем
+    $('.settings_access option').mousedown(function(){
+        if ($(this).val() == 'all') {
+            event.preventDefault();
+            if ($(this).closest('select').find('option:selected').size() == $(this).closest('select').find('option').size()) $(this).closest('select').find('option').prop('selected', false);
+            else $(this).closest('select').find('option').prop('selected', true);
+        }
+    });
+	
     //открытие/закрытие select multiple
     $('#choise_user .dropdown').click(function(){
         if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
@@ -38,10 +46,11 @@ $(document).ready(function(){
             $('.users_choised').text(text);
         });
     });
-    
-	//открытие/закрытие распределения клиентов архивных пользователей
+	
+    //открытие/закрытие распределения клиентов архивных пользователей
     $('input.access').click(function(){
         if ($(this).val() == 0) {
+            $('#status-archive').show(0);
             $('#status-archive').animate({
                 'max-height':'1000px'
             }, 400);
@@ -56,10 +65,11 @@ $(document).ready(function(){
                 'max-height':'0'
             }, 400);
             setTimeout(function() {
+                $('#status-archive').hide(50);
                 $('#status-archive').css({'overflow':'hidden'});
             },400);
         }
-    });
+    });	
 	
     $('input#access').click(function(){
         userFunctionsAccess();

@@ -10,39 +10,48 @@ SettingAsset::register($this);
 ?>
 
     <?php $form = ActiveForm::begin(['id' => 'form-signup', 'options' =>  ['class' => 'settings'], 'fieldConfig' => ['enableLabel' => false]]); ?>
-        <table class="wrap1 w100p">
+        <table class="wrap1">
             <tr>
-                <td class="w180">Фамилия</td>
+                <td>Фамилия</td>
                 <td><?= $form->field($model, 'surname', ['template' => "{input}"])->input('text', ['class' => 'mb10']) ?></td>
             </tr>
             <tr>
-                <td class="w180">Имя</td>
+                <td>Имя</td>
                 <td><?= $form->field($model, 'name', ['template' => "{input}"])->input('text', ['class' => 'mb10']) ?></td>
             </tr>
             <tr>
-                <td class="w180">Отчество</td>
+                <td>Отчество</td>
                 <td><?= $form->field($model, 'patronymic', ['template' => "{input}"])->input('text', ['class' => 'mb10']) ?></td>
             </tr>
             <tr>
-                <td class="w180">Должность</td>
+                <td>Должность</td>
                 <td><?= $form->field($model, 'position', ['template' => "{input}"])->input('text', ['class' => 'mb10']) ?></td>
             </tr>
             <tr>
-                <td class="w180">E-mail</td>
+                <td>E-mail</td>
                 <td><?= $form->field($model, 'email', ['template' => "{input}"])->input('email', ['class' => 'mb10']) ?></td>
             </tr>
             <tr>
-                <td class="w180">Телефон</td>
+                <td>Телефон</td>
                 <td><?= $form->field($model, 'phone', ['template' => "{input}"])->input('text', ['class' => 'mb10']) ?></td>
             </tr>
             <tr>
-                <td class="w180">День рождения</td>
-                <td><?= $form->field($model, 'birthday', ['template' => "{input}"])->input('date', ['class' => 'mb10']) ?></td>
-            </tr>			
+                <td>Дата рождения</td>
+				<?$model->birthday = date('d.m.Y',strtotime($model->birthday))?>
+                <td><?= $form->field($model, 'birthday', ['template' => "{input}"])->input('text', ['class' => 'mb10', 'readonly' => true, 'onClick' => 'xCal(this)', 'onKeyUp' => 'xCal()']) ?></td>
+            </tr>
+			<tr>
+				<?$managers = ArrayHelper::map($user, 'id', 'surnameNP')?>
+				<td>Доступ к</td>
+				<td>
+					<?$allSel = array_search('all', $model->managers) !== false ? true : false?>
+					<?=$form->field($model, 'managers', ['template' => "{input}"])->dropDownList($managers, ['multiple' => 'true', 'class' => 'settings_access', 'prompt' => ['text' => 'Всем', 'options' => ['value' => 'all', 'selected' => $allSel]]])?>
+				</td>				
+			</tr>
 			<? 
 			if (!empty($model->id)) :?>
 			<tr>
-				<td class="w180 cl360">Статус пользователя</td>
+				<td class="cl360">Статус пользователя</td>
 				<td class="settings_user">
                     <?= $form->field($model, 'status', ['template' => "{input}"])->radioList(['10' => ' Активный', '0' => ' Архивный'],[
                             'item' => function($index, $label, $name, $checked, $value){
@@ -54,10 +63,10 @@ SettingAsset::register($this);
                                 return $return;
                             }
                     ])->label(false); ?>
-					<div class="clear wrap3"></div>
+					<div class="clear"></div>
 					<div ID="status-archive">
 						<p>У пользователя <span ID="clients_col"><?=$cntClient?></span> клиента(ов). Выберите для них новых пользователей</p>
-						<div ID="distribution" class="wrap_select">
+						<div ID="distribution" class="wrap_select_multiple wrap_select">
 							<label><span class="user">Пользователь:</span>
 								<span ID="choise_user" class="select">
 									<span class="users_choised"></span>
@@ -75,7 +84,7 @@ SettingAsset::register($this);
 			</tr>
 			<? endif;?>
             <tr>
-                <td class="w180 cl360">Право доступа</td>
+                <td class="cl360">Право доступа</td>
                 <td class="settings_user">
                     <?= $form->field($model, 'access', ['template' => "{input}"])->radioList(['1' => ' Базовый', '2' => ' Расширенный'],[
                             'item' => function($index, $label, $name, $checked, $value){
@@ -92,7 +101,7 @@ SettingAsset::register($this);
                 </td>
             </tr>
             <tr>
-                <td class="w180 cl480"></td>
+                <td class="cl480"></td>
                 <td class="settings_user cl480">
                     <p>Выберите доступные для пользователя функции</p>
                     <div class="user_functions">
@@ -116,12 +125,13 @@ SettingAsset::register($this);
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td class="w180 cl480"></td>
-                <td class="settings_user cl480">
-					<?=Html::a('Отменить', ['set/users'], ['class' => 'btn cancel'])?>
-                    <?= Html::submitInput('Сохранить', ['class' => 'btn']) ?>
-                </td>
-            </tr>
         </table>
+		<div class="fixed_footer">
+			<div class="w900">
+				<div class="right">
+					<?=Html::a('Отменить', ['set/users'], ['class' => 'btn cancel'])?>
+					<?= Html::submitInput('Сохранить', ['class' => 'btn']) ?>
+				</div>
+			</div>
+		</div>
     <?php ActiveForm::end(); ?>

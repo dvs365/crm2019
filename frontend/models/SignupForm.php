@@ -21,6 +21,7 @@ class SignupForm extends Model
 	public $rule;
 	public $status;
 	public $birthday;
+	public $managers;
 
     /**
      * {@inheritdoc}
@@ -65,6 +66,8 @@ class SignupForm extends Model
 			['status', 'in', 'range' => [0, 9, 10]],
 			['status', 'default', 'value' => 9],
 			
+			['managers', 'each', 'rule' => ['string']],
+			
 			['birthday', 'date', 'format' => 'php:Y-m-d'],
         ];
     }
@@ -88,6 +91,7 @@ class SignupForm extends Model
         $user->phone = $this->phone;
         $user->email = $this->email;
 		$user->birthday = $this->birthday;
+		$user->managers = is_array($this->managers) ? implode(',', $this->managers) : '';
         $this->password = bin2hex(openssl_random_pseudo_bytes(4));
 
         $user->setPassword($this->password);

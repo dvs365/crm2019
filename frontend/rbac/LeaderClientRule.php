@@ -4,7 +4,7 @@
 namespace frontend\rbac;
 
 use yii\rbac\Rule;
-
+use Yii;
 
 class LeaderClientRule extends Rule
 {
@@ -12,7 +12,8 @@ class LeaderClientRule extends Rule
 
     public function execute($user_id, $item, $params)
     {
-		return true;
-        //return isset($params['user'])? array_search($params['user']->id, explode(',', $users)) !== false : false;
+		$userModel = Yii::$app->user->identity;
+		$managers = array_merge(array_diff(explode(',', $userModel->managers), ['76']));
+        return isset($params['client']) ? array_search($params['client']->user, $managers) !== false : false;
     }
 }

@@ -90,6 +90,8 @@ class ClientController extends Controller
 
     public function actionIndex($role = null)
     {
+		$userModel = Yii::$app->user->identity;
+		$managers = array_diff(explode(',', $userModel->managers), ['all']);
         $searchModel = new ClientSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         if ($role) {
@@ -98,7 +100,7 @@ class ClientController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'users' => User::find()->indexBy('id')->all(),
+            'users' => User::find()->where(['id' => $managers])->indexBy('id')->all(),
             'role' => (int)$role,
             'statuses' => ['target' => Client::TARGET, 'load' => Client::LOAD,'reject' => Client::REJECT],
         ]);
@@ -542,7 +544,6 @@ class ClientController extends Controller
     public function actionTransfer()
     {
 		$transfer = new TransferClientForm();
-		$transaction = \Yii::$app->db->beginTransaction();
 		if ($transfer->load(Yii::$app->request->post()) && $transfer->update()) {
 			$flag = true;
 		}

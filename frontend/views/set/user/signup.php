@@ -17,5 +17,6 @@ $model->status = 10;
     <h1 class="wrap1"><?= Html::encode($this->title) ?></h1>
 	<?=$this->render('_form', [
 		'model' => $model,
+		'user' => common\models\User::findByRole(Yii::$app->authManager->getRole('user')),
 	])?>
 </main>

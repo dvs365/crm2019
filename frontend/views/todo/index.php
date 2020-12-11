@@ -27,9 +27,10 @@ TodoAsset::register($this);
 		<?endif;?>
 	</div>
 	<?if(\Yii::$app->user->can('viewTodoUser')):?>
+	<?$userModel = Yii::$app->user->identity; $managerIDs = array_diff(explode(',', $userModel->managers), ['all', Yii::$app->user->identity->id])?>
 	<?=$this->render('_form_user', [
 		'model' => new common\models\Todo,
-		'user' => common\models\User::findByRole(Yii::$app->authManager->getRole('user')),
+		'user' => common\models\User::find()->where(['id' => $managerIDs])->all(),
 		'userID' => $userID,
 		'action' => ['todo/index', 'status' => $status],
 	])?>

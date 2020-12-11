@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?endif;?>
 	<h1 class="wrap1">Данные</h1>
 	<div class="settings">
-		<table class="wrap1 w100p lh30">
+		<table class="wrap1 w100p lh36">
 			<tr>
 				<td class="w180">ФИО</td>
 				<td><?=$user->surname.' '.$user->name.' '.$user->patronymic?></td>
@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			<span class="error color_red"></span>
 			<table>
 				<tr>
-					<td class="w180 cl360">Текущий пароль</td>
+					<td class="w180 lh-cancel418">Текущий пароль</td>
 					<td class="w280">
 						<?= $form->field($model, 'currentPassword', ['template' => "{input}"])->input('password', ['class' => 'mb10']) ?>	
 					</td>
