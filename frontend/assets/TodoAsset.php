@@ -12,9 +12,9 @@ class TodoAsset extends AssetBundle
         'css/select2.css?2',
     ];	
     public $js = [
-		'js/select2.js?2',
-        'js/todo.js?2',
-        'js/datepicker-2.js?2',
+		'js/select2.js',
+        'js/todo.js',
+        'js/datepicker-2.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

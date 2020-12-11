@@ -9,7 +9,7 @@ class BirthdayAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';	
     public $js = [
-        'js/calendar.js?2',
+        'js/calendar.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
