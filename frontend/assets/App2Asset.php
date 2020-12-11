@@ -12,12 +12,12 @@ class App2Asset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/main2.css',
+        'css/main2.css?2',
     ];
     public $js = [
-        'js/jquery-2.2.4.js',
-        'js/jquery-ui.min.js',
-        'js/dynamicform.js',
+        'js/jquery-2.2.4.js?2',
+        'js/jquery-ui.min.js?2',
+        'js/dynamicform.js?2',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
