@@ -68,7 +68,7 @@ class Organization extends \yii\db\ActiveRecord
 			['valid', 'in', 'range' => [self::VALID, self::NO_VALID]],
             ['phone','app\components\validators\PhoneValidator'],
 			['mail', 'app\components\validators\MailValidator'],
-            [['client', 'form', 'nds', 'number_mirror', 'inn', 'ogrn', 'kpp', 'payment', 'valid'], 'integer'],
+            [['client', 'form', 'nds', 'number_mirror', 'inn', 'ogrn', 'kpp', 'payment', 'valid', 'bik'], 'integer'],
 
             ['form', 'in', 'range' => [self::FORM_OOO, self::FORM_AO, self::FORM_PAO, self::FORM_MUP, self::FORM_FGUP, self::FORM_IP, self::FORM_TOO, self::FORM_ZAO, self::FORM_GUP, self::FORM_GP, self::FORM_OAO, self::FORM_TSZ, self::FORM_TSN, self::FORM_UK]],
             ['nds', 'in', 'range' => [self::WITHNDS, self::WITHOUTNDS, self::UNKNOWNNDS]],
@@ -144,6 +144,7 @@ class Organization extends \yii\db\ActiveRecord
             'payment' => 'Расчётный счёт',
             'bank' => 'Банк',
 			'valid' => 'Рабочая',
+			'bik' => 'БИК',
         ];
     }
 
@@ -159,5 +160,5 @@ class Organization extends \yii\db\ActiveRecord
     {
 		$this->mail = trim($this->mail);
 		return parent::beforeSave($insert);
-    }	
+    }
 }

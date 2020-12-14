@@ -30,7 +30,8 @@ use wbraganca\dynamicform\DynamicFormWidget;
         'ogrn',
         'kpp',
         'payment',
-        'bank'
+        'bank',
+		'bik',
     ],
 ]); ?>
 <div class="container-items_client_org">
@@ -181,6 +182,14 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     <?= $form->field($clientOrg, "[{$indexOrg}]bank", ['template' => "{input}"])->textInput(['maxlength' => true]) ?>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <?=$clientOrg->getAttributeLabel('bik')?>
+                </td>
+                <td>
+                    <?= $form->field($clientOrg, "[{$indexOrg}]bik", ['template' => "{input}"])->textInput(['maxlength' => true, 'class' => 'firm_detail']) ?>
+                </td>
+            </tr>			
         </table>
     </div>
     <?php endforeach;?>
