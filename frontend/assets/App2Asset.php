@@ -18,6 +18,7 @@ class App2Asset extends AssetBundle
         'js/jquery-2.2.4.js',
         'js/jquery-ui.min.js',
         'js/dynamicform.js',
+		'js/functions.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
