@@ -44,7 +44,7 @@ SettingAsset::register($this);
 				<?$managers = ArrayHelper::map($user, 'id', 'surnameNP')?>
 				<td>Доступ к</td>
 				<td>
-					<?$allSel = array_search('all', $model->managers) !== false ? true : false?>
+					<?$allSel = $model->managers ? (array_search('all', $model->managers) !== false ? true : false) : false?>
 					<?=$form->field($model, 'managers', ['template' => "{input}"])->dropDownList($managers, ['multiple' => 'true', 'class' => 'settings_access', 'prompt' => ['text' => 'Всем', 'options' => ['value' => 'all', 'selected' => $allSel]]])?>
 				</td>				
 			</tr>
