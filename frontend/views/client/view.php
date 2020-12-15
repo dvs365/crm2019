@@ -154,6 +154,7 @@ ClientAsset::register($this);
                 <table id="commentsTable">
                     <?=$this->render('_form_list_comment', [
                         'comments' => $client->comments,
+						'users' => \common\models\User::find()->indexBy('id')->all(),
                     ]);?>
                 </table>
             </div>

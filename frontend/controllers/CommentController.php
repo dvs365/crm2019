@@ -66,8 +66,9 @@ class CommentController extends Controller
                     $comments = $model->find()->where(['client' => $id])->limit(1)->offset((int)($data['count']/10)+$add)->orderBy(['id' => SORT_DESC])->all();
                 }
                 return $this->renderAjax('/client/_form_list_comment', [
-                    "comments" => $comments,
-                    "error" => null
+                    'comments' => $comments,
+					'users' => \common\models\User::find()->indexBy('id')->all(),
+                    'error' => null
                 ]);
             } else {
                 return [
@@ -103,7 +104,7 @@ class CommentController extends Controller
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if ($model->load($data)) {
-				$newText = date('Y-m-d').'^&'. $model->text;
+				$newText = date('Y-m-d').'^&'. $model->text . '|' . \Yii::$app->user->id;
                 $model->user = \Yii::$app->user->id;
 				$model->text = (!$model->isNewRecord && $text) ? $text . '&^' . $newText : $newText;
                 $model->client = $client;
@@ -114,6 +115,7 @@ class CommentController extends Controller
 					$newComment->text = end($newCommentTextArr);
 					return $this->renderAjax('/client/_form_list_comment', [
 						"comments" => [$newComment],
+						'users' => \common\models\User::find()->where(['id' => \Yii::$app->user->id])->indexBy('id')->all(),
 						"error" => null
 					]);
 				}
