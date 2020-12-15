@@ -83,7 +83,7 @@ echo ($flag)? $this->render('_popup', []) : '';
                         <div class="select w200">
                             <div class="dropdown"></div>
 							<?$managers = ArrayHelper::map($users, 'id', 'surnameNP')?>
-							<?=$form->field($transfer, 'userID', ['template' => "{input}"])->dropDownList($managers, ['class' => 'w200'])?>
+							<?=$form->field($transfer, 'userID', ['template' => "{input}"])->dropDownList($managers, ['class' => 'w200', 'prompt' => ['text' => '...', 'options' => ['value' => '']]])?>
                         </div>
                     </label>
                 </td>

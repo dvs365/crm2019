@@ -133,8 +133,13 @@ class ClientSearch extends Client
 
         // grid filtering conditions
 		if (!empty($_GET['role']) || (empty($_GET['role']) && !$this->search)) {
+			$user = \Yii::$app->user->identity;
+			if (!empty($user->managers)) {
+				$user->managers = array_diff(explode(',', $user->managers), ['all']);
+			}
+
 			$query->andFilterWhere([
-				'user' => \Yii::$app->user->can('user') ? \Yii::$app->user->id : $this->user,
+				'user' => $user->managers ? array_merge($user->managers, [\Yii::$app->user->id]) : (\Yii::$app->user->can('user') ? \Yii::$app->user->id : $this->user),
 			]);
 		} else {
 			$query->andFilterWhere([

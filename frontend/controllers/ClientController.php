@@ -543,6 +543,9 @@ class ClientController extends Controller
 
     public function actionTransfer()
     {
+		$user = Yii::$app->user->identity;
+		$managers = array_merge(array_diff(explode(',', $user->managers), ['all']), [$user->id]);
+
 		$transfer = new TransferClientForm();
 		if ($transfer->load(Yii::$app->request->post()) && $transfer->update()) {
 			$flag = true;
@@ -551,7 +554,7 @@ class ClientController extends Controller
         $searchModel = new ClientSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('_form_transfer', [
-            'users' => User::find()->indexBy('id')->all(),
+            'users' => User::find()->where(['id' => $managers])->indexBy('id')->all(),
 			'transfer' => $transfer,
             'transferModel' => $searchModel,
             'dataProvider' => $dataProvider,

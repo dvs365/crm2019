@@ -1,9 +1,10 @@
 <?php
 namespace frontend\models;
  
-use yii\base\Model;
+//use yii\base\Model;
 use yii\db\ActiveQuery;
 use Yii;
+use app\base\Model;
  
 class TransferClientForm extends Model
 {
@@ -15,6 +16,7 @@ class TransferClientForm extends Model
     public function rules()
     {
         return [
+			['userID', 'required'],
 			['userID', 'integer'],
 			['clientIDs', 'each', 'rule' => ['integer']],
 			['users', 'checkIsArrayArrayID'],
@@ -28,8 +30,15 @@ class TransferClientForm extends Model
 			$transaction = \Yii::$app->db->beginTransaction();
 			try {
 				$this->clientIDs = array_diff($this->clientIDs, ['0']);
+				$desclientClientIDs = \common\models\Desclient::find()->select('client')->where(['client' => $this->clientIDs])->asArray()->column();
+				$desclientIns = array_diff($this->clientIDs, $desclientClientIDs);
+				foreach ($desclientIns as $clientID) {
+					$desclient = new \common\models\Desclient;
+					$desclient->client = $clientID;
+					$desclient->save();
+				}
 				\common\models\Client::updateAll(['user' => $this->userID, 'show' => ''], ['id' => $this->clientIDs]);
-				\common\models\Desclient::updateAll(['transfer' => $this->transfer], ['client' => $this->clientIDs]);
+				\common\models\Desclient::updateAll(['transfer' => $this->transfer ?: date('Y-m-d H:i:s')], ['client' => $this->clientIDs]);
 				foreach ($this->users as $userOld => $clientIDs) {
 					\common\models\Todo::updateAll(['user' => $this->userID], ['client' => $clientIDs, 'user' => $userOld]);
 				}
