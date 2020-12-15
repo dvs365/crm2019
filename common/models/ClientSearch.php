@@ -139,7 +139,7 @@ class ClientSearch extends Client
 			}
 
 			$query->andFilterWhere([
-				'user' => $user->managers ? array_merge($user->managers, [\Yii::$app->user->id]) : (\Yii::$app->user->can('user') ? \Yii::$app->user->id : $this->user),
+				'user' => $user->managers ?  ($this->user ?: array_merge($user->managers, [\Yii::$app->user->id])) : \Yii::$app->user->id
 			]);
 		} else {
 			$query->andFilterWhere([
