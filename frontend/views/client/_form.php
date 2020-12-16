@@ -113,11 +113,13 @@ use yii\helpers\ArrayHelper;
         <div class="fixed_footer">
 			<div class="w900">
 				<div class="wrap_select left">
-					<?if(\Yii::$app->user->can('upClientAll')):?>
-					<label>Менеджер:<?$model->user = (!empty($model->user)) ? $model->user : Yii::$app->user->identity->id?>
+					<?if(\Yii::$app->user->can('admin')):?>
+						<?$user = Yii::$app->user->identity; $managerIDs = array_merge(explode(',', $user->managers), [$user->id])?>
+						<?$users =  \common\models\User::find()->where(['id' => $managerIDs])->all()?>
+					<label>Менеджер:<?$model->user = (!empty($model->user)) ? $model->user : $user->id?>
 						<span class="select">
 							<span class="dropdown"></span>
-							<?$managers = ArrayHelper::map($modelsUser, 'id', 'surnameNP')?>
+							<?$managers = ArrayHelper::map($users, 'id', 'surnameNP')?>
 							<?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['class' => '', 'options' => [$model->user => ['selected' => true]]])?>
 						</span>
 					</label>
