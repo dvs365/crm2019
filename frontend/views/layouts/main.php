@@ -9,7 +9,7 @@ use frontend\assets\App2Asset;
 use yii\widgets\Menu;
 use app\components\Menu\MenuActive;
 list($clientA, $todoA, $setA) = [false, false, false];
-if(\Yii::$app->controller->id == 'client' && array_search(\Yii::$app->controller->action->id, ['index', 'view', 'update', 'create']) !== false) {
+if(\Yii::$app->controller->id == 'client') {
 	$clientA = true;
 } 
 if(\Yii::$app->controller->id == 'todo' && array_search(\Yii::$app->controller->action->id, ['index','toweek','view']) !== false) {

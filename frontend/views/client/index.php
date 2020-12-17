@@ -9,7 +9,7 @@ use frontend\assets\ClientAsset;
 /* @var $searchModel common\models\ClientSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Клиенты:' . \common\models\User::findOne(Yii::$app->user->identity->id)->surnameNP;
+$this->title = 'Клиенты:' . Yii::$app->user->identity->surnameNP;
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ClientAsset::register($this);
@@ -44,7 +44,8 @@ $request = Yii::$app->request;
 				'sort' => $sort], ['class' => 'checkbox', 'sort' => $sort])?>
     </div>
     <?$up = Html::tag('div', Html::a('Наверх' . Html::tag('div', '', ['class' => 'arrow_up']), '#header', ), ['id' => 'up','class' => 'right'])?>
-    <?= ListViewPager::widget([
+    <?$users = \common\models\User::find()->indexBy('id')->all();?>
+	<?= ListViewPager::widget([
         'dataProvider' => $dataProvider,
         'summary' => '',
         'pager' => [
@@ -66,7 +67,7 @@ $request = Yii::$app->request;
 			'prevPageCssClass' => 'none410',
 			'nextPageCssClass' => 'none410',		
         ],
-        'viewParams' => ['statuses' => $statuses],
+        'viewParams' => ['statuses' => $statuses, 'users' => $users],
         'itemOptions' => ['class' => 'wrap4'],
         'itemView' => function ($model, $key, $index, $widget) {
             //$widget->viewParams['users'][$model->user]->surnameNP
@@ -75,7 +76,7 @@ $request = Yii::$app->request;
 				$whoseClient = '';
 			} else {
 				$nameClient = Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']);
-				$whoseClient = $model->user0 ? Html::encode($model->user0->surnameNP):'';
+				$whoseClient = $model->user ? Html::encode($widget->viewParams['users'][$model->user]->surnameNP):'';
 			}
             $pAbout = Html::tag('p', $nameClient.Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
             $firms = ArrayHelper::map($model->organizations, 'id', function ($element){

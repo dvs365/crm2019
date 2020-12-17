@@ -29,7 +29,7 @@ use yii\helpers\ArrayHelper;
         <div class="clear"></div>
     </div>
     <?=$form->field($model, 'search', ['template' => "{input}"])->textInput(['id' => "search", 'placeholder' => 'Разделяйте варианты вертикальным слешем. Например, Иванов | 45-78-62'])?>
-    <?=Html::submitInput('Найти', ['class' => "btn w160 right"])?>
-    <div id="slash" class="btn w30 right">|</div>
+    <?=Html::submitInput('Найти', ['class' => "btn w180 right"])?>
+    <div id="slash" class="btn w36 right">|</div>
     <div class="clear"></div>
 <?php ActiveForm::end(); ?>

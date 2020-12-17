@@ -13,8 +13,9 @@ echo ($flag)? $this->render('_popup', []) : '';
 ?>
 
 <main>
-    <div class="wrap2 control">
-        <?=$this->render('menu')?>
+    <div class="wrap4">
+        <?=$this->render('menuStatus')?>
+		<?=$this->render('menuAddTransfer')?>
         <div class="clear"></div>
     </div>
     <h1 class="wrap1">Передача клиентов</h1>
@@ -24,7 +25,8 @@ echo ($flag)? $this->render('_popup', []) : '';
     ])?>
 
     <?php $form = ActiveForm::begin(['action' => ['client/transfer'], 'method' => 'post', 'options' => ['class' => 'wrap1']]); ?>
-        <table class="clients_table wrap1">
+        <!--<div class="paginator"><a class="none410" href="/">Назад</a><a href="/">1</a><a href="/">...</a><a href="/">9</a><a href="/">10</a><span class="active-page">11</span><a href="/">12</a><a href="/">13</a><a href="/">...</a><a href="/">55</a><a class="none410" href="/">Вперед</a></div>-->
+		<table class="clients_table wrap1">
             <tr>
                 <td class="w50">
                     <label>
@@ -37,6 +39,7 @@ echo ($flag)? $this->render('_popup', []) : '';
         </table>
         <div class="clear"></div>
         <table ID="elements" class="clients_table">
+			<?$users = \common\models\User::find()->indexBy('id')->all();?>
 			<? $models = $dataProvider->getModels();
 				$template = '';
 				foreach ($models as $model) {
@@ -46,26 +49,33 @@ echo ($flag)? $this->render('_popup', []) : '';
 					$template .= $form->field($transfer, 'users['.$model->user.'][]')->label(false)->hiddenInput(['value' => $model->id]);
 					$template .= '</td>';
                     $template .= '<td><div class="wrap4">';
-					$user = Html::tag('span', $model->user0->surnameNP, ['class' => 'manager color_grey']);
 					$status = Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']);
-                    $template .= Html::tag('div', Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']).$user.$status, ['class' => 'about']);
+					$nameA = Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']);
                     $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
-                        return Html::tag('div', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
+                        return Html::tag('li', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
                     });
-                    $template .= Html::tag('div', implode('', $firms), ['class' => 'firms']);
+					$firmsUl = Html::tag('ul', implode('', $firms), ['class' => 'firms']);
+                    $template .= Html::tag('div', Html::tag('p', $nameA.$status, ['class' => 'about']).$firmsUl,['class' => 'wrap1']);
+
                     $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
-                    $reason = $model->desclient0['reject'];
-                    $template .= Html::tag('div', Html::tag('p', 'Открытие: ' . $lastTime).(($model->status == \common\models\Client::REJECT)?Html::tag('p', 'Причина отказа: ' . $reason):''), ['class' => 'wrap1']);
-                    $discomment = Html::tag('span', Html::encode('Скидка: '.$model->discomment.' '.(($model->discount)?$model->discount.'%':'')), ['class' => (!$model->disconfirm)?'agreed_none':'']);
-                    $delivery = Html::tag('p', 'Доставка: ' . Html::encode($model->address), ['class' => 'wrap3']);
+					$user = Html::tag('p', $users[$model->user]->surnameNP.Html::tag('span', ' Открытие: ' . $lastTime, ['class' => 'color_grey']));
+                    $template .= Html::tag('div', $user, ['class' => 'wrap1']);
+					$confirmClass = (!$model->disconfirm && ($model->discount || $model->discomment)) ? 'agreed_none' : '';
+					$discount = Html::tag('span', Html::encode($model->discount.'%'), ['class' => $confirmClass]);
+					$discomment = Html::tag('br').Html::tag('span', Html::encode($model->discomment), ['class' => $confirmClass]);
+					$disconfirm = (!$model->disconfirm && ($model->discount || $model->discomment) && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
+					$template .= Html::tag('div', Html::tag('p', Html::tag('b','Скидка: ').$discount.$disconfirm.$discomment), ['class' => 'wrap1']);
+					$td1 = Html::tag('td', Html::tag('b', 'Доставка:'));
+					$deliveryLi = Html::tag('li', $model->address);
+					$td2 = Html::tag('td', Html::tag('ul', $deliveryLi));
+					$delivery = Html::tag('table', Html::tag('tr', $td1.$td2), ['class' => 'clients_list_delivery']);
+					$template .= Html::tag('div', $delivery, ['class' => 'wrap1']);
                     $webArr = explode(',', $model->website);
 					$webs = [];
                     foreach ($webArr as $web):
                         $webs[] = Html::a(Html::encode(trim($web)), '//'.Html::encode(trim($web)), ['target' => '_blank']);
                     endforeach;
-                    $websites = Html::tag('p', implode(' ', $webs));
-                    $disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
-                    $template .= Html::tag('div', Html::tag('div', ($model->discount || $model->discomment)? $discomment.' '.$disconfirm : '', ['class' => 'wrap3']).$delivery.$websites, ['class' => 'wrap1']);
+                    $websites = Html::tag('p', implode(' ', $webs));                    
                     $template .= '</div></td>';					
 				}
 				echo $template;

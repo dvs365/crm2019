@@ -98,13 +98,30 @@ class TodoController extends Controller
 				"error" => null
 			]);					
 		}
-        return $this->render('index', [
+		list($todoCurIDs, $todoLateIDs) = [[],[]];
+		list($todoCur, $todoLate) = [[],[]];
+		if (empty($status) || $status == Todo::OPEN) {
+			$todoCurIDs = Todo::find()->select('id')->where(['user' => $userID, 'status' => Todo::OPEN])
+			->andwhere(['>','dateto', date('Y-m-d 00:00:00')])
+			->andwhere(['<','date', date('Y-m-d 23:59:59')])->asArray()->column();
+			$todoCur = Todo::find()->where(['id' => $todoCurIDs])->orderBy(['date' => SORT_ASC])->all();
+		}
+		if (empty($status) || $status == Todo::LATE) {
+			$todoLateIDs = Todo::find()->select('id')->where(['user' => $userID, 'status' => Todo::OPEN])
+			->andwhere(['<','dateto', date('Y-m-d H:i:s')])->asArray()->column();
+			$todoLate = Todo::find()->where(['id' => $todoLateIDs])->orderBy(['date' => SORT_ASC])->all();
+		}
+		$clientIDs = Todo::find()->select('client')->where(['id' => array_merge($todoCurIDs,$todoLateIDs)])->asArray()->column();
+		$clientIDs = array_diff(array_unique($clientIDs),['0']);
+		$clientTodoName = Client::find()->select('name')->where(['id' => $clientIDs])->indexBy('id')->asArray()->column();
+		return $this->render('index', [
 			'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-			'todoCur' => (empty($status) || $status == Todo::OPEN)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['>','dateto', date('Y-m-d 00:00:00')])->andwhere(['<','date', date('Y-m-d 23:59:59')])->orderBy(['date' => SORT_ASC])->all():'',
-			'todoLate' => (empty($status) || $status == Todo::LATE)?Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['<','dateto', date('Y-m-d H:i:s')])->orderBy(['date' => SORT_ASC])->all():'',
+			'todoCur' => $todoCur,
+			'todoLate' => $todoLate,
 			'status' => $status,
 			'clients' => $clients,
+			'clientTodoName' => $clientTodoName,
 			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
 			'userID' => $userID,
         ]);

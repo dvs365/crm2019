@@ -17,7 +17,7 @@ use yii\helpers\Url;
 						</form>
 					</td>
 					<td>
-						<?=Html::a(Html::encode($lastTodo->client0['name'])?:'Собственное', ['view', 'id' => $lastTodo->id], ['class' => 'task_item_client'])?>
+						<?=Html::a(isset($clientTodoName[$lastTodo->client]) ? Html::encode($clientTodoName[$lastTodo->client]):'Собственное', ['view', 'id' => $lastTodo->id], ['class' => 'task_item_client'])?>
 						<?=Html::tag('p', $lastTodo->name)?>
 					</td>
 				</tr>

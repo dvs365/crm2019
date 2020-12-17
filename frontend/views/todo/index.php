@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Дела:' . \common\models\User::findOne(Yii::$app->user->identity->id)->surnameNP;
+$this->title = 'Дела:' . Yii::$app->user->identity->surnameNP;
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 TodoAsset::register($this);
@@ -46,6 +46,7 @@ TodoAsset::register($this);
 				<?=$this->render('list_cur_todo', [
 					'curTodos' => $todoCur,
 					'status' => $status,
+					'clientTodoName' => $clientTodoName,
 				])?>
 		</div>
 	<?endif;?>
@@ -59,6 +60,7 @@ TodoAsset::register($this);
 	<?if (empty($status) || $status == common\models\Todo::LATE):?>
 		<?=$this->render('list_last_todo', [
 			'lastTodos' => $todoLate,
+			'clientTodoName' => $clientTodoName,
 		])?>
 	<?endif;?>
 </main>
