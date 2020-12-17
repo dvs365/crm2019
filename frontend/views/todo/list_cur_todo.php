@@ -3,7 +3,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
 <?foreach ($curTodos as $curTodo):?>
-	<?$last = (date('H:i',strtotime($curTodo->date)) < \Yii::$app->formatter->asTime(new DateTime())) ? true: false?>
+	<? $time1 = (date('d m Y H:i',strtotime($curTodo->date)));?>
+	<? $time2 = \Yii::$app->formatter->asDateTime(new DateTime(), 'php:d m Y H:i');?>
+	<?$last = $time1 < $time2 ? true: false?>
 	<div class="task_item">
 		<table class="w100p">
 			<tr class="table_item">

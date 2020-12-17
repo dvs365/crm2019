@@ -81,10 +81,11 @@ class TodoController extends Controller
 		$userID = !empty($model->user) && \Yii::$app->user->can('viewTodoUser') ? $model->user : ($cookieUserID ? $cookieUserID->value : Yii::$app->user->identity->id);
 	
 		$datetime = !empty($model->date) ? strtotime($model->date) : time();
-		
-		$searchModel = new TodoSearch();
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		$dataProvider->query->andWhere(['user' => (int)$userID]);
+		if ($status == Todo::CLOSE) {
+			$searchModel = new TodoSearch();
+			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+			$dataProvider->query->andWhere(['user' => (int)$userID]);			
+		}
 		
 		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->identity->id);
 		$clientsQuery = Client::find();
@@ -92,18 +93,12 @@ class TodoController extends Controller
 			$clientsQuery->andWhere(['user' => Yii::$app->user->identity->id]);
 		}
 		$clients = $clientsQuery->andWhere(['status' => ['10','20']])->all();
-		if (Yii::$app->request->isAjax) {
-			return $this->renderAjax('list_cur_todo', [
-				"curTodos" => (empty($status) || $status == Todo::OPEN) ? Todo::find()->where(['user' => $userID, 'status' => Todo::OPEN])->andwhere(['>','dateto', date('Y-m-d 00:00:00', $datetime)])->andwhere(['<','date', date('Y-m-d 23:59:59',$datetime)])->orderBy(['date' => SORT_ASC])->all():'',
-				"error" => null
-			]);					
-		}
 		list($todoCurIDs, $todoLateIDs) = [[],[]];
 		list($todoCur, $todoLate) = [[],[]];
 		if (empty($status) || $status == Todo::OPEN) {
 			$todoCurIDs = Todo::find()->select('id')->where(['user' => $userID, 'status' => Todo::OPEN])
-			->andwhere(['>','dateto', date('Y-m-d 00:00:00')])
-			->andwhere(['<','date', date('Y-m-d 23:59:59')])->asArray()->column();
+			->andwhere(['>','dateto', date('Y-m-d 00:00:00', $datetime)])
+			->andwhere(['<','date', date('Y-m-d 23:59:59', $datetime)])->asArray()->column();
 			$todoCur = Todo::find()->where(['id' => $todoCurIDs])->orderBy(['date' => SORT_ASC])->all();
 		}
 		if (empty($status) || $status == Todo::LATE) {
@@ -114,9 +109,16 @@ class TodoController extends Controller
 		$clientIDs = Todo::find()->select('client')->where(['id' => array_merge($todoCurIDs,$todoLateIDs)])->asArray()->column();
 		$clientIDs = array_diff(array_unique($clientIDs),['0']);
 		$clientTodoName = Client::find()->select('name')->where(['id' => $clientIDs])->indexBy('id')->asArray()->column();
+		if (Yii::$app->request->isAjax) {
+			return $this->renderAjax('list_cur_todo', [
+				'curTodos' => $todoCur,
+				'clientTodoName' => $clientTodoName,
+				'error' => null
+			]);					
+		}
 		return $this->render('index', [
-			'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+			'searchModel' => ($status == Todo::CLOSE) ? $searchModel : [],
+            'dataProvider' => ($status == Todo::CLOSE) ? $dataProvider :[],
 			'todoCur' => $todoCur,
 			'todoLate' => $todoLate,
 			'status' => $status,
