@@ -41,7 +41,19 @@ echo ($flag)? $this->render('_popup', []) : '';
         <table ID="elements" class="clients_table">
 			<?$users = \common\models\User::find()->indexBy('id')->all();?>
 			<? $models = $dataProvider->getModels();
+			    $clientIDs = array_keys($models);
+				$org = \common\models\Organization::find()->select('id,client,name,form')->where(['client' => $clientIDs])->asArray()->all();
+
+				$result = [];
+				foreach($org as $v) {
+					if (array_key_exists($v['client'], $result)) {
+						$result[$v['client']][] = $v;
+					} else {
+						$result[$v['client']] = array($v);        
+					}
+				}
 				$template = '';
+				$formLabels = \common\models\Organization::getFormLabels();
 				foreach ($models as $model) {
                     $template .= '<tr>';
                     $template .= '<td class="w50 lh30">';
@@ -51,9 +63,9 @@ echo ($flag)? $this->render('_popup', []) : '';
                     $template .= '<td><div class="wrap4">';
 					$status = Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']);
 					$nameA = Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']);
-                    $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
-                        return Html::tag('li', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
-                    });
+					$firms = isset($result[$model->id]) ? ArrayHelper::map($result[$model->id], 'id', function ($element) use ($formLabels){
+                        return Html::tag('li', Html::encode($formLabels[$element['form']].' '.$element['name']), ['class' => 'firm']);
+                    }) : [];
 					$firmsUl = Html::tag('ul', implode('', $firms), ['class' => 'firms']);
                     $template .= Html::tag('div', Html::tag('p', $nameA.$status, ['class' => 'about']).$firmsUl,['class' => 'wrap1']);
 

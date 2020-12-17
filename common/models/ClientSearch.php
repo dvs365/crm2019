@@ -207,7 +207,7 @@ class ClientSearch extends Client
 			$query->andWhere(['id' => '0']);
 		}
 
-        $query->orderBy(['show' => SORT_DESC]);
+        $query->indexBy('id')->orderBy(['show' => SORT_DESC]);
 		
         return $dataProvider;
     }
