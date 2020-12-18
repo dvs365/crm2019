@@ -191,6 +191,7 @@ class TodoController extends Controller
         }
 		
 		foreach ($models as $keyDay => $todos) {
+			$dayCnt[$keyDay] = count($todos);
 			foreach ($todos as $keyTodo => $todo) {
 				$cntID[$todo->id][] = $todo->id;
 				if (date('d.m.Y', strtotime($todo->date)) == date('d.m.Y', strtotime($todo->dateto))) {
@@ -218,6 +219,7 @@ class TodoController extends Controller
 			'modelsLong' => isset($modelsLong) ? $modelsLong : [],
 			'cntID' => isset($cntID) ? $cntID : [],
 			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
+			'dayCnt' => $dayCnt,
         ]);
 	}
 	

@@ -11,8 +11,8 @@ TodoAsset::register($this);
 	<div class="task left">
 		<div class="wrap1 control">
 			<?=$this->render('menu', [
-				'todoCurCnt' => 0,
-				'todoLateCnt' => 0,			
+				'todoCurCnt' => \Yii::$app->todo->cur(),
+				'todoLateCnt' => \Yii::$app->todo->last(),			
 			])?>
 		</div>
 		<?=$this->render('_form', [
@@ -50,7 +50,7 @@ TodoAsset::register($this);
 					<th class="tweek_frow"></th>
 					<? $days = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];?>
 					<? foreach ($day as $key => $date):?>
-					<th class="tweek_frow"><?= $days[$key].', '.$date->format('d.m')?></th>
+					<th class="tweek_frow"><?= $days[$key].",&nbsp;".$date->format('d.m') . '<br>('.$dayCnt[$key].')'?></th>
 					<? endforeach;?>
 				</tr>
 				</thead>
