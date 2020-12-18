@@ -15,7 +15,10 @@ TodoAsset::register($this);
 <main>
 	<div class="task left">
 		<div class="wrap1 control">
-			<?=$this->render('menu')?>
+			<?=$this->render('menu', [
+				'todoCurCnt' => $todoCurCnt,
+				'todoLateCnt' => $todoLateCnt,
+			])?>
 		</div>
 		<?if (empty($status) || $status == common\models\Todo::OPEN):?>
 		<?=$this->render('_form', [

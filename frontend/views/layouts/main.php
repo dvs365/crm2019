@@ -55,7 +55,7 @@ if ($clientA || $todoA || $setA){
                     'items' => [
                         ['label' => 'Сводка', 'url' => ['summary/index'], 'active' => $checkController('summary'), 'visible' => false],
                         ['label' => 'Клиенты', 'url' => ['client/index'], 'active' => $checkController('client')],
-                        ['label' => 'Дела'.(($clientA || $todoA || $setA)?'<span class="work_value"> (<span>'.(\Yii::$app->todo->cur() + \Yii::$app->todo->last()).'</span>)</span>':''), 'url' => ['todo/index'], 'active' => $checkController('todo')],
+                        ['label' => 'Дела'.(($clientA || $todoA || $setA)?'<span class="work_value" id="work_value"> (<span>'.(\Yii::$app->todo->cur() + \Yii::$app->todo->last()).'</span>)</span>':''), 'url' => ['todo/index'], 'active' => $checkController('todo')],
                     ],
                     'activeCssClass' => 'active',
                 ])

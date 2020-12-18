@@ -95,16 +95,18 @@ class TodoController extends Controller
 		$clients = $clientsQuery->andWhere(['status' => ['10','20']])->all();
 		list($todoCurIDs, $todoLateIDs) = [[],[]];
 		list($todoCur, $todoLate) = [[],[]];
+		$todoCurIDs = Todo::find()->select('id')->where(['user' => $userID, 'status' => Todo::OPEN])
+		->andwhere(['>','dateto', date('Y-m-d 00:00:00', $datetime)])
+		->andwhere(['<','date', date('Y-m-d 23:59:59', $datetime)])->asArray()->column();
 		if (empty($status) || $status == Todo::OPEN) {
-			$todoCurIDs = Todo::find()->select('id')->where(['user' => $userID, 'status' => Todo::OPEN])
-			->andwhere(['>','dateto', date('Y-m-d 00:00:00', $datetime)])
-			->andwhere(['<','date', date('Y-m-d 23:59:59', $datetime)])->asArray()->column();
 			$todoCur = Todo::find()->where(['id' => $todoCurIDs])->orderBy(['date' => SORT_ASC])->all();
+			$todoCurCnt = count($todoCurIDs);
 		}
+		$todoLateIDs = Todo::find()->select('id')->where(['user' => $userID, 'status' => Todo::OPEN])
+		->andwhere(['<','dateto', date('Y-m-d H:i:s')])->asArray()->column();
 		if (empty($status) || $status == Todo::LATE) {
-			$todoLateIDs = Todo::find()->select('id')->where(['user' => $userID, 'status' => Todo::OPEN])
-			->andwhere(['<','dateto', date('Y-m-d H:i:s')])->asArray()->column();
 			$todoLate = Todo::find()->where(['id' => $todoLateIDs])->orderBy(['date' => SORT_ASC])->all();
+			$todoLateCnt = count($todoLateIDs);
 		}
 		$clientIDs = Todo::find()->select('client')->where(['id' => array_merge($todoCurIDs,$todoLateIDs)])->asArray()->column();
 		$clientIDs = array_diff(array_unique($clientIDs),['0']);
@@ -114,6 +116,7 @@ class TodoController extends Controller
 				'curTodos' => $todoCur,
 				'clientTodoName' => $clientTodoName,
 				'datetime' => $datetime,
+				'todoCurCnt' => count($todoCurIDs),
 				'error' => null
 			]);					
 		}
@@ -128,6 +131,8 @@ class TodoController extends Controller
 			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
 			'userID' => $userID,
 			'datetime' => $datetime,
+			'todoCurCnt' => count($todoCurIDs),
+			'todoLateCnt' => count($todoLateIDs),
         ]);
     }
 

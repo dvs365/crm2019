@@ -33,3 +33,15 @@ use yii\helpers\Url;
 		</table>
 	</div>
 <?endforeach;?>
+<?$datetime1 = new DateTime(date('Y-m-d', $datetime))?>
+<?$datetime2 = new DateTime()?>
+<?if ($datetime1->format('Y-m-d') != $datetime2->format('Y-m-d')): ?>
+	<script>
+		var late = Number(document.getElementById("work_overdue_value").textContent.replace ( /[^\d.]/g, '' ));
+		var cur = Number(<?=count($curTodos)?>);
+		var all = late + cur;
+		document.getElementById("work_value").textContent="(" + all + ")";
+		document.getElementById("work_active_value").textContent="(" + cur + ")";
+		
+	</script>
+<?endif;?>
