@@ -3,9 +3,11 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
 <?foreach ($curTodos as $curTodo):?>
-	<? $time1 = (date('d m Y H:i',strtotime($curTodo->date)));?>
-	<? $time2 = \Yii::$app->formatter->asDateTime(new DateTime(), 'php:d m Y H:i');?>
-	<?$last = $time1 < $time2 ? true: false?>
+	<?$date1 = new DateTime($curTodo->date);?>
+	<?$date2 = new DateTime($curTodo->dateto);?>
+	<?$time1 = ($date1->format('Y-m-d') < $date2->format('Y-m-d')) ? new DateTime(date('Y-m-d', $datetime).' '.$date1->format('H:i')) : $date1?>
+	<?$time2 = \Yii::$app->formatter->asDateTime(new DateTime(), 'php:Y-m-d H:i:s');?>
+	<?$last = $time1->format('Y-m-d H:i:s') < $time2 ? true: false?>
 	<div class="task_item">
 		<table class="w100p">
 			<tr class="table_item">

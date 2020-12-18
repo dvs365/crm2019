@@ -113,6 +113,7 @@ class TodoController extends Controller
 			return $this->renderAjax('list_cur_todo', [
 				'curTodos' => $todoCur,
 				'clientTodoName' => $clientTodoName,
+				'datetime' => $datetime,
 				'error' => null
 			]);					
 		}
@@ -126,6 +127,7 @@ class TodoController extends Controller
 			'clientTodoName' => $clientTodoName,
 			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
 			'userID' => $userID,
+			'datetime' => $datetime,
         ]);
     }
 

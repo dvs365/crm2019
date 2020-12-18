@@ -47,6 +47,7 @@ TodoAsset::register($this);
 					'curTodos' => $todoCur,
 					'status' => $status,
 					'clientTodoName' => $clientTodoName,
+					'datetime' => $datetime,
 				])?>
 		</div>
 	<?endif;?>
