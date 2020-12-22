@@ -59,12 +59,12 @@ window.xCal = function(ob, delim, order) {
     istMonth = a.tmonth +1;
     if (istMonth < 10) istMonth = '0' + istMonth
     today = String(a.tyear) + String(istMonth) + String(isDay);
-    sss = $(ob).closest('form').find('input[name="date-from"]').val();
+    sss = $(ob).closest('form').find('input[name="Todo[date]"]').val();
     if (typeof sss !== "undefined") { 
         startDate = sss;
         stD = reverseDate(startDate);
     }
-    sss = $(ob).closest('form').find('input[name="date-to"]').val();
+    sss = $(ob).closest('form').find('input[name="Todo[dateto]"]').val();
     if (typeof sss !== "undefined") { 
         finishDate = sss;
         fD = reverseDate(finishDate);
@@ -74,7 +74,7 @@ window.xCal = function(ob, delim, order) {
 	    if((typeof ob==="undefined" || ob==0 || ob==1) && Nod(a.id)) {
             isd = reverseDate(xCal.value);
             
-            if (((obname == 'date-to') && ((isd < stD) || (((typeof par !== 'undefined') && (par.pform == 'sum') && (isd > Number(today)))))) || ((obname == 'date-from') && (typeof par !== 'undefined') && (par.pform == 'sum') && (isd > Number(fD)))) {
+            if (((obname == 'Todo[dateto]') && ((isd < stD) || (((typeof par !== 'undefined') && (par.pform == 'sum') && (isd > Number(today)))))) || ((obname == 'Todo[date]') && (typeof par !== 'undefined') && (par.pform == 'sum') && (isd > Number(fD)))) {
                 Nod(a.id).style.display="block";
                 return false;
             }            
@@ -108,7 +108,7 @@ window.xCal = function(ob, delim, order) {
         isd = reverseDate(d);
         
         if ((typeof par !== 'undefined') && (par.pform == 'sum')) {
-            if (((a.o.name == 'date-to') && (isd >= stD) && (isd <= Number(today))) || ((a.o.name == 'date-from') && (isd <= Number(fD))) ) {
+            if (((a.o.name == 'Todo[dateto]') && (isd >= stD) && (isd <= Number(today))) || ((a.o.name == 'Todo[date]') && (isd <= Number(fD))) ) {
                 if(a.o) a.o.value = xCal.value = d;
                 if(a.hide==1) Nod(a.id).style.display="none";
             } else {
@@ -117,7 +117,7 @@ window.xCal = function(ob, delim, order) {
                 return false;
             }
         } else {
-            if (((a.o.name == 'date-to') && (isd >= stD)) || (a.o.name != 'date-to')) { 
+            if (((a.o.name == 'Todo[dateto]') && (isd >= stD)) || (a.o.name != 'Todo[dateto]')) { 
                 if(a.o) a.o.value = xCal.value = d;
                 if(a.hide==1) Nod(a.id).style.display="none";
             } else {
@@ -126,10 +126,10 @@ window.xCal = function(ob, delim, order) {
                 return false;
             }
         }
-        if ((a.o.name == 'date-from') && (document.querySelector('input[name="date-to"]'))) {
-            dto = reverseDate(document.querySelector('input[name="date-to"]').value);
+        if ((a.o.name == 'Todo[date]') && (document.querySelector('input[name="Todo[dateto]"]'))) {
+            dto = reverseDate(document.querySelector('input[name="Todo[dateto]"]').value);
             dfrom = reverseDate(xCal.value);
-            if (dfrom > dto) document.querySelector('input[name="date-to"]').value = xCal.value;
+            if (dfrom > dto) document.querySelector('input[name="Todo[dateto]"]').value = xCal.value;
         }
 	    if(typeof a.fn==="function") a.fn(d, a);
 	    else if(typeof a.fn==="string" && a.fn!=="") eval(a.fn+"('"+d+"');");
@@ -220,7 +220,7 @@ window.xCal = function(ob, delim, order) {
 	        } else ca += '<td class="cal-l" title="'+lang[a.lang].pre+' '+lang[a.lang].mo[mm]+'"><b>‹</b></td>';
         }
 
-        if (a.o.name == 'date-to') {
+        if (a.o.name == 'Todo[dateto]') {
             isMonth = a.month + 1;
             if (isMonth < 10) isMonth = '0' + isMonth;
             for(var i=1; i<=Dlast; i++) {

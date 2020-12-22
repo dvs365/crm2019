@@ -63,7 +63,7 @@ TodoAsset::register($this);
 							<?if (!empty($todos[$key])):?>
 								<td>
 							<?foreach ($todos[$key] as $todo):?>
-								<?= Html::a($todo->name, ['todo/view', 'id' => $todo->id])?>
+								<?= Html::a(isset($clientTodoName[$todo->client]) ? $clientTodoName[$todo->client] : $todo->name, ['todo/view', 'id' => $todo->id])?>
 							<?endforeach;?>
 								</td>
 							<?else:?>
@@ -83,7 +83,7 @@ TodoAsset::register($this);
 										<?endfor;?>
 										<td colspan="<?=$delay?>">
 											<div class="work_long<?= ($key+$delay == 7)?'__transit':''?>">
-												<?= Html::a($todo->name, ['todo/view', 'id' => $todo->id])?>
+												<?= Html::a(isset($clientTodoName[$todo->client]) ? $clientTodoName[$todo->client] : $todo->name, ['todo/view', 'id' => $todo->id])?>
 												<?if ($key+$delay == 7):?>
 												<span class="color_grey">До <?= date('d.m', strtotime($todo->dateto))?></span>
 												<?endif;?>

@@ -189,10 +189,11 @@ class TodoController extends Controller
             $day[$i] = \DateTime::createFromFormat('d.m.Y', $dayOfWeek->format('d.m.Y'));
             $dayOfWeek->add(new \DateInterval('P1D'));//Добавляем 1 день
         }
-		
+		$clientIDs = [];
 		foreach ($models as $keyDay => $todos) {
 			$dayCnt[$keyDay] = count($todos);
 			foreach ($todos as $keyTodo => $todo) {
+				$clientIDs[] = $todo->client;
 				$cntID[$todo->id][] = $todo->id;
 				if (date('d.m.Y', strtotime($todo->date)) == date('d.m.Y', strtotime($todo->dateto))) {
 					$modelsTime[date('H:i', strtotime($todo->date))][$keyDay][$todo->id] = $todo;
@@ -220,6 +221,8 @@ class TodoController extends Controller
 			'cntID' => isset($cntID) ? $cntID : [],
 			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
 			'dayCnt' => $dayCnt,
+			'clientTodoName' => Client::find()->select('name')->where(['id' => array_diff(array_unique($clientIDs),['0'])])
+			->indexBy('id')->asArray()->column(),
         ]);
 	}
 	

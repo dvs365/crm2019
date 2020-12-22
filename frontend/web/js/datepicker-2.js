@@ -53,8 +53,8 @@ window.xCal = function(ob, delim, order) {
     }
     if(a.id==="") a.id = a['class'];
 
-    if (document.querySelector('input[name="date-from"]')) {
-        startDate = document.querySelector('input[name="date-from"]').value;
+    if (document.querySelector('input[name="Todo[date]"]')) {
+        startDate = document.querySelector('input[name="Todo[date]"]').value;
         stD = reverseDate(startDate);
     } else stD = 0;
     if (typeof document.activeElement.name !=="undefined") obname = document.activeElement.name;
@@ -63,7 +63,7 @@ window.xCal = function(ob, delim, order) {
 	    if((typeof ob==="undefined" || ob==0 || ob==1) && Nod(a.id)) {
 	    	isd = reverseDate(xCal.value);
             
-            if ((obname == 'date-to') && (isd < stD)) {
+            if ((obname == 'Todo[dateto]') && (isd < stD)) {
                 Nod(a.id).style.display="block";
                 return false;
             }
@@ -94,7 +94,7 @@ window.xCal = function(ob, delim, order) {
 	    d += a.delim+m+a.delim+y;
 	    if(a.dop!=="") d += " "+a.dop;
 	    isd = reverseDate(d);
-        if (((a.o.name == 'date-to') && (isd >= stD)) || (a.o.name != 'date-to')) { 
+        if (((a.o.name == 'Todo[dateto]') && (isd >= stD)) || (a.o.name != 'Todo[dateto]')) { 
             if(a.o) a.o.value = xCal.value = d;
             if(a.hide==1) Nod(a.id).style.display="none";
         } else {
@@ -102,10 +102,10 @@ window.xCal = function(ob, delim, order) {
             Nod(a.id).style.display="block";
             return false;
         }
-        if ((a.o.name == 'date-from') && (document.querySelector('input[name="date-to"]'))) {
-        	dto = reverseDate(document.querySelector('input[name="date-to"]').value);
+        if ((a.o.name == 'Todo[date]') && (document.querySelector('input[name="Todo[dateto]"]'))) {
+        	dto = reverseDate(document.querySelector('input[name="Todo[dateto]"]').value);
         	dfrom = reverseDate(xCal.value);
-            if (dfrom > dto) document.querySelector('input[name="date-to"]').value = xCal.value;
+            if (dfrom > dto) document.querySelector('input[name="Todo[dateto]"]').value = xCal.value;
         }
 	    if(typeof a.fn==="function") a.fn(d, a);
 	    else if(typeof a.fn==="string" && a.fn!=="") eval(a.fn+"('"+d+"');");
@@ -195,7 +195,7 @@ window.xCal = function(ob, delim, order) {
 	        } else ca += '<td class="cal-l" title="'+lang[a.lang].pre+' '+lang[a.lang].mo[mm]+'"><b>‹</b></td>';
         }
 
-        if (a.o.name == 'date-to') {
+        if (a.o.name == 'Todo[dateto]') {
             isMonth = a.month + 1;
             if (isMonth < 10) isMonth = '0' + isMonth;
             for(var i=1; i<=Dlast; i++) {
