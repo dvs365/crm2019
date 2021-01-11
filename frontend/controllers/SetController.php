@@ -34,6 +34,9 @@ class SetController extends Controller
                         'actions' => ['signup', 'update', 'users'],
                         'allow' => true,
                         'roles' => ['addUpAdmin','addUpUser'],
+						'roleParams' => function() {
+							return ['user' => User::findOne(['id' => Yii::$app->request->get('id')])];
+						}						
                     ],
 					[
 						'actions' => ['profile', 'index'],
