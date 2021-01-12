@@ -239,4 +239,8 @@ class User extends ActiveRecord implements IdentityInterface
 		$statuses = $this->getStatusLabels();
         return isset($statuses[$this->status]) ? $statuses[$this->status] : '';
 	}
+	
+	public function getManagerIDs() {
+		return array_diff(explode(',', $this->managers), ['all', $this->id]);
+	}
 }

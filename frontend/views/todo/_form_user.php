@@ -7,7 +7,7 @@ use yii\helpers\ArrayHelper;
 	<label>Менеджер:
 		<span class="select">
 			<span class="dropdown"></span>
-                <?$managers = ArrayHelper::map($user, 'id', 'surnameNP')?>
+                <?$managers = ArrayHelper::map($users, 'id', 'surnameNP')?>
                 <?=$form->field($model, 'user', ['template' => "{input}"])->dropDownList($managers, ['onchange'=>'this.form.submit()', 'class' => '', 'prompt' => ['text' => 'Свои', 'options' => ['value' => Yii::$app->user->identity->id]], 'options' => [$userID => ['selected' => true]]])?>
 		</span>
 	</label>

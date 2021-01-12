@@ -33,7 +33,7 @@ TodoAsset::register($this);
 	<?$userModel = Yii::$app->user->identity; $managerIDs = array_diff(explode(',', $userModel->managers), ['all', $userModel->id])?>
 	<?=$this->render('_form_user', [
 		'model' => new common\models\Todo,
-		'user' => common\models\User::find()->where(['id' => $managerIDs])->all(),
+		'users' => $users,
 		'userID' => $userID,
 		'action' => ['todo/index', 'status' => $status],
 	])?>

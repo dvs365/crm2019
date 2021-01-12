@@ -64,21 +64,20 @@ class TodoController extends Controller
 
     public function actionIndex($status = null)
     {
-		
+		$user = \Yii::$app->user->identity;
 		if ($data = Yii::$app->request->post()) {
 			$model = new Todo();
 			$model->load($data);
-			if ($model->user) {
-				Yii::$app->response->cookies->add(new \yii\web\Cookie([
-					'name' => 'userID',
-					'path' => 'todo',
-					'value' => $model->user,
-					'expire' => '',
-				]));
-			}
+			Yii::$app->response->cookies->add(new \yii\web\Cookie([
+				'name' => 'userID',
+				'path' => '/todo',
+				'value' => $model->user,
+				'expire' => '',
+			]));
+
 		}		
 		$cookieUserID = \Yii::$app->user->can('viewTodoUser') ? (Yii::$app->request->cookies['userID']?:false) : false;
-		$userID = !empty($model->user) && \Yii::$app->user->can('viewTodoUser') ? $model->user : ($cookieUserID ? $cookieUserID->value : Yii::$app->user->identity->id);
+		$userID = !empty($model->user) && \Yii::$app->user->can('viewTodoUser') ? $model->user : ($cookieUserID ? $cookieUserID->value : $user->id);
 	
 		$datetime = !empty($model->date) ? strtotime($model->date) : time();
 		if ($status == Todo::CLOSE) {
@@ -87,10 +86,10 @@ class TodoController extends Controller
 			$dataProvider->query->andWhere(['user' => (int)$userID]);			
 		}
 		
-		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->identity->id);
+		$roles = Yii::$app->authManager->getRolesByUser($user->id);
 		$clientsQuery = Client::find();
 		if (!isset($roles['admin'])) {
-			$clientsQuery->andWhere(['user' => Yii::$app->user->identity->id]);
+			$clientsQuery->andWhere(['user' => $user->id]);
 		}
 		$clients = $clientsQuery->andWhere(['status' => ['10','20']])->all();
 		list($todoCurIDs, $todoLateIDs) = [[],[]];
@@ -128,7 +127,7 @@ class TodoController extends Controller
 			'status' => $status,
 			'clients' => $clients,
 			'clientTodoName' => $clientTodoName,
-			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
+			'users' => \Yii::$app->user->can('viewTodoUser') || \Yii::$app->user->can('addTodoUser') ? User::findAll($user->managerIDs) : [],
 			'userID' => $userID,
 			'datetime' => $datetime,
 			'todoCurCnt' => count($todoCurIDs),
@@ -155,20 +154,20 @@ class TodoController extends Controller
 
 	public	function actionToweek($week = null)
 	{
+		$user = \Yii::$app->user->identity;
 		if ($data = Yii::$app->request->post()) {
 			$model = new Todo();
 			$model->load($data);
             Yii::$app->response->cookies->add(new \yii\web\Cookie([
                 'name' => 'userID',
-                'path' => 'todo',
+                'path' => '/todo',
                 'value' => $model->user,
                 'expire' => '',
             ]));
-			$userID = \Yii::$app->user->can('viewTodoUser') ? $model->user : Yii::$app->user->identity->id;
-		} else {
-			$cookieUserID = \Yii::$app->user->can('viewTodoUser') ? (Yii::$app->request->cookies['userID']?:false) : false;
-			$userID = !empty($model->user) && \Yii::$app->user->can('viewTodoUser') ? $model->user : ($cookieUserID ? $cookieUserID->value : Yii::$app->user->identity->id);
-		}		
+		}
+		$cookieUserID = \Yii::$app->user->can('viewTodoUser') ? (Yii::$app->request->cookies['userID']?:false) : false;
+		$userID = !empty($model->user) && \Yii::$app->user->can('viewTodoUser') ? $model->user : ($cookieUserID ? $cookieUserID->value : $user->id);
+		
 				
 		$datetime = \Yii::$app->request->post('date') ? Yii::$app->request->post('date') : date('d.m.Y');
 		if ($week) {
@@ -209,9 +208,10 @@ class TodoController extends Controller
 			$clientsQuery->andWhere(['user' => $userID]);
 		}
 		$clients = $clientsQuery->andWhere(['status' => ['10','20']])->all();
+
         return $this->render('toweek', [
 			'clients' => $clients,
-			'user' => User::findByRole(Yii::$app->authManager->getRole('user')),
+			'users' => \Yii::$app->user->can('viewTodoUser') || \Yii::$app->user->can('addTodoUser') ? User::findAll($user->managerIDs) : [],
 			'userID' => $userID,
 			'status' => Todo::OPEN,
 			'week' => $week ?: \DateTime::createFromFormat('d.m.Y', date('d.m.Y'))->format('W'),
@@ -219,7 +219,6 @@ class TodoController extends Controller
 			'modelsTime' => isset($modelsTime) ? $modelsTime : [],
 			'modelsLong' => isset($modelsLong) ? $modelsLong : [],
 			'cntID' => isset($cntID) ? $cntID : [],
-			'users' => (\Yii::$app->user->can('addTodoUser'))? User::find()->all():'',
 			'dayCnt' => $dayCnt,
 			'clientTodoName' => Client::find()->select('name')->where(['id' => array_diff(array_unique($clientIDs),['0'])])
 			->indexBy('id')->asArray()->column(),
@@ -269,11 +268,6 @@ class TodoController extends Controller
 				return $this->redirect(['view', 'id' => $model->id]);
 			}
         }
-		
-		/*
-        return $this->render('update', [
-            'model' => $model,
-        ]);*/
     }
 
 	public function actionToclose($id)

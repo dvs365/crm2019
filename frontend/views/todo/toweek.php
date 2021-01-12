@@ -25,7 +25,7 @@ TodoAsset::register($this);
 	<?if(\Yii::$app->user->can('viewTodoUser')):?>
 	<?=$this->render('_form_user', [
 		'model' => new common\models\Todo,
-		'user' => $user,
+		'users' => $users,
 		'userID' => $userID,
 		'status' => $status,
 		'action' => ['todo/toweek'],
