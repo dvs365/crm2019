@@ -68,14 +68,15 @@ class TodoController extends Controller
 		if ($data = Yii::$app->request->post()) {
 			$model = new Todo();
 			$model->load($data);
-			Yii::$app->response->cookies->add(new \yii\web\Cookie([
-				'name' => 'userID',
-				'path' => '/todo',
-				'value' => $model->user,
-				'expire' => '',
-			]));
-
-		}		
+			if ($model->user) {
+				Yii::$app->response->cookies->add(new \yii\web\Cookie([
+					'name' => 'userID',
+					'path' => '/todo',
+					'value' => $model->user,
+					'expire' => '',
+				]));				
+			}
+		}
 		$cookieUserID = \Yii::$app->user->can('viewTodoUser') ? (Yii::$app->request->cookies['userID']?:false) : false;
 		$userID = !empty($model->user) && \Yii::$app->user->can('viewTodoUser') ? $model->user : ($cookieUserID ? $cookieUserID->value : $user->id);
 	
@@ -137,12 +138,12 @@ class TodoController extends Controller
 
     public function actionView($id)
     {
-		$userID = Yii::$app->user->identity->id;
-		$roles = Yii::$app->authManager->getRolesByUser($userID);
+		$user = Yii::$app->user->identity;
+		$roles = Yii::$app->authManager->getRolesByUser($user->id);
 		
 		$clientsQuery = Client::find();
 		if (!isset($roles['admin'])) {
-			$clientsQuery->andWhere(['user' => $userID]);
+			$clientsQuery->andWhere(['user' => $user->id]);
 		}
 		$clients = $clientsQuery->andWhere(['status' => ['10','20']])->all();		
 		
