@@ -8,21 +8,8 @@ use frontend\assets\AppAsset;
 use frontend\assets\App2Asset;
 use yii\widgets\Menu;
 use app\components\Menu\MenuActive;
-list($clientA, $todoA, $setA) = [false, false, false];
-if(\Yii::$app->controller->id == 'client') {
-	$clientA = true;
-} 
-if(\Yii::$app->controller->id == 'todo' && array_search(\Yii::$app->controller->action->id, ['index','toweek','view']) !== false) {
-	$todoA = true;
-}
-if(\Yii::$app->controller->id == 'set' && array_search(\Yii::$app->controller->action->id, ['profile', 'users', 'update', 'signup']) !== false) {
-	$setA = true;
-}
-if ($clientA || $todoA || $setA){
-	App2Asset::register($this);
-}else {
-	AppAsset::register($this);
-}
+
+App2Asset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -55,7 +42,7 @@ if ($clientA || $todoA || $setA){
                     'items' => [
                         ['label' => 'Сводка', 'url' => ['summary/index'], 'active' => $checkController('summary'), 'visible' => false],
                         ['label' => 'Клиенты', 'url' => ['client/index'], 'active' => $checkController('client')],
-                        ['label' => 'Дела'.(($clientA || $todoA || $setA)?'<span class="work_value" id="work_value"> (<span>'.(\Yii::$app->todo->cur() + \Yii::$app->todo->last()).'</span>)</span>':''), 'url' => ['todo/index'], 'active' => $checkController('todo')],
+                        ['label' => 'Дела<span class="work_value" id="work_value"> (<span>'.(\Yii::$app->todo->cur() + \Yii::$app->todo->last()).'</span>)</span>', 'url' => ['todo/index'], 'active' => $checkController('todo')],
                     ],
                     'activeCssClass' => 'active',
                 ])

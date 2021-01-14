@@ -122,6 +122,11 @@ class Organization extends \yii\db\ActiveRecord
         return isset($forms[$this->form]) ? $forms[$this->form] : '';
     }
 
+	function getNdsLabel() {
+        $nds = $this->getNdsLabels();
+        return isset($nds[$this->nds]) ? $nds[$this->nds] : '';		
+	}
+	
     /**
      * {@inheritdoc}
      */
@@ -131,7 +136,7 @@ class Organization extends \yii\db\ActiveRecord
             'id' => 'ID',
             'client' => 'Client',
             'name' => 'Наименование',
-            'form' => 'Form',
+            'form' => 'Форма собственности',
             'jadds' => 'Юридический адрес',
             'fadds' => 'Фактический адрес',
             'director' => 'ФИО директора',

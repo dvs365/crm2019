@@ -19,8 +19,9 @@ ClientAsset::register($this);
 			<?$backLink = (strpos(Yii::$app->request->referrer, 'update') === false && 
 				strpos(Yii::$app->request->referrer, 'create') === false)? Yii::$app->request->referrer : ['client/index'];
 				$ref = (Yii::$app->request->get('ref')?: $backLink);
+				$ref = (Yii::$app->request->get('ref2c')?: $ref);
 				?>
-			<?= Html::a('', Yii::$app->request->get('ref')?:$backLink, ['class' => 'arrow_left']) ?>
+			<?= Html::a('', $ref, ['class' => 'arrow_left']) ?>
 			<?= Html::a('Изменить', ['update', 'id' => $client->id, 'ref' => $ref]) ?>
 			<?= ($client->status !== common\models\Client::TARGET)?Html::a('В потенциальные', ['totarget', 'id' => $client->id, 'ref' => $ref]):''?>
 			<?= ($client->status !== common\models\Client::LOAD)?Html::a('В рабочие', ['toload', 'id' => $client->id, 'ref' => $ref]):''?>
@@ -43,7 +44,7 @@ ClientAsset::register($this);
 						<?$orgs = $client->organizations;?>
 						<?foreach($orgs as $org){?>
 							<li class="firm">
-								<?= Html::a($org->formLabel.' '.$org->name, ['client/update', 'id' => $client->id, '#' => 'organization'.$org->id]) ?>
+								<?= Html::a($org->formLabel.' '.$org->name, ['organization/view', 'id' => $org->id, 'ref2' => $ref]) ?>
 								<span class="nds color_grey <?=($org->nds == $org->ndsConst['without'])?'nds_none':''?>"><?=$org->nds ? $org->getAttributeLabel('nds'):''?></span>
 							</li>
 						<?}?>
