@@ -9,4 +9,11 @@ $(document).ready(function(){
             $('.firm_item').hide(0);
         }, 500);
     });
+    //закрытие редактирования фирмы
+    $("#close-firm-change").click(function(){
+        $("#open-firm-change").addClass('color_blue');
+		$('.firm_item').css('height','');
+        $('.firm_item').show(0);
+		$('.firm_item_change').hide(600);
+    });	
 });	

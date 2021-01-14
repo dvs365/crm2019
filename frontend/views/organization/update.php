@@ -131,7 +131,7 @@ use yii\bootstrap\ActiveForm;
 		<?=$form->field($firm, "client")->hiddenInput()->label(false) ?>
 	</table>
 	<div class="right">
-		<a href="client.html" class="btn cancel">Отменить</a>
+		<a href="client.html" id="close-firm-change" class="btn cancel" onclick="return false">Отменить</a>
 		<input type="submit" class="btn" value="Сохранить">
 	</div>
 	<div class="clear"></div>
