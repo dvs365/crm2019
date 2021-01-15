@@ -103,6 +103,7 @@ ClientAsset::register($this);
 				<div class="contact_site wrap1">
 					<?$webArr = explode(',', $client->website);?>
 						<?foreach ($webArr as $web):?>
+							<?$web = ($web && strpos($web, '://') === false)?'http://'.$web:$web?>
 							<?=Html::a(Html::encode($web), Html::encode($web), ['target' => '_blank']);?>
 						<?endforeach;?>
 				</div>

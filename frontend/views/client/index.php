@@ -98,7 +98,8 @@ $request = Yii::$app->request;
 			$template .= Html::tag('div', Html::tag('table', $trDelivery, ['class' => 'clients_list_delivery']),['class' => 'wrap1']);
 			$webArr = explode(',', $model->website);
             foreach ($webArr as $web):
-                $webs[] = Html::a(Html::encode(trim($web)), Html::encode(trim($web)));
+				$web = ($web && strpos($web, '://') === false)?'http://'.$web:$web;
+                $webs[] = Html::a(Html::encode(trim($web)), Html::encode(trim($web)), ['target' => '_blank']);
             endforeach;
             $template .= Html::tag('div', implode(' ', $webs), ['class' => 'contact_site']);
             return $template;
