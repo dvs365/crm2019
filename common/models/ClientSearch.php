@@ -97,30 +97,36 @@ class ClientSearch extends Client
             if ($phones) {
                 $qPhoneClient = Phoneclient::find();
                 $qPhoneFace = Phoneface::find();
+				$qPhoneOrg = Organization::find();
                 foreach ($phones as $phone) {
                     $qPhoneClient->orWhere(['LIKE', 'number_mirror', $phone.'%', false]);
                     $qPhoneFace->orWhere(['LIKE', 'number_mirror', $phone.'%', false]);
+					$qPhoneOrg->orWhere(['LIKE', 'number_mirror', $phone.'%', false]);
                 }
                 $ids1 = $qPhoneClient->select('client')->asArray()->column();
                 $ids11 = [];
                 if ($face1 = $qPhoneFace->select('face')->asArray()->column()) {
                     $ids11 = Face::find()->andWhere(['in','id', $face1])->select('client')->asArray()->column();
                 }
-                $idsPhone = array_merge($ids1, $ids11);
+				$ids111 = $qPhoneOrg->select('client')->asArray()->column();
+                $idsPhone = array_merge($ids1, $ids11, $ids111);
             }
             if ($mails) {
                 $qMailClient = Mailclient::find();
                 $qMailFace = Mailface::find();
+				$qMailOrg = Organization::find();
                 foreach ($mails as $mail) {
                     $qMailClient->orWhere(['LIKE', 'mail', $mail.'%', false]);
                     $qMailFace->orWhere(['LIKE', 'mail', $mail.'%', false]);
+					$qMailOrg->orWhere(['LIKE', 'mail', $mail.'%', false]);
                 }
                 $ids2 = $qMailClient->select('client')->asArray()->column();
                 $ids22 = [];
                 if ($face2 = $qMailFace->select('face')->asArray()->column()) {
                     $ids22 = Face::find()->andWhere(['in','id', $face2])->select('client')->asArray()->column();
                 }
-                $idsMail = array_merge($ids2, $ids22);
+				$ids222 = $qMailOrg->select('client')->asArray()->column();
+                $idsMail = array_merge($ids2, $ids22, $ids222);
             }
             $ids = array_unique(array_merge($idsPhone,$idsMail));
         }
