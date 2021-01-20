@@ -16,5 +16,6 @@ $this->title = 'Добавление клиента';
         'modelsFacePhone' => $modelsFacePhone,
         'modelsFaceMail' => $modelsFaceMail,
         'modelsOrganization' => $modelsOrganization,
+		'modelsDelivery' => $modelsDelivery,
         'modelsUser' => $modelsUser,
     ]) ?>

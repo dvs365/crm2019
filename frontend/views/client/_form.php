@@ -65,14 +65,16 @@ use yii\helpers\ArrayHelper;
                     <?= $form->field($model, 'discomment', ['template' => "{input}"])->textInput(['placeholder' => 'Комментарий к скидке', 'maxlength' => true]) ?>
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <?=$model->getAttributeLabel('address')?>
-                </td>
-                <td>
-                    <?= $form->field($model, 'address', ['template' => "{input}"])->textInput(['placeholder' => 'Индекс, страна, регион, город, улица, дом', 'maxlength' => true]) ?>
-                </td>
-            </tr>
+			<tr>
+				<td colspan="2">
+				<?=$this->render('_form_client_delivery', [
+					'form' => $form,
+					'modelsDelivery' => $modelsDelivery,
+					'model' => $model,
+				]);	
+				?>
+				</td>
+			</tr>
             <tr>
                 <td>
                     <?=$model->getAttributeLabel('website')?>

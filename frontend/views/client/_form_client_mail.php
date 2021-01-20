@@ -24,7 +24,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
 <table class="w100p container-items_client_mail">
     <?php foreach($modelsClientMail as $index => $clientMail):?>
     <tr class="item_client_mail">
-        <td class="w180">E-mail</td>
+        <td class="w180"></td>
         <td>
             <?php
             //necessary for update action.

@@ -45,6 +45,7 @@ $request = Yii::$app->request;
     </div>
     <?$up = Html::tag('div', Html::a('Наверх' . Html::tag('div', '', ['class' => 'arrow_up']), '#header', ), ['id' => 'up','class' => 'right'])?>
     <?$users = \common\models\User::find()->indexBy('id')->all();?>
+	
 	<?= ListViewPager::widget([
         'dataProvider' => $dataProvider,
         'summary' => '',
@@ -93,7 +94,11 @@ $request = Yii::$app->request;
             $discount = Html::tag('span', $model->discount.'%', ['class' => (!$model->disconfirm)?'agreed_none':'']);
 			$trDiscount = Html::tag('tr', Html::tag('th', 'Скидка:').Html::tag('td', $discount.$disconfirm.Html::tag('br').Html::tag('span', $model->discomment, ['class' => (!$model->disconfirm)?'agreed_none':'']))); 
 			$template .= ($model->discount || $model->discomment)?Html::tag('div', Html::tag('table', $trDiscount, ['class' => 'client_discount']), ['class' => 'wrap1']):'';
-            $liDelivery = Html::tag('li', Html::encode($model->address));
+            $deliveries = $model->deliveries;
+			$liDelivery = '';
+			foreach ($deliveries as $delivery):
+				$liDelivery .= Html::tag('li', Html::encode($delivery->address));
+			endforeach;
 			$trDelivery = Html::tag('tr', Html::tag('td', Html::tag('b', 'Доставка:')).Html::tag('td', Html::tag('ul', $liDelivery)));
 			$template .= Html::tag('div', Html::tag('table', $trDelivery, ['class' => 'clients_list_delivery']),['class' => 'wrap1']);
 			$webArr = explode(',', $model->website);

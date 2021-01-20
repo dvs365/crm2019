@@ -181,4 +181,12 @@ class Client extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Desclient::className(), ['client' => 'id']);
     }
+	
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDeliveries()
+    {
+        return $this->hasMany(Delivery::className(), ['client' => 'id']);
+    }	
 }

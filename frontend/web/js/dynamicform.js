@@ -1,9 +1,11 @@
 jQuery(function ($) {
     $(this).find(".item_client_phone:first td:first").html('Телефон');
     $(this).find(".item_client_mail:first td:first").html('E-mail');
+	$(this).find(".client_delivery_item:first td:first").html('Адрес доставки');
 
-    $(".dynamicform_wrapper_client_phone tr:not(:last) td:last .add-cphone").hide();
-    $(".dynamicform_wrapper_client_mail tr:not(:last) td:last .add-cmail").hide();
+    $(".dynamicform_wrapper_client_phone tr:not(:last-child) td:last-child .add-cphone").hide();
+    $(".dynamicform_wrapper_client_mail tr:not(:last-child) td:last-child .add-cmail").hide();
+	$(".dynamicform_wrapper_client_delivery tr:not(:last-child) td:last-child .add-address").hide();
 
     $(".dynamicform_wrfphone tr:not(:last-child) td:last-child .add-fphone").hide();
     $(".dynamicform_wrfmail tr:not(:last-child) td:last-child .add-fmail").hide();

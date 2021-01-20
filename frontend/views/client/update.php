@@ -1,10 +1,10 @@
 <?php
-
+use frontend\assets\ClientAsset;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Client */
-
+ClientAsset::register($this);
 $this->title = 'Редактирование клиента';
 ?>
 
@@ -16,5 +16,6 @@ $this->title = 'Редактирование клиента';
     'modelsFacePhone' => $modelsFacePhone,
     'modelsFaceMail' => $modelsFaceMail,
     'modelsOrganization' => $modelsOrganization,
+	'modelsDelivery' => $modelsDelivery,
     'modelsUser' => $modelsUser,
 ]) ?>

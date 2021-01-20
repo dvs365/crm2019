@@ -76,7 +76,10 @@ ClientAsset::register($this);
 						<td>Доставка:</td>
 						<td>
 							<ul>
-								<li><?=$client->address?></li>
+								<?$deliveries = $client->deliveries;?>
+								<?foreach ($deliveries as $delivery):?>
+									<li><?=$delivery->address?></li>
+								<?endforeach;?>
 							</ul>
 						</td>
 					</tr>

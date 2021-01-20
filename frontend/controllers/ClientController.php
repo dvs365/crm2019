@@ -14,6 +14,7 @@ use common\models\Mailface;
 use common\models\Organization;
 use common\models\Todo;
 use common\models\ClientSearch;
+use common\models\Delivery;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -61,7 +62,7 @@ class ClientController extends Controller
                         'allow' => true,
                         'roles' => ['viewClientAll'],
                         'roleParams' => function() {
-                            return ['client' => Client::findOne(['id' => Yii::$app->request->get('id')])];
+                            return ['client' => Client::findOne(Yii::$app->request->get('id'))];
                         }
                     ],
                     [
@@ -69,7 +70,7 @@ class ClientController extends Controller
                         'allow' => true,
                         'roles' => ['upClientAll'],
                         'roleParams' => function() {
-                            return ['client' => Client::findOne(['id' => Yii::$app->request->get('id')])];
+                            return ['client' => Client::findOne(Yii::$app->request->get('id'))];
                         }
                     ],
                     [
@@ -142,6 +143,7 @@ class ClientController extends Controller
         $facePhones = [[new Phoneface]];
         $faceMails = [[new Mailface]];
         $clientOrganizations = [new Organization];
+		$clientDeliveries = [new Delivery];
 
         if ($client->load(Yii::$app->request->post())) {
 			//$client->website = parse_url($client->website, PHP_URL_HOST);
@@ -155,11 +157,13 @@ class ClientController extends Controller
             $clientMails = Model::createMultiple(Mailclient::classname());
             $clientFaces = Model::createMultiple(Face::classname());
             $clientOrganizations = Model::createMultiple(Organization::classname());
+			$clientDeliveries = Model::createMultiple(Delivery::classname());
 
             Model::loadMultiple($clientPhones, Yii::$app->request->post());
             Model::loadMultiple($clientMails, Yii::$app->request->post());
             Model::loadMultiple($clientFaces, Yii::$app->request->post());
             Model::loadMultiple($clientOrganizations, Yii::$app->request->post());
+			Model::loadMultiple($clientDeliveries, Yii::$app->request->post());
             $valid = $client->validate();
             
 			$transaction = \Yii::$app->db->beginTransaction();
@@ -262,6 +266,15 @@ class ClientController extends Controller
 							}
 						}
 					}
+					foreach ($clientDeliveries as $clientDelivery) {
+						if (!empty($clientDelivery->address)) {
+							$clientDelivery->client = $client->id;
+							$valid = $clientDelivery->validate() && $valid;
+							if (!$valid || !($flag = $clientDelivery->save())) {
+								break;
+							}					
+						}
+					}
 					
 					if ($flag && $valid) {
 						$transaction->commit();
@@ -284,6 +297,7 @@ class ClientController extends Controller
             'modelsFacePhone'  => (empty($facePhones)) ? [[new Phoneface]] : $facePhones,
             'modelsFaceMail'  => (empty($faceMails)) ? [[new Mailface]] : $faceMails,
             'modelsOrganization' => (empty($clientOrganizations)) ? [new Organization] : $clientOrganizations,
+			'modelsDelivery' => (empty($clientDeliveries)) ? [new Delivery] : $clientDeliveries,
             'modelsUser' => User::find()->all(),
         ]);
     }
@@ -299,6 +313,7 @@ class ClientController extends Controller
         $faceMails = [];
         $oldFaceMails = [];
         $clientOrganizations = $client->organizations;
+		$clientDeliveries = $client->deliveries;
 
         if (!empty($clientFaces)) {
             foreach ($clientFaces as $indexFace => $face) {
@@ -320,21 +335,25 @@ class ClientController extends Controller
             $oldClientMailIDs = ArrayHelper::map($clientMails, 'id', 'id');
             $oldClientFaceIDs = ArrayHelper::map($clientFaces, 'id', 'id');
             $oldClientOrgIDs = ArrayHelper::map($clientOrganizations, 'id', 'id');
+			$oldClientDeliveryIDs = ArrayHelper::map($clientDeliveries, 'id', 'id');
 
             $clientPhones = Model::createMultiple(Phoneclient::classname(), $clientPhones);
             $clientMails = Model::createMultiple(Mailclient::classname(), $clientMails);
             $clientFaces = Model::createMultiple(Face::classname(), $clientFaces);
             $clientOrganizations = Model::createMultiple(Organization::classname(), $clientOrganizations);
+			$clientDeliveries = Model::createMultiple(Delivery::classname(), $clientDeliveries);
 
             Model::loadMultiple($clientPhones, Yii::$app->request->post());
             Model::loadMultiple($clientMails, Yii::$app->request->post());
             Model::loadMultiple($clientFaces, Yii::$app->request->post());
             Model::loadMultiple($clientOrganizations, Yii::$app->request->post());
+			Model::loadMultiple($clientDeliveries, Yii::$app->request->post());
 
             $deleteClientPhoneIDs = array_diff($oldClientPhoneIDs, array_filter(ArrayHelper::map($clientPhones, 'id', 'id')));
             $deleteClientMailIDs = array_diff($oldClientMailIDs, array_filter(ArrayHelper::map($clientMails, 'id', 'id')));
             $deleteClientFaceIDs = array_diff($oldClientFaceIDs, array_filter(ArrayHelper::map($clientFaces, 'id', 'id')));
             $deleteClientOrgIDs = array_diff($oldClientOrgIDs, array_filter(ArrayHelper::map($clientOrganizations, 'id', 'id')));
+			$deleteClientDeliveryIDs = array_diff($oldClientDeliveryIDs, array_filter(ArrayHelper::map($clientDeliveries, 'id', 'id')));
 
             //validate
             $valid = $client->validate();
@@ -399,6 +418,9 @@ class ClientController extends Controller
                         }
                         if (!empty($deleteClientOrgIDs)) {
                             Organization::deleteAll(['id' => $deleteClientOrgIDs]);
+                        }
+                        if (!empty($deleteClientDeliveryIDs)) {
+                            Delivery::deleteAll(['id' => $deleteClientDeliveryIDs]);
                         }
 
                         foreach ($clientPhones as $clientPhone) {
@@ -499,6 +521,18 @@ class ClientController extends Controller
                                 $clientOrg->delete();
                             }
                         }
+						foreach ($clientDeliveries as $clientDelivery) {
+							if (!empty($clientDelivery->address)) {
+								$clientDelivery->client = $client->id;
+                                $dirty = $dirty && empty($clientDelivery->getDirtyAttributes());
+								$valid = $clientDelivery->validate() && $valid;
+                                if (!$valid || !$flag = $clientDelivery->save()) {
+                                    break;
+                                }								
+							} else {
+                                $clientDelivery->delete();
+                            }
+						}
                         if (!$dirty) {
                             $client->update = date('Y-m-d H:i:s');
                             $userID = Yii::$app->user->identity->id;
@@ -537,6 +571,7 @@ class ClientController extends Controller
             'modelsFacePhone' => (empty($facePhones)) ? [[new Phoneface]] : $facePhones,
             'modelsFaceMail' => (empty($faceMails)) ? [[new Mailface]] : $faceMails,
             'modelsOrganization' => (empty($clientOrganizations)) ? [new Organization] : $clientOrganizations,
+			'modelsDelivery' => (empty($clientDeliveries)) ? [new Delivery] : $clientDeliveries,
             'modelsUser' => User::find()->all(),
         ]);
     }
