@@ -17,7 +17,7 @@ class App2Asset extends AssetBundle
     public $js = [
         'js/jquery-2.2.4.js',
         'js/jquery-ui.min.js',
-        'js/dynamicform.js',
+        'js/dynamicform.js?q=1',
 		'js/functions.js',
     ];
     public $depends = [
