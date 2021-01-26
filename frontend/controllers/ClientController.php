@@ -98,12 +98,24 @@ class ClientController extends Controller
         if ($role) {
             $dataProvider->query->andWhere(['status' => (int)$role]);
         }
+		$clientIDs = array_keys($dataProvider->getModels());
+		$deliveries = Delivery::find()->where(['client' => $clientIDs])->all();
+		foreach ($deliveries as $delivery) {
+			$deliveryArr[$delivery->client][] = $delivery;
+		}
+		$orgs = Organization::find()->where(['client' => $clientIDs])->all();
+		foreach ($orgs as $org) {
+			$orgArr[$org->client][] = $org;
+		}
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'users' => User::find()->where(['id' => $managers])->indexBy('id')->all(),
+            'users' => User::find($managers)->indexBy('id')->all(),
             'role' => (int)$role,
             'statuses' => ['target' => Client::TARGET, 'load' => Client::LOAD,'reject' => Client::REJECT],
+			'deliveries' => isset($deliveryArr)? $deliveryArr : [],
+			'orgs' => isset($orgArr)? $orgArr : [],
+			'desclient' => Desclient::find()->where(['client' => $clientIDs])->indexBy('client')->all(),
         ]);
     }
 

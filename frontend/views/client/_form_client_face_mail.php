@@ -8,7 +8,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
     'widgetContainer' => 'dynamicform_wrfmail', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
     'widgetBody' => '.container-fmails', // required: css class selector
     'widgetItem' => '.fmail-item', // required: css class
-    'limit' => 10, // the maximum times, an element can be cloned (default 999)
+    'limit' => 30, // the maximum times, an element can be cloned (default 999)
     'min' => 1, // 0 or 1 (default 1)
     'insertButton' => '.add-fmail', // css class
     'deleteButton' => '.remove-item_client_face', // css class

@@ -10,7 +10,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
     'widgetContainer' => 'dynamicform_wrface', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
     'widgetBody' => '.container-faces', // required: css class selector
     'widgetItem' => '.face-item', // required: css class
-    'limit' => 10, // the maximum times, an element can be cloned (default 999)
+    'limit' => 30, // the maximum times, an element can be cloned (default 999)
     'min' => 1, // 0 or 1 (default 1)
     'insertButton' => '.client_item_add', // css class
     'deleteButton' => '.remove-face', // css class

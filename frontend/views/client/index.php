@@ -13,7 +13,6 @@ $this->title = 'Клиенты:' . Yii::$app->user->identity->surnameNP;
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ClientAsset::register($this);
-
 $request = Yii::$app->request;
 ?>
 
@@ -44,7 +43,6 @@ $request = Yii::$app->request;
 				'sort' => $sort], ['class' => 'checkbox', 'sort' => $sort])?>
     </div>
     <?$up = Html::tag('div', Html::a('Наверх' . Html::tag('div', '', ['class' => 'arrow_up']), '#header', ), ['id' => 'up','class' => 'right'])?>
-    <?$users = \common\models\User::find()->indexBy('id')->all();?>
 	
 	<?= ListViewPager::widget([
         'dataProvider' => $dataProvider,
@@ -68,7 +66,7 @@ $request = Yii::$app->request;
 			'prevPageCssClass' => 'none410',
 			'nextPageCssClass' => 'none410',		
         ],
-        'viewParams' => ['statuses' => $statuses, 'users' => $users],
+        'viewParams' => ['statuses' => $statuses, 'users' => $users, 'deliveries' => $deliveries, 'orgs' => $orgs, 'desclient' => $desclient],
         'itemOptions' => ['class' => 'wrap4'],
         'itemView' => function ($model, $key, $index, $widget) {
             //$widget->viewParams['users'][$model->user]->surnameNP
@@ -80,13 +78,22 @@ $request = Yii::$app->request;
 				$whoseClient = $model->user ? Html::encode($widget->viewParams['users'][$model->user]->surnameNP):'';
 			}
             $pAbout = Html::tag('p', $nameClient.Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
-            $firms = ArrayHelper::map($model->organizations, 'id', function ($element){
-                return Html::tag('li', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
-            });
-			$ulFirms = Html::tag('ul', implode('', $firms), ['class' => 'firms']);
+            //$firms = ArrayHelper::map($model->organizations, 'id', function ($element){
+                //return Html::tag('li', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
+            //});
+			
+			$liFirm = '';
+            if (isset($widget->viewParams['orgs'][$model->id])) {
+				$orgs = $widget->viewParams['orgs'][$model->id];
+				foreach ($orgs as $org):
+					$liFirm .= Html::tag('li', Html::encode($org->formLabel . ' ' . $org->name), ['class' => 'firm']);
+				endforeach;				
+			}
+			
+			$ulFirms = Html::tag('ul', $liFirm, ['class' => 'firms']);
 			//комментарий по клиенту
 			$divComm = Html::tag('div', $model->comment, ['class' => 'client_comment']);
-            $reject = $model->status == $widget->viewParams['statuses']['reject'] ? Html::tag('p', 'Причина отказа: '.Html::encode($model->desclient0['reject'])) : '';
+            $reject = $model->status == $widget->viewParams['statuses']['reject'] ? Html::tag('p', 'Причина отказа: '.Html::encode($widget->viewParams['desclient'][$model->id]->reject)) : '';
             $template = Html::tag('div', Html::tag('div', $pAbout.$ulFirms.$reject, ['class' => 'wrap3']).$divComm, ['class' => 'wrap1']);
             $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
             $template .= Html::tag('div', Html::tag('p', $whoseClient.' ' . Html::tag('span', 'Открытие: '. $lastTime, ['class' => 'color_grey'])), ['class' => 'wrap1']);
@@ -94,11 +101,13 @@ $request = Yii::$app->request;
             $discount = Html::tag('span', $model->discount.'%', ['class' => (!$model->disconfirm)?'agreed_none':'']);
 			$trDiscount = Html::tag('tr', Html::tag('th', 'Скидка:').Html::tag('td', $discount.$disconfirm.Html::tag('br').Html::tag('span', $model->discomment, ['class' => (!$model->disconfirm)?'agreed_none':'']))); 
 			$template .= ($model->discount || $model->discomment)?Html::tag('div', Html::tag('table', $trDiscount, ['class' => 'client_discount']), ['class' => 'wrap1']):'';
-            $deliveries = $model->deliveries;
 			$liDelivery = '';
-			foreach ($deliveries as $delivery):
-				$liDelivery .= Html::tag('li', Html::encode($delivery->address));
-			endforeach;
+			if (isset($widget->viewParams['deliveries'][$model->id])) {
+				$deliveries = $widget->viewParams['deliveries'][$model->id];
+				foreach ($deliveries as $delivery):
+					$liDelivery .= Html::tag('li', Html::encode($delivery->address));
+				endforeach;				
+			}
 			$trDelivery = Html::tag('tr', Html::tag('td', Html::tag('b', 'Доставка:')).Html::tag('td', Html::tag('ul', $liDelivery)));
 			$template .= Html::tag('div', Html::tag('table', $trDelivery, ['class' => 'clients_list_delivery']),['class' => 'wrap1']);
 			$webArr = explode(',', $model->website);
