@@ -73,9 +73,14 @@ $request = Yii::$app->request;
 			if (\Yii::$app->user->can('user') && $model->user != Yii::$app->user->identity->id) {
 				$nameClient = Html::tag('span', Html::encode($model->name), ['class' => 'about_client']);
 				$whoseClient = '';
+				$divDiscount = '';
 			} else {
 				$nameClient = Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']);
 				$whoseClient = $model->user ? Html::encode($widget->viewParams['users'][$model->user]->surnameNP):'';
+				$disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
+				$discount = Html::tag('span', $model->discount.'%', ['class' => (!$model->disconfirm)?'agreed_none':'']);
+				$trDiscount = Html::tag('tr', Html::tag('th', 'Скидка:').Html::tag('td', $discount.$disconfirm.Html::tag('br').Html::tag('span', $model->discomment, ['class' => (!$model->disconfirm)?'agreed_none':'']))); 
+				$divDiscount = ($model->discount || $model->discomment)?Html::tag('div', Html::tag('table', $trDiscount, ['class' => 'client_discount']), ['class' => 'wrap1']):'';			
 			}
             $pAbout = Html::tag('p', $nameClient.Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
             //$firms = ArrayHelper::map($model->organizations, 'id', function ($element){
@@ -93,14 +98,12 @@ $request = Yii::$app->request;
 			$ulFirms = Html::tag('ul', $liFirm, ['class' => 'firms']);
 			//комментарий по клиенту
 			$divComm = Html::tag('div', $model->comment, ['class' => 'client_comment']);
-            $reject = $model->status == $widget->viewParams['statuses']['reject'] ? Html::tag('p', 'Причина отказа: '.Html::encode($widget->viewParams['desclient'][$model->id]->reject)) : '';
+			$rejectCom = isset($widget->viewParams['desclient'][$model->id]->reject) ? $widget->viewParams['desclient'][$model->id]->reject : '';
+            $reject = $model->status == $widget->viewParams['statuses']['reject'] ? Html::tag('p', 'Причина отказа: '.Html::encode($rejectCom)) : '';
             $template = Html::tag('div', Html::tag('div', $pAbout.$ulFirms.$reject, ['class' => 'wrap3']).$divComm, ['class' => 'wrap1']);
-            $lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
+			$lastTime = Yii::$app->formatter->asRelativeTime($model->show, date('Y-m-d H:i:s'));
             $template .= Html::tag('div', Html::tag('p', $whoseClient.' ' . Html::tag('span', 'Открытие: '. $lastTime, ['class' => 'color_grey'])), ['class' => 'wrap1']);
-            $disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
-            $discount = Html::tag('span', $model->discount.'%', ['class' => (!$model->disconfirm)?'agreed_none':'']);
-			$trDiscount = Html::tag('tr', Html::tag('th', 'Скидка:').Html::tag('td', $discount.$disconfirm.Html::tag('br').Html::tag('span', $model->discomment, ['class' => (!$model->disconfirm)?'agreed_none':'']))); 
-			$template .= ($model->discount || $model->discomment)?Html::tag('div', Html::tag('table', $trDiscount, ['class' => 'client_discount']), ['class' => 'wrap1']):'';
+			$template .= $divDiscount; 
 			$liDelivery = '';
 			if (isset($widget->viewParams['deliveries'][$model->id])) {
 				$deliveries = $widget->viewParams['deliveries'][$model->id];
