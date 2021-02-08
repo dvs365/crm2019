@@ -14,6 +14,7 @@ class LeaderClientRule extends Rule
     {
 		$userModel = Yii::$app->user->identity;
 		$managers = array_merge(explode(',', $userModel->managers), [$user_id]);
-        return isset($params['client']) ? array_search($params['client']->user, $managers) !== false : false;
+        return isset($params['client']) ? array_search($params['client']->user, $managers) !== false
+		|| $params['client']->status == $params['client']::REJECT : false;
     }
 }

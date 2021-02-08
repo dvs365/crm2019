@@ -12,6 +12,6 @@ class AuthorRule extends Rule
 
     public function execute($user_id, $item, $params)
     {
-        return isset($params['client'])? $params['client']->user == $user_id : false;
+        return isset($params['client'])? $params['client']->user == $user_id || $params['client']->status == $params['client']::REJECT : false;
     }
 }

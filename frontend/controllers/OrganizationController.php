@@ -24,13 +24,21 @@ class OrganizationController extends Controller
 						'roles' => ['?'],
 					],
 					[
-                        'actions' => ['view', 'update'],
+                        'actions' => ['view'],
                         'allow' => true,
                         'roles' => ['viewClientAll'],
                         'roleParams' => function() {
                             return ['client' => Organization::findOne(Yii::$app->request->get('id'))->client0];
                         }						
                     ],
+					[
+                        'actions' => ['update'],
+                        'allow' => true,
+                        'roles' => ['upClientAll'],
+                        'roleParams' => function() {
+                            return ['client' => Organization::findOne(Yii::$app->request->get('id'))->client0];
+                        }						
+                    ],					
 				],
             ],		
             'verbs' => [

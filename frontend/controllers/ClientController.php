@@ -92,7 +92,7 @@ class ClientController extends Controller
     public function actionIndex($role = null)
     {
 		$userModel = Yii::$app->user->identity;
-		$managers = array_diff(explode(',', $userModel->managers), ['all']);
+		$managers = array_merge($userModel->managerIDs, [$userModel->id]);
         $searchModel = new ClientSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         if ($role) {
@@ -110,7 +110,7 @@ class ClientController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'users' => User::find($managers)->indexBy('id')->all(),
+            'users' => User::find()->where(['id' => $managers])->indexBy('id')->all(),
             'role' => (int)$role,
             'statuses' => ['target' => Client::TARGET, 'load' => Client::LOAD,'reject' => Client::REJECT],
 			'deliveries' => isset($deliveryArr)? $deliveryArr : [],
@@ -408,7 +408,7 @@ class ClientController extends Controller
                 try {
                     $dirtyClient = $client->getDirtyAttributes();
                     $dirty = empty($dirtyClient);
-                    if (array_key_exists('discomment', $dirtyClient) || array_key_exists('discount', $dirtyClient)){
+                    if (array_key_exists('discomment', $dirtyClient) || array_key_exists('discount', $dirtyClient)) {
                         $client->disconfirm = \Yii::$app->user->can('confirmDiscount') ? 1 : 0;
                     }
                     if ($flag = $client->save(false)) {
@@ -418,7 +418,6 @@ class ClientController extends Controller
                         if (!empty($deleteFaceMailsIDs)) {
                             Mailface::deleteAll(['id' => $deleteFaceMailsIDs]);
                         }
-
                         if (!empty($deleteClientPhoneIDs)) {
                             Phoneclient::deleteAll(['id' => $deleteClientPhoneIDs]);
                         }
@@ -556,6 +555,11 @@ class ClientController extends Controller
                                 $client->update_u = date('Y-m-d H:i:s');
                                 $client->update_uid = $userID;
                             }
+							if ($client->getOldAttribute('status') == $client::REJECT && !\Yii::$app->user->can('admin')) {
+								if ($client->status != $client::REJECT) {
+									$client->user = $userID;
+								}
+							}
 							Todo::updateAll(['user' => $client->user], ['client' => $client->id]);
                             if (!($flag = $client->save())) {
                                 $transaction->rollBack();
@@ -611,6 +615,9 @@ class ClientController extends Controller
     public function actionTotarget($id)
     {
         $client = $this->findModel($id);
+		if (!\Yii::$app->user->can('admin') && $client->status == $client::REJECT) {
+			$client->user = \Yii::$app->user->identity->id;
+		}
         $client->status = Client::TARGET;
         $client->save();
         return $this->redirect(['view', 'id' => $id, 'ref' => Yii::$app->request->get('ref')]);
@@ -619,6 +626,9 @@ class ClientController extends Controller
     public function actionToload($id)
     {
         $client = $this->findModel($id);
+		if (!\Yii::$app->user->can('admin') && $client->status == $client::REJECT) {
+			$client->user = \Yii::$app->user->identity->id;
+		}		
         $client->status = Client::LOAD;
         $client->save();
         return $this->redirect(['view', 'id' => $id, 'ref' => Yii::$app->request->get('ref')]);

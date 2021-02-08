@@ -70,22 +70,20 @@ $request = Yii::$app->request;
         'itemOptions' => ['class' => 'wrap4'],
         'itemView' => function ($model, $key, $index, $widget) {
             //$widget->viewParams['users'][$model->user]->surnameNP
-			if (\Yii::$app->user->can('user') && $model->user != Yii::$app->user->identity->id) {
+			if (!\Yii::$app->user->can('admin') && $model->user != Yii::$app->user->identity->id && $model->status != $model::REJECT) {
 				$nameClient = Html::tag('span', Html::encode($model->name), ['class' => 'about_client']);
 				$whoseClient = '';
 				$divDiscount = '';
 			} else {
 				$nameClient = Html::a(Html::encode($model->name), ['view', 'id' => $model->id], ['class' => 'about_client']);
-				$whoseClient = $model->user ? Html::encode($widget->viewParams['users'][$model->user]->surnameNP):'';
+				$surnameNP = isset($widget->viewParams['users'][$model->user]) ? $widget->viewParams['users'][$model->user]->surnameNP : '';
+				$whoseClient = $model->user ? Html::encode($surnameNP) : '';
 				$disconfirm = (!$model->disconfirm && \Yii::$app->user->can('confirmDiscount'))? Html::a('Согласовать', ['disconfirm', 'id' => $model->id], ['class' => 'agreed']):'';
 				$discount = Html::tag('span', $model->discount.'%', ['class' => (!$model->disconfirm)?'agreed_none':'']);
 				$trDiscount = Html::tag('tr', Html::tag('th', 'Скидка:').Html::tag('td', $discount.$disconfirm.Html::tag('br').Html::tag('span', $model->discomment, ['class' => (!$model->disconfirm)?'agreed_none':'']))); 
 				$divDiscount = ($model->discount || $model->discomment)?Html::tag('div', Html::tag('table', $trDiscount, ['class' => 'client_discount']), ['class' => 'wrap1']):'';			
 			}
             $pAbout = Html::tag('p', $nameClient.Html::tag('span', $model->statusLabel.' клиент', ['class' => 'about_status color_grey']), ['class' => 'about']);
-            //$firms = ArrayHelper::map($model->organizations, 'id', function ($element){
-                //return Html::tag('li', Html::encode($element->formLabel.' '.$element['name']), ['class' => 'firm']);
-            //});
 			
 			$liFirm = '';
             if (isset($widget->viewParams['orgs'][$model->id])) {
