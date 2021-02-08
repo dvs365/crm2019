@@ -317,6 +317,7 @@ class ClientController extends Controller
     public function actionUpdate($id)
     {
         $client = $this->findModel($id);
+		$oldStatus = $client->status;
         $clientPhones = $client->phoneclients;
         $clientMails = $client->mailclients;
         $clientFaces = $client->faces;
@@ -555,7 +556,7 @@ class ClientController extends Controller
                                 $client->update_u = date('Y-m-d H:i:s');
                                 $client->update_uid = $userID;
                             }
-							if ($client->getOldAttribute('status') == $client::REJECT && !\Yii::$app->user->can('admin')) {
+							if ($oldStatus == $client::REJECT && !\Yii::$app->user->can('admin')) {
 								if ($client->status != $client::REJECT) {
 									$client->user = $userID;
 								}
