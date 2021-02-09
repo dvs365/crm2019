@@ -116,6 +116,7 @@ class ClientController extends Controller
 			'deliveries' => isset($deliveryArr)? $deliveryArr : [],
 			'orgs' => isset($orgArr)? $orgArr : [],
 			'desclient' => Desclient::find()->where(['client' => $clientIDs])->indexBy('client')->all(),
+			'managersIDs' => $managers,
         ]);
     }
 
