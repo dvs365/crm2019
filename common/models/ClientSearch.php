@@ -190,8 +190,7 @@ class ClientSearch extends Client
 					if (mb_strlen($word , 'UTF-8') < 3) continue;
 					$or = ['or'];
 					$or[] = ['like', 'name', trim($word)];
-					$or[] = ['like', 'address', trim($word)];
-					
+					$or[] = ['id' => Delivery::find()->andWhere(['like', 'address', trim($word)])->select('client')->asArray()->column()];
 					$or[] = ['id' => Organization::find()->andWhere(['like', 'name', trim($word)])->select('client')->asArray()->column()];
 					$or[] = ['id' => Face::find()->andWhere(['like', 'fullname', trim($word)])->select('client')->asArray()->column()];					
 					$and[] = $or;
