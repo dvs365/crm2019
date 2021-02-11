@@ -61,4 +61,10 @@ class Phoneface extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Face::className(), ['id' => 'face']);
     }
+	
+    public function beforeSave($insert)
+    {
+		$this->number = trim($this->number);
+		return parent::beforeSave($insert);
+    }	
 }

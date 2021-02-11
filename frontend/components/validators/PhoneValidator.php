@@ -9,10 +9,13 @@ use common\models\Face;
 
 class PhoneValidator extends Validator
 {
+    private $messageFormat = 'неверный формат';
+	private $messageDouble = 'телефон задублирован';
+	
     public function init()
     {
         parent::init();
-        $this->message = 'неверный формат';
+		$this->message = '';
     }
 
     public function validateAttribute($model, $attribute)
@@ -20,33 +23,35 @@ class PhoneValidator extends Validator
         $int = preg_replace("/[^0-9]/", '', $model->$attribute);
         $strlen = mb_strlen($int);
         if (!in_array($strlen, [0,11,12])){
-            $model->addError($attribute, $this->message);
+            $model->addError($attribute, $this->messageFormat);
         }elseif ($strlen == 11 && mb_substr($int,0,1,'utf-8') == '8'){
             $int = substr_replace($int, '7',0,1);
         }
 
-        $model->number_mirror = strrev($int);
-        $queryPhoneclient = Phoneclient::find()->where(['number_mirror' => $model->number_mirror]);
-        $queryPhoneface = Phoneface::find()->where(['number_mirror' => $model->number_mirror]);
-        $queryPhoneOrg = Organization::find()->where(['number_mirror' => $model->number_mirror]);
-		
-		$faceIDs = Face::find()->where(['client' => $model->client])->select('id')->asArray()->column();
-				
-		if ($queryPhoneface->andWhere(['not in', 'face', $faceIDs])->exists()) {
-			$model->addError($attribute, 'телефон задублирован.');
-		}
-		elseif ($queryPhoneclient->andWhere(['<>', 'client', $model->client])->exists()) {
-			$model->addError($attribute, 'телефон задублирован.');
-		}
-		elseif ($queryPhoneOrg->andWhere(['<>', 'client', $model->client])->exists()) {
-			$model->addError($attribute, 'телефон задублирован.');
+		$model->number_mirror = strrev($int);
+		if ($model->number_mirror) {
+			$queryPhoneclient = Phoneclient::find()->where(['number_mirror' => $model->number_mirror]);
+			$queryPhoneface = Phoneface::find()->where(['number_mirror' => $model->number_mirror]);
+			$queryPhoneOrg = Organization::find()->where(['number_mirror' => $model->number_mirror]);
+			
+			$faceIDs = Face::find()->where(['client' => $model->client])->select('id')->asArray()->column();
+					
+			if ($queryPhoneface->andWhere(['not in', 'face', $faceIDs])->exists()) {
+				$model->addError($attribute, $this->messageDouble);
+			}
+			elseif ($queryPhoneclient->andWhere(['<>', 'client', $model->client])->exists()) {
+				$model->addError($attribute, $this->messageDouble);
+			}
+			elseif ($queryPhoneOrg->andWhere(['<>', 'client', $model->client])->exists()) {
+				$model->addError($attribute, $this->messageDouble);
+			}
 		}
     }
 
     public function clientValidateAttribute($model, $attribute, $view)
     {
-        $message = json_encode($this->message, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        $message2 = json_encode('телефон задублирован.', JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $message = json_encode($this->messageFormat, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $message2 = json_encode($this->messageDouble, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         return <<<JS
 var rev = '';  

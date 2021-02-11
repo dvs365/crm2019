@@ -437,7 +437,7 @@ class ClientController extends Controller
                         }
 
                         foreach ($clientPhones as $clientPhone) {
-                            if (!empty($clientPhone->number)) {
+                            if (!empty(trim($clientPhone->number)) || !empty(trim($clientPhone->comment))) {
                                 $clientPhone->client = $client->id;
                                 $dirty = $dirty && empty($clientPhone->getDirtyAttributes());
 								$valid = $clientPhone->validate() && $valid;
@@ -449,14 +449,16 @@ class ClientController extends Controller
                             }
                         }
                         foreach ($clientMails as $clientMail) {
-                            if (array_filter($clientMail->attributes) !== []) {
+                            if (!empty(trim($clientMail->mail)) || !empty(trim($clientMail->comment))) {
                                 $clientMail->client = $client->id;
                                 $dirty = $dirty && empty($clientMail->getDirtyAttributes());
 								$valid = $clientMail->validate() && $valid;
                                 if (!$valid || !$flag = $clientMail->save()) {
                                     break;
                                 }
-                            }
+                            } else {
+								$clientMail->delete();
+							}
                         }
                         foreach ($clientFaces as $indexFace => $clientFace) {
                             $emptyFace = true;
@@ -490,8 +492,8 @@ class ClientController extends Controller
                                     break;
                                 }
                                 foreach ($facePhones[$indexFace] as $indexPhone => $phone) {
-                                    if (!empty($phone->number) || !empty($phone->comment)) {
-                                        $phone->face = $clientFace->id;
+                                    if (!empty(trim($phone->number)) || !empty(trim($phone->comment))) {
+										$phone->face = $clientFace->id;
 										$phone->client = $client->id;
                                         $dirty = $dirty && empty($phone->getDirtyAttributes());
 										$valid = $phone->validate() && $valid;
@@ -503,7 +505,7 @@ class ClientController extends Controller
                                     }
                                 }
                                 foreach ($faceMails[$indexFace] as $indexMail => $mail) {
-                                    if (!empty($mail->mail)) {
+                                    if (!empty(trim($mail->mail)) || !empty(trim($mail->comment))) {
                                         $mail->face = $clientFace->id;
 										$mail->client = $client->id;
                                         $dirty = $dirty && empty($mail->getDirtyAttributes());

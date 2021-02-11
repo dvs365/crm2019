@@ -59,4 +59,10 @@ class Phoneclient extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Client::className(), ['id' => 'client']);
     }
+	
+    public function beforeSave($insert)
+    {
+		$this->number = trim($this->number);
+		return parent::beforeSave($insert);
+    }	
 }
