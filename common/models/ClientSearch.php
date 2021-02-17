@@ -184,7 +184,8 @@ class ClientSearch extends Client
 			$whereFlag = true;
             $or_ = ['or'];
             foreach ($searchArr as $searchIt) {
-				$words = explode(' ', $searchIt);
+				//preg_replace("/^[а-яА-ЯёЁa-zA-Z0-9]+/", "", $searchIt)
+				$words = explode(' ', preg_replace("/[^а-яА-ЯёЁa-zA-Z0-9]/ui", " ", $searchIt));
 				$and = ['and'];
 				foreach ($words as $word) {
 					if (mb_strlen($word , 'UTF-8') < 3) continue;
