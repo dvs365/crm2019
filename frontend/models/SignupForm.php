@@ -68,7 +68,7 @@ class SignupForm extends Model
 			
 			['managers', 'each', 'rule' => ['string']],
 			
-			['birthday', 'date', 'format' => 'php:Y-m-d'],
+			['birthday', 'date', 'format' => 'php:d.m.Y'],
         ];
     }
 
@@ -90,7 +90,7 @@ class SignupForm extends Model
         $user->position = $this->position;
         $user->phone = $this->phone;
         $user->email = $this->email;
-		$user->birthday = $this->birthday;
+		$user->birthday = $this->birthday ? \Yii::$app->formatter->asDate($this->birthday, "php:Y-m-d"):'';
 		$user->managers = is_array($this->managers) ? implode(',', $this->managers) : '';
         $this->password = bin2hex(openssl_random_pseudo_bytes(4));
 

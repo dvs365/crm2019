@@ -75,7 +75,7 @@ class UserController extends Controller
 			} catch (Exception $e) {
 				$transaction->rollBack();
 			}
-			return $this->redirect(['set/users']);
+			return $this->redirect(['/setup/user']);
 		}
 		return $this->render('/user/update', [
 			'model' => $model,

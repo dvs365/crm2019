@@ -129,7 +129,7 @@ SettingAsset::register($this);
 		<div class="fixed_footer">
 			<div class="w900">
 				<div class="right">
-					<?=Html::a('Отменить', ['set/users'], ['class' => 'btn cancel'])?>
+					<?=Html::a('Отменить', ['/setup/user'], ['class' => 'btn cancel'])?>
 					<?= Html::submitInput('Сохранить', ['class' => 'btn']) ?>
 				</div>
 			</div>

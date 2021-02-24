@@ -116,7 +116,7 @@ class ProfileUpdateForm extends Model
 			$user->email = $this->email;
 			$user->status = $this->status;
 			$user->managers = is_array($this->managers) ? implode(',', $this->managers) : '';
-			$user->birthday = $this->birthday ? \Yii::$app->formatter->asDate($this->birthday, "php:Y-m-d"):'';;
+			$user->birthday = $this->birthday ? \Yii::$app->formatter->asDate($this->birthday, "php:Y-m-d"):'';
 
 			$permissions = Yii::$app->authManager->getPermissions();
 			foreach($permissions as $name => $permission) {
