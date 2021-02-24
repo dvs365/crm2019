@@ -3,14 +3,20 @@ a {
 	text-decoration: none;
 }
 </style>
-
+<main>
+	<div class="wrap4">
+		<div class="control left">
+			<?=$this->render('/layouts/menu')?>
+		</div>
+		<div class="clear"></div>
+	</div>
 <?
 $m = (isset($_GET['m']))?($_GET['m']):'0';
 $minus = (int)$m - 1;
 $plus = (int)$m + 1;
 $minus1 = 0;
 $plus1 = 0;
-echo '<h1><a href="?m='.$minus.'"><<</a>Статистика новой базы с 1 октября.<a href="?m='.$plus.'">>></a></h2>';
+echo '<h1 class="wrap1"><a href="?m='.$minus.'"><<</a>Статистика новой базы с 1 октября.<a href="?m='.$plus.'">>></a></h2>';
 $user = ['51' => 'Порошина', '74' => 'Кириллов', '84' => 'Ермилова', '86' => 'Макаров', '90' => 'Порошин', '94' => 'Дурманова'];
 $limit = count($user) * 63;
 $dbhostSt = '81.177.165.56';
@@ -137,7 +143,7 @@ if (!empty($statistic2) && is_array($statistic2)){
    TH, TD {
     border: 1px solid black; /* Параметры рамки */
     padding: 1px; /* Поля вокруг текста */
-   font-size: 13px;
+   font-size: 16px;
    font-weight: none;
    }
    
@@ -164,3 +170,5 @@ if (!empty($statistic2) && is_array($all2)) {
 	$trAll22 = array_reverse($trAll22);
  echo '<div style="display:inline-block;padding-left:5px;"><table class="second">'.implode('',$trAll2).implode('',$trAll22).'</table><br><table class="second">'.implode('',$tr2).'</table></div>';
 }
+?>
+</main>

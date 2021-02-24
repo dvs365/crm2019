@@ -1,12 +1,14 @@
 <?php
-namespace frontend\controllers;
+
+namespace frontend\modules\setup\controllers;
 
 use yii\web\Controller;
 use yii\filters\AccessControl;
+
 /**
- * App controller
+ * Default controller for the `setup` module
  */
-class AppController extends Controller
+class AddController extends Controller
 {
     /**
      * @inheritdoc
@@ -16,21 +18,33 @@ class AppController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['statistic'],
+                'only' => ['index','statistic','costdelivery'],
                 'rules' => [
                     [   
-                        'actions' => ['statistic'],
+                        'actions' => ['index','statistic','costdelivery'],
                         'allow' => true,
                         'roles' => ['admin'],
                     ],
                 ],
             ],
         ];
+    }	
+    /**
+     * Renders the index view for the module
+     * @return string
+     */
+    public function actionIndex()
+    {
+        return $this->render('index');
     }
-
+	
     public function actionStatistic()
     {
-		$m = (isset($_GET['m']))?($_GET['m']):'0';
         return $this->render('statistic');
     }
+	
+	public function actionCostdelivery()
+	{
+		return $this->render('costdelivery');
+	}
 }

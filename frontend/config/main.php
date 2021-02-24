@@ -64,7 +64,14 @@ return [
 				'<controller:\w+>' => '<controller>/index',
 				'<controller:\w+>/<id:\d+>' => '<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
-				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',			
+				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+
+				'<module:[\w-]+>/' => '<module>/default/index',
+				'<module:[\w-]+>/<controller:[\w-]+>' => '<module>/<controller>/index',
+				'<module:[\w-]+>/<controller:[\w-]+>/<id:\d+>' => '<module>/<controller>/view',
+				'<module:[\w-]+>/<controller:[\w-]+>/<action:[\w-]+>/<id:\d+>' => '<module>/<controller>/<action>', 
+				'<module:[\w-]+>/<controller:[\w-]+>/<action:[\w-]+>' => '<module>/<controller>/<action>', 
+				
             ],
         ],
 		'mark' => [
@@ -75,10 +82,13 @@ return [
 		],
     ],
     'modules' => [
-      'gii' => [
-          'class' => 'yii\debug\Module',
-          'allowedIPs' => ['*'],
-      ]
+		'gii' => [
+			'class' => 'yii\debug\Module',
+			'allowedIPs' => ['*'],
+      ],
+		'setup' => [
+			'class' => 'frontend\modules\setup\Module',
+		],
     ],
     'params' => $params,
 ];

@@ -39,9 +39,9 @@ App2Asset::register($this);
                 <?= Menu::widget([
                     'encodeLabels' => false,
                     'items' => [
-                        ['label' => 'Сводка', 'url' => ['summary/index'], 'active' => $checkController('summary'), 'visible' => false],
-                        ['label' => 'Клиенты', 'url' => ['client/index'], 'active' => $checkController('client')],
-                        ['label' => 'Дела<span class="work_value" id="work_value"> (<span>'.(\Yii::$app->todo->cur() + \Yii::$app->todo->last()).'</span>)</span>', 'url' => ['todo/index'], 'active' => $checkController('todo')],
+                        ['label' => 'Сводка', 'url' => ['/summary/index'], 'active' => $checkController('summary'), 'visible' => false],
+                        ['label' => 'Клиенты', 'url' => ['/client/index'], 'active' => $checkController('client')],
+                        ['label' => 'Дела<span class="work_value" id="work_value"> (<span>'.(\Yii::$app->todo->cur() + \Yii::$app->todo->last()).'</span>)</span>', 'url' => ['/todo/index'], 'active' => $checkController('todo')],
                     ],
                     'activeCssClass' => 'active',
                 ])
@@ -52,7 +52,7 @@ App2Asset::register($this);
 					<?= MenuActive::widget([
 						'encodeLabels' => false,
 						'items' => [
-							['label' => 'Настройки'.$setMark, 'url' => ['set/profile'], 'active' => $checkController('set')],
+							['label' => 'Настройки'.$setMark, 'url' => ['/setup/profile/index'], 'active' => $checkController('set')],
 							['label' => 'Выход', 'url' => ['site/logout']],
 						],
 						'options' => ['tag' => false],
