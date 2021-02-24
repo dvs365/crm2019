@@ -143,7 +143,7 @@ if (!empty($statistic2) && is_array($statistic2)){
    TH, TD {
     border: 1px solid black; /* Параметры рамки */
     padding: 1px; /* Поля вокруг текста */
-   font-size: 16px;
+   font-size: 14px;
    font-weight: none;
    }
    
