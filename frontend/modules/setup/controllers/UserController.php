@@ -21,10 +21,17 @@ class UserController extends Controller
                 'class' => AccessControl::className(),
                 'only' => ['index','signup','update'],
                 'rules' => [
+					[
+						'allow' => false,
+						'roles' => ['?'],
+					],				
                     [   
                         'actions' => ['index','signup','update'],
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'roles' => ['addUpAdmin','addUpUser'],
+						'roleParams' => function() {
+							return ['user' => User::findOne(['id' => Yii::$app->request->get('id')])];
+						}						
                     ],
                 ],
             ],

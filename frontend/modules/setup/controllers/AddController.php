@@ -20,6 +20,10 @@ class AddController extends Controller
                 'class' => AccessControl::className(),
                 'only' => ['index','statistic','costdelivery'],
                 'rules' => [
+					[
+						'allow' => false,
+						'roles' => ['?'],
+					],				
                     [   
                         'actions' => ['index','statistic','costdelivery'],
                         'allow' => true,

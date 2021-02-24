@@ -3,6 +3,7 @@
 namespace frontend\modules\setup\controllers;
 
 use yii\web\Controller;
+use yii\filters\AccessControl;
 use common\models\User;
 use Yii;
 use frontend\models\PasswordChangeForm;
@@ -13,6 +14,28 @@ use frontend\models\PasswordChangeForm;
 class ProfileController extends Controller
 {
     /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index'],
+                'rules' => [
+					[
+						'allow' => false,
+						'roles' => ['?'],
+					],				
+                    [   
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }    /**
      * Renders the index view for the module
      * @return string
      */
