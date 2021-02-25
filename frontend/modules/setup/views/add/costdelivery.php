@@ -28,7 +28,7 @@
 		<div class="clear"></div>
 	</div>
 	<ul>
-		<?='<li>город - скидка (последнее редактирование)</li>'?>
+		<?='<li>город - доставка (последнее редактирование)</li>'?>
 		<?foreach($cities as $id => $city):?>
 		<?='<li><a href="https://sansfera.ru/admin/page/edit/'.$city['id'].'" target="_blank">'.$city['name'].'</a>-'.$city['price'].' ('.date('d-m-Y',$city['edit']).')</li>'?>
 		<?endforeach;?>
