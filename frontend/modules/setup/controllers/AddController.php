@@ -51,4 +51,9 @@ class AddController extends Controller
 	{
 		return $this->render('costdelivery');
 	}
+	
+	public function actionLastpay()
+	{
+		return $this->render('lastpay');
+	}	
 }

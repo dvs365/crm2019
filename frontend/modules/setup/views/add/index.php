@@ -10,6 +10,7 @@ use yii\helpers\Html;
 		<div class="clear"></div>
 	</div>
 	<ul>
+		<li><?=Html::a('Последний платеж', ['add/lastpay'])?></li>
 		<li><?=Html::a('Статистика', ['add/statistic'])?></li>
 		<li><?=Html::a('Стоимость доставки', ['add/costdelivery'])?></li>
 	</ul>
